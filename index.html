@@ -21,135 +21,42 @@
 
 </head>
 <body> 
-<div class="container">
-    <header>
-      <div class="nav-left">
-        <div class="logo">LOGO</div>
-        <nav>
-          <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Library</a></li>
-            <li><a href="#">Movies</a></li>
-            <li><a href="#">My List</a></li>
-            <li><a href="#">About Us</a></li>
-          </ul>
-        </nav>
-      </div>
-
-      <div class="nav-right">
-        <div class="muted">🔍</div>
-        <div class="muted">🔔</div>
-        <div class="icon-btn">🙂</div>
-      </div>
-    </header>
-
-    <main>
-      <section class="hero">
-        <div class="hero-left">
-          <h1>The Conjuring: Last Rites</h1>
-          <p class="meta">Paranormal investigators Ed and Lorraine Warren take on one last terrifying case involving mysterious entities they must confront.</p>
-          <div class="hero-actions">
-            <button class="btn play">▶ Play</button>
-            <button class="btn">ⓘ More Info</button>
-          </div>
+  <div class="header">
+        <div class="nav-container">
+            <div class="logo">InDEV</div>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">Movies</a></li>
+                    <li><a href="#">Series</a></li>
+                    <li><a href="#">My List</a></li>
+                </ul>
+            </nav>
+            <div class="icons">
+                <div class="icon">🔍</div>
+                <div class="icon">🔔</div>
+                <div class="icon">🙂</div>
+            </div>
         </div>
-        <div class="hero-right">Hero Image</div>
-      </section>
-
-      <section class="row">
-        <h3>Trending Now</h3>
-        <div class="carousel" aria-label="Trending Now">
-          <div class="item"><div class="poster"></div><div class="label">Weapons</div></div>
-          <div class="item"><div class="poster"></div><div class="label">The Conjuring: Last Rites</div></div>
-          <div class="item"><div class="poster"></div><div class="label">Demon Slayer: Infinity Castle</div></div>
-          <div class="item"><div class="poster"></div><div class="label">Wednesday</div></div>
-          <div class="item"><div class="poster"></div><div class="label">Ballerina</div></div>
-          <div class="item"><div class="poster"></div><div class="label">Nobody 2</div></div>
-          <div class="item"><div class="poster"></div><div class="label">Iso-resident</div></div>
+    </div>
+    
+    <div class="trailer-container">
+        <video autoplay muted loop class="trailer">
+            <source src="trailer.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="info">
+            <div class="duration">Duration: 51m</div>
+            <div class="rating">⭐ 7.5</div>
+            <div class="episodes">Season 8 - Episode 14 - Still Gotta Mean Something</div>
+            <h1 class="title">The Walking Dead</h1>
+            <p class="description">A Heaps prisoner makes a discovery; Carol searches for someone in the nearby forest; Rick and Morgan find themselves in the company of strangers.</p>
+            <div class="actions">
+                <button class="btn watch">WATCH</button>
+                <button class="btn add-list">ADD LIST</button>
+            </div>
         </div>
-      </section>
-
-      <section class="row">
-        <h3>Movies</h3>
-        <div class="carousel" aria-label="Movies">
-          <div class="item"><div class="poster"></div><div class="label">War of the Worlds</div></div>
-          <div class="item"><div class="poster"></div><div class="label">Demon Slayer</div></div>
-          <div class="item"><div class="poster"></div><div class="label">The Conjuring</div></div>
-          <div class="item"><div class="poster"></div><div class="label">Weapons</div></div>
-          <div class="item"><div class="poster"></div><div class="label">Nobody 2</div></div>
-          <div class="item"><div class="poster"></div><div class="label">Stockholm Bloodbath</div></div>
-          <div class="item"><div class="poster"></div><div class="label">The Naked Gun</div></div>
-        </div>
-      </section>
-
-      <section class="row">
-        <h3>Library</h3>
-        <div class="carousel" aria-label="Library">
-          <div class="item"><div class="poster"></div><div class="label">Wednesday</div></div>
-          <div class="item"><div class="poster"></div><div class="label">Dexter</div></div>
-          <div class="item"><div class="poster"></div><div class="label">Law &amp; Order</div></div>
-          <div class="item"><div class="poster"></div><div class="label">Parasite</div></div>
-          <div class="item"><div class="poster"></div><div class="label">The Dark Knight</div></div>
-          <div class="item"><div class="poster"></div><div class="label">The Green Mile</div></div>
-        </div>
-      </section>
-
-      <section class="row">
-        <h3>My List</h3>
-        <div class="carousel" aria-label="My List">
-          <div class="item"><div class="poster"></div><div class="label">Wednesday</div></div>
-          <div class="item"><div class="poster"></div><div class="label">The Conjuring: Last Rites</div></div>
-          <div class="item"><div class="poster"></div><div class="label">War of the Worlds</div></div>
-          <div class="item"><div class="poster"></div><div class="label">Nobody 2</div></div>
-          <div class="item"><div class="poster"></div><div class="label">Stockholm Bloodbath</div></div>
-          <div class="item"><div class="poster"></div><div class="label">The Dark Knight</div></div>
-        </div>
-      </section>
-
-      <section class="row">
-        <h3>Top 10 Movies in South Africa Today</h3>
-        <div class="top10" aria-label="Top 10">
-          <div>
-            <div class="top-card"><div class="rank">1</div></div>
-            <div class="label">War of the Worlds</div>
-          </div>
-          <div>
-            <div class="top-card"><div class="rank">2</div></div>
-            <div class="label">Nobody 2</div>
-          </div>
-          <div>
-            <div class="top-card"><div class="rank">3</div></div>
-            <div class="label">Nobody 3</div>
-          </div>
-          <div>
-            <div class="top-card"><div class="rank">4</div></div>
-            <div class="label">Stockholm Bloodbath</div>
-          </div>
-          <div>
-            <div class="top-card"><div class="rank">5</div></div>
-            <div class="label">The Conjuring</div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <footer>
-      <div class="footer-cols">
-        <div class="footer-col">
-          <div><strong>Questions?</strong></div>
-          <div class="muted">Email: support@example.com</div>
-        </div>
-        <div class="footer-col">
-          <div><strong>Languages</strong></div>
-          <div class="muted">English • Español • Français</div>
-        </div>
-        <div class="footer-col">
-          <div><strong>Legal</strong></div>
-          <div class="muted">Terms • Privacy</div>
-        </div>
-      </div>
-    </footer>
-  </div>
+    </div>
 
  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
