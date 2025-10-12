@@ -1,7 +1,7 @@
 (() => {
     let currentIndex = 0;
     const videos = [];
-    let userInteracted = false; // Track first real user gesture
+    let userInteracted = false; 
 
     function updateVideos() {
         if (!videos.length) return;
@@ -11,16 +11,16 @@
             const isActive = item && item.classList.contains('active');
             try {
                 if (isActive) {
-                    // Always ensure an active video is playing (muted if user hasn't interacted)
+                    
                     v.muted = !userInteracted;
                     v.play().catch(err => {
-                        v.muted = true; // Keep muted if play fails
+                        v.muted = true; 
                         console.warn('Failed to play active video:', err);
                     });
                 } else {
-                    // Pause and mute non-active videos to save CPU
+                   
                     v.pause();
-                    v.currentTime = 0; // Reset time to 0
+                    v.currentTime = 0;
                     v.muted = true;
                 }
             } catch (e) {
@@ -38,9 +38,9 @@
         currentIndex += direction;
 
         if (currentIndex < 0) {
-            currentIndex = items.length - 1; // Wrap to last item
+            currentIndex = items.length - 1;
         } else if (currentIndex >= items.length) {
-            currentIndex = 0; // Wrap to first item
+            currentIndex = 0;
         }
 
         items[currentIndex].classList.add('active');
@@ -75,8 +75,8 @@
         videos.forEach(v => {
             v.playsInline = true;
             v.preload = 'metadata';
-            v.muted = true; // Start muted for autoplay
-            v.play().catch(() => {}); // Ignore autoplay block errors
+            v.muted = true;
+            v.play().catch(() => {});
         });
 
         updateVideos();
@@ -94,7 +94,7 @@
             if (activeVideo) {
                 activeVideo.muted = false;
                 activeVideo.play().catch(err => {
-                    activeVideo.muted = true; // Keep muted if play fails
+                    activeVideo.muted = true;
                 });
             }
             removeGestureListeners();
@@ -116,60 +116,114 @@
         document.addEventListener('keydown', onKey);
     });
 
-    // Movie filtering sectionconst movies = [
-    { title: 'Movie 1', genre: 'Action', year: 2021, rating: 8.0 },
-    { title: 'Movie 2', genre: 'Comedy', year: 2019, rating: 7.5 },
-    { title: 'Movie 3', genre: 'Drama', year: 2020, rating: 9.0 },
-    { title: 'Movie 4', genre: 'Animation', year: 2022, rating: 6.5 },
-    { title: 'Movie 5', genre: 'Crime', year: 2018, rating: 8.5 },
-    { title: 'Movie 6', genre: 'Documentary', year: 2023, rating: 7.0 },
-];
+    document.addEventListener('DOMContentLoaded', () => {
+    const movies = [
+        { title: 'Movie 1', genre: 'Action', year: 2021, rating: 8.0 },
+        { title: 'Movie 2', genre: 'Adventure', year: 2019, rating: 7.5 },
+        { title: 'Movie 3', genre: 'Animation', year: 2020, rating: 9.0 },
+        { title: 'Movie 4', genre: 'Biography', year: 2022, rating: 6.5 },
+        { title: 'Movie 5', genre: 'Crime', year: 2018, rating: 8.5 },
+        { title: 'Movie 6', genre: 'Comedy', year: 2023, rating: 7.0 },
+        { title: 'Movie 7', genre: 'Documentary', year: 2021, rating: 7.8 },
+        { title: 'Movie 8', genre: 'Drama', year: 2017, rating: 9.5 },
+        { title: 'Movie 9', genre: 'Action', year: 2015, rating: 8.3 },
+        { title: 'Movie 10', genre: 'Animation', year: 2020, rating: 8.7 },
+    ];
 
-let selectedGenres = [];
+    let selectedGenres = [];
 
-const movieListElement = document.getElementById('movie-list');
-const ratingInput = document.getElementById('rating');
-const ratingValueElement = document.getElementById('rating-value');
+    const movieListElement = document.getElementById('movie-list');
+    const ratingInput = document.getElementById('rating');
+    const ratingValueElement = document.getElementById('rating-value');
 
-function renderMovies() {
-    movieListElement.innerHTML = ''; // Clear existing movies
+    function renderMovies() {
+        if (!movieListElement) return;
+        movieListElement.innerHTML = ''; // Clear existing movies
 
-    const filteredMovies = movies.filter(movie => {
-        const rating = parseFloat(ratingInput.value);
-        return (
-            (selectedGenres.length === 0 || selectedGenres.includes(movie.genre)) &&
-            movie.rating >= rating
-        );
+        const minRating = parseFloat(ratingInput.value || 0);
+        
+        // Filter movies
+        const filteredMovies = movies.filter(movie => {
+            return (
+                (selectedGenres.length === 0 || selectedGenres.includes(movie.genre)) &&
+                movie.rating >= minRating
+            );
+        });
+
+        // Create movie card elements
+        filteredMovies.forEach(movie => {
+            const movieCard = document.createElement('div');
+            movieCard.className = 'movie-card';
+            movieCard.innerHTML = `
+                <h3>${movie.title}</h3>
+                <p>Genre: ${movie.genre}</p>
+                <p>Year: ${movie.year}</p>
+                <p>Rating: ${movie.rating}</p>
+            `;
+            movieListElement.appendChild(movieCard);
+        });
+    }
+
+    // Handling genre filter button clicks
+    document.querySelectorAll('.filter-button').forEach(button => {
+        button.addEventListener('click', () => {
+            const genre = button.textContent.trim();
+            button.classList.toggle('active');
+
+            if (selectedGenres.includes(genre)) {
+                selectedGenres = selectedGenres.filter(g => g !== genre);
+            } else {
+                selectedGenres.push(genre);
+            }
+
+            renderMovies();
+        });
     });
 
-    filteredMovies.forEach(movie => {
-        const movieCard = document.createElement('div');
-        movieCard.className = 'movie-card';
-        movieCard.innerHTML = `<h3>${movie.title}</h3><p>${movie.genre}</p><p>Rating: ${movie.rating}</p>`;
-        movieListElement.appendChild(movieCard);
-    });
-}
+    // Handling rating input change
+    if (ratingInput && ratingValueElement) {
+        ratingInput.addEventListener('input', () => {
+            const ratingValue = ratingInput.value;
+            ratingValueElement.textContent = ratingValue;
+            renderMovies();
+        });
+    }
 
-document.querySelectorAll('.filter-button').forEach(button => {
-    button.addEventListener('click', () => {
-        const genre = button.textContent;
-        button.classList.toggle('active');
-
-        if (selectedGenres.includes(genre)) {
-            selectedGenres = selectedGenres.filter(g => g !== genre);
-        } else {
-            selectedGenres.push(genre);
-        }
-
-        renderMovies(); // Re-render the movie list
-    });
+    // Initial rendering of movies
+    renderMovies();
 });
 
-ratingInput.addEventListener('input', () => {
-    const ratingValue = ratingInput.value;
-    ratingValueElement.textContent = ratingValue;
-    renderMovies(); // Re-render the movie list
-});
 
-// Initial render
-renderMovies();
+
+(function setupToggles() {
+    const toggleButtons = Array.from(document.querySelectorAll('.toggle'));
+    if (!toggleButtons.length) return;
+
+
+    toggleButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const multi = btn.dataset.multi === 'true';
+            const group = btn.closest('.toggle-buttons') || document;
+
+            if (!multi) {
+
+                group.querySelectorAll('.toggle').forEach(sib => sib.classList.remove('active'));
+                btn.classList.add('active');
+            } else {
+                btn.classList.toggle('active');
+            }
+
+
+            const view = btn.dataset.view;
+            const movieList = document.querySelector('.movie-list');
+            if (view && movieList) {
+                movieList.classList.toggle('list-view', view === 'list' && btn.classList.contains('active'));
+                movieList.classList.toggle('grid-view', view === 'grid' && btn.classList.contains('active'));
+            }
+
+            document.dispatchEvent(new CustomEvent('toggleChange', {
+                detail: { button: btn, multi, view, active: btn.classList.contains('active') }
+            }));
+        });
+    });
+})();
