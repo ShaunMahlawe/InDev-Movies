@@ -181,26 +181,22 @@ nav a:hover {
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #000000;
-    color: #fff;
+    background-color: #121212;
+    color: white;
     margin: 0;
     padding: 0;
 }
 
 .container {
-    width: 100%;
-    margin: auto;
+    padding: 20px;
+    margin: 0% auto;
 }
 
 header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    padding: 20px 0;
-}
-
-h1 {
-    font-size: 24px;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
 .toggle-buttons {
@@ -208,75 +204,93 @@ h1 {
 }
 
 .toggle {
-    background-color: #444;
+    margin: 0 10px;
+    padding: 10px 20px;
+    background-color: #1b1b1b;
+    color: white;
     border: none;
-    color: #fff;
-    padding: 10px;
-    margin-left: 10px;
     cursor: pointer;
 }
 
 .toggle.active {
-    background-color: #e50914; /* Highlight active button */
-}
-
-input[type="text"] {
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    margin-left: 20px;
+    background-color: #007bff;
 }
 
 .filters {
     display: flex;
     justify-content: space-between;
-    padding: 20px 0;
+    margin-top: 20px;
 }
 
 .genre-filter {
     display: flex;
-    flex-wrap: wrap;
 }
 
 .filter-button {
-    background-color: #444;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
     padding: 10px;
-    margin: 5px;
+    background-color: #1b1b1b;
+    color: white;
+    border: none;
     cursor: pointer;
+    margin-right: 5px;
 }
 
 .filter-button.active {
-    background-color: #e50914;
-}
-
-.sort-options,
-.rating-filter {
-    display: flex;
-    align-items: center;
-}
-
-.sort-options label,
-.rating-filter label {
-    margin-right: 10px;
+    background-color: #007bff;
 }
 
 .movie-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 20px;
-    padding-top: 20px;
+    gap: 15px;
+    margin-top: 20px;
 }
 
 .movie-card {
-    border: 1px solid #ccc;
+    background-color: #1b1b1b;
     border-radius: 5px;
-    padding: 16px;
-    margin: 10px;
-    background-color: #f9f9f9;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.movie-card h3 {
+    font-size: 1.2em;
+}
+
+.trailer-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.trailer-content {
+    background: #1e1e1e;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+video {
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 5px;
 }
 
 .movie-card img {
@@ -329,3 +343,331 @@ input[type="text"] {
     }
 }
 /* End of CSS */  
+
+/* GLOBAL STYLES & DARK MODE SETUP */
+:root {
+    --primary-red: #e50914; /* Netflix Red */
+    --background-dark: #000000;
+    --card-dark: #1e1e1e;
+    --text-light: #f5f5f5;
+    --text-secondary: #aaaaaa;
+    --grid-gap: 20px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
+body {
+    background-color: var(--background-dark);
+    color: var(--text-light);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1400px; /* Adjust as needed */
+    margin: 0 auto;
+    padding: 0 40px 40px; /* Padding for the sides and bottom */
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: var(--text-light);
+    padding: 8px 15px;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+/* -------------------------------------- */
+/* 1. HEADER (Logo/Selection & Search) */
+/* -------------------------------------- */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 0;
+}
+
+.content-selector {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.content-selector label {
+    cursor: pointer;
+    display: flex; /* To align text and input */
+    align-items: center;
+}
+
+.content-selector span {
+    color: var(--text-secondary); /* Default color for unselected */
+}
+
+/* Style the text when the radio is checked */
+.content-selector input:checked + span {
+    color: var(--text-light);
+}
+
+/* Hide the actual radio button */
+.content-selector input[type="radio"] {
+    display: none;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    background: var(--card-dark);
+    border-radius: 20px;
+    padding: 5px 15px;
+}
+
+.search-box input {
+    background: none;
+    border: none;
+    color: var(--text-light);
+    padding: 5px;
+    font-size: 16px;
+    outline: none;
+}
+
+.search-icon {
+    color: var(--text-secondary);
+}
+
+/* -------------------------------------- */
+/* 2. FILTERS (Genre Tags and Sort Options) */
+/* -------------------------------------- */
+.filters {
+    padding: 20px 0;
+    border-bottom: 1px solid var(--card-dark);
+}
+
+.genre-tags {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tag {
+    background-color: var(--card-dark);
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-weight: bold;
+    color: var(--text-secondary);
+}
+
+.tag.active {
+    background-color: var(--primary-red);
+    color: var(--text-light);
+}
+
+.sort-options {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.sort-by {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.sort-button {
+    background: var(--card-dark);
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-weight: bold;
+}
+
+.rating-filter {
+    margin-left: auto; /* Pushes the rating filter to the far right */
+    color: var(--text-light);
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.rating-filter .star {
+    margin-right: 5px;
+}
+
+/* -------------------------------------- */
+/* 3. CONTENT GRID */
+/* -------------------------------------- */
+.movie-grid {
+    display: grid;
+    /* Create 6 columns (or adjust based on viewport) */
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: var(--grid-gap);
+    padding: 40px 0;
+}
+
+.movie-card {
+    background-color: rgba(169, 169, 169, 0);
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.poster img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
+    display: block;
+}
+
+.details {
+    padding-top: 10px;
+    font-size: 14px;
+}
+
+.title {
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.year-runtime {
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 5px;
+    font-weight: bold;
+    color: var(--text-light);
+}
+
+/* -------------------------------------- */
+/* 4. FEATURED HERO SECTION */
+/* -------------------------------------- */
+.featured-hero {
+    position: relative;
+    height: 500px; /* Fixed height for the hero section */
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 40px;
+    color: var(--text-light);
+}
+
+.hero-background video {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    top: -2%;
+    left: 0;
+    z-index: 1;
+}
+
+.hero-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    padding: 40px 60px;
+    
+    /* Gradient overlay to make text readable */
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.9) 30%, rgba(0, 0, 0, 0.1) 70%);
+    
+    /* Use flexbox to position content at the bottom */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 3;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    line-height: 1;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.duration-tags {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+}
+
+.duration-tags .rating {
+    color: #ffcc00; /* Yellow star */
+}
+
+.hero-title {
+    font-size: 48px;
+    font-weight: 800;
+    margin-bottom: 15px;
+    line-height: 1.1;
+}
+
+.hero-description {
+    max-width: 600px;
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-bottom: 30px;
+}
+
+.hero-actions {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 40px;
+}
+
+.btn {
+    padding: 12px 25px;
+    font-weight: bold;
+}
+
+.btn-watch {
+    background-color: var(--primary-red);
+    color: var(--text-light);
+}
+
+.btn-list {
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.hero-footer-nav {
+    display: flex;
+    gap: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 20px;
+}
+
+.footer-link {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--text-secondary);
+}
+
+.footer-link.active {
+    color: var(--text-light);
+    border-bottom: 2px solid var(--primary-red);
+    padding-bottom: 20px;
+}
