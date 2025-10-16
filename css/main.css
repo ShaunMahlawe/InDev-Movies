@@ -285,8 +285,6 @@
   opacity: 1;
 }
 
-/* Main Stylesheet — UTF-8 encoding handled via HTML meta tag */
-
 body {
   background: #0e0e0e;
   font-family: 'Poppins', Arial, sans-serif;
@@ -297,7 +295,6 @@ body {
   padding: 0;
 }
 
-/* Site Header */
 .site-header {
   background-color: #ffffff;
   border-bottom: 1px solid #ddd;
@@ -308,7 +305,6 @@ body {
   z-index: 100;
 }
 
-/* Header Layout */
 .header-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -318,7 +314,6 @@ body {
   flex-wrap: wrap;
 }
 
-/* Menu Button */
 .menu-button {
   font-size: 24px;
   background: none;
@@ -327,7 +322,6 @@ body {
   margin-right: 1px;
 }
 
-/* Logo */
 .logo {
   font-size: 22px;
   font-weight: bold;
@@ -335,7 +329,6 @@ body {
   margin-right: auto;
 }
 
-/* Search Bar */
 .search-bar {
   display: flex;
   flex: 1 1 300px;
@@ -367,7 +360,6 @@ body {
   background-color: #ddd;
 }
 
-/* Player Controls */
 .player-controls {
   background: #1c1c1c;
   display: flex;
@@ -391,7 +383,6 @@ body {
   background-color: #555;
 }
 
-/* Feedback Animation */
 .player-feedback {
   position: absolute;
   top: 50%;
@@ -416,7 +407,6 @@ body {
   opacity: 1;
 }
 
-/* Responsive Design */
 @media (max-width: 992px) {
   #main-content,
   #main-sidebar {
@@ -475,7 +465,7 @@ body {
     order: 1;
   }
 }
-/* Main Stylesheet — UTF-8 encoding handled via HTML meta tag */
+
 body {
   background: #0e0e0e;
   font-family: 'Poppins', Arial, sans-serif;
@@ -486,7 +476,7 @@ body {
   padding: 0;
 }
 
-/* Header */
+
 .site-header {
   background-color: #fff;
   border-bottom: 1px solid #ddd;
@@ -552,7 +542,6 @@ body {
   background-color: #ddd;
 }
 
-/* Player Controls */
 .player-controls {
   background: #1c1c1c;
   display: flex;
@@ -576,7 +565,6 @@ body {
   background-color: #555;
 }
 
-/* Feedback */
 .player-feedback {
   position: absolute;
   top: 50%;
@@ -601,7 +589,6 @@ body {
   opacity: 1;
 }
 
-/* Footer */
 #footer {
   padding: 20px 0;
   position: relative;
@@ -643,7 +630,6 @@ body {
   background: #ff3c1f;
 }
 
-/* Media Queries */
 @media (max-width: 992px) {
   #main-content,
   #main-sidebar {
@@ -731,7 +717,6 @@ body {
     font-size: 14px;
   }
 }
-/* Main Stylesheet — UTF-8 handled via HTML meta tag */
 
 body {
   background: #0e0e0e;
@@ -743,7 +728,6 @@ body {
   padding: 0;
 }
 
-/* Header */
 .site-header {
   background-color: #fff;
   border-bottom: 1px solid #ddd;
@@ -763,7 +747,6 @@ body {
   flex-wrap: wrap;
 }
 
-/* Player Area */
 .player-frame {
   width: 100%;
   position: relative;
@@ -784,7 +767,6 @@ body {
   height: 100%;
 }
 
-/* Player Controls */
 .player-controls {
   background: #1c1c1c;
   display: flex;
@@ -808,7 +790,6 @@ body {
   background-color: #555;
 }
 
-/* Feedback */
 .player-feedback {
   position: absolute;
   top: 50%;
@@ -833,7 +814,6 @@ body {
   opacity: 1;
 }
 
-/* Footer */
 #footer {
   padding: 20px 0;
   background: #1c1c1c;
@@ -865,7 +845,6 @@ body {
   background: #ff3c1f;
 }
 
-/* Responsive */
 @media (max-width: 992px) {
   #main-content,
   #main-sidebar {
