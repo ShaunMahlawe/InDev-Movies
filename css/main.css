@@ -367,8 +367,8 @@ body {
     line-height: 1.6;
 }
 
-.container {
-    max-width: 1400px; /* Adjust as needed */
+.container-fluid {
+    max-width: 2000px; /* Adjust as needed */
     margin: 0 auto;
     padding: 0 40px 40px; /* Padding for the sides and bottom */
 }
