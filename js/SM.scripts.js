@@ -165,12 +165,12 @@ function isHighlyRated(movie){
 }
 
 !async function(){
-const url = 'https://imdb236.p.rapidapi.com/api/imdb/top-box-office';
+    const url = 'https://moviesverse1.p.rapidapi.com/top-movies-of-all-time';
 const options = {
 	method: 'GET',
 	headers: {
-		'x-rapidapi-key': 'ecdd572f6fmsh055b23482742d2cp1af123jsn9b1d66941f6f',
-		'x-rapidapi-host': 'imdb236.p.rapidapi.com'
+		'x-rapidapi-key': '1e4b942479msh20a441535ffa565p139ba7jsnad11b0324a16',
+		'x-rapidapi-host': 'moviesverse1.p.rapidapi.com'
 	}
 };
 
@@ -203,8 +203,8 @@ const options = {
     console.log(bestMovies);
 
     bestMovies.forEach(movie => {
-        document.getElementById('movie-card').innerHTML += ` <div class="col-md-3">
-        <div class="movie-card">
+        document.getElementById("movie-card").innerHTML += ` <div class="col-md-3">
+        <div class="card">
         <img src="${movie.image}" class="card-img-top" alt="...">
         <div class="card-body">
         <h5 class="card-title">${movie.title}</h5>
