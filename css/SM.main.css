@@ -312,6 +312,11 @@ video {
     display: inline-block;
     margin-top: 10px;
 }
+
+.movie-card :hover {
+    transform: scale(0.8);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .container {
