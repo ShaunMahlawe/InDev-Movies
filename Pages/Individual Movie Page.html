@@ -15,13 +15,15 @@
 </head>
 
 <body>
-  <div id="trailer-overlay">
-  <video id="trailerVideo" autoplay muted>
-    <source src="../videos/trailer.mp4" type="video/mp4">
-  </video>
-  <div id="trailer-skip">Click to skip</div>
-</div>
 
+  <div id="trailer-overlay">
+    <video id="trailerVideo" autoplay muted>
+      <source src="../videos/trailer.mp4" type="video/mp4">
+    </video>
+    <div id="trailer-skip">Click to skip</div>
+  </div>
+
+  <!-- Header -->
   <header class="site-header">
     <div class="header-container">
       <button class="menu-button">☰</button>
@@ -33,33 +35,39 @@
     </div>
   </header>
 
+
   <div class="layout-page layout-page-watch" id="main-wrapper">
     <div class="container">
+
+
       <div id="main-content">
         <div id="watch-block">
           <div class="player-wrap">
             <div class="player-frame">
-
-              <!-- Title -->
+              
               <h2 class="movie-title">Example Movie</h2>
 
-              <!-- Video -->
-            <video id="moviePlayer" controls>
-              <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
-            </video>
+              <video id="moviePlayer" controls>
+                <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+              </video>
 
-
-
-              <!-- Floating feedback -->
               <div class="player-feedback" id="player-feedback"></div>
 
-              <!-- Poster below video -->
               <img class="movie-poster" src="../media/sample-poster.jpg" alt="Movie Poster">
+
+              <div id="movie-info">
+                <p><strong>Released:</strong> <span id="info-release">Loading...</span></p>
+                <p><strong>Genre:</strong> <span id="info-genre">Loading...</span></p>
+                <p><strong>IMDb Rating:</strong> <span id="info-rating">Loading...</span></p>
+                <p><strong>Plot:</strong> <span id="info-plot">Loading...</span></p>
+              </div>
+
             </div>
           </div>
         </div>
       </div>
 
+      
       <aside id="main-sidebar">
         <section class="block_area block_area_sidebar block_area-realtime">
           <div class="block_area-header">
@@ -96,6 +104,7 @@
     </div>
   </div>
 
+  <!-- Footer -->
   <footer id="footer">
     <div class="container">
       <div class="footer-content">
