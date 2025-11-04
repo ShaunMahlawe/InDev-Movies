@@ -385,9 +385,9 @@ body {
 }
 
 .container-fluid {
-    max-width: 2000px; /* Adjust as needed */
+    max-width: 2000px;
     margin: 0 auto;
-    padding: 0 40px 40px; /* Padding for the sides and bottom */
+    padding: 0 40px 40px; 
 }
 
 button {
@@ -401,9 +401,7 @@ button {
     transition: background-color 0.2s;
 }
 
-/* -------------------------------------- */
-/* 1. HEADER (Logo/Selection & Search) */
-/* -------------------------------------- */
+
 .header {
     display: flex;
     justify-content: space-between;
