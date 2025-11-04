@@ -47,6 +47,46 @@
       <input id="login-email" type="text" placeholder="email" name="login-email"/>
       <input id="login-password" type="text" placeholder="password" name="login-password"/>
       <button name="login-button" type="button" id="login-button">login</button>
+
+<body>
+<!-- <body onload="showName()">  -->
+
+
+
+<div class="login-page">
+  <div class="form">
+
+
+    <form id="signupForm" class="register-form">
+      <h1>Sign Up</h1>
+      <input id="create-userName" type="text" placeholder="username"/>
+      <input id="signUpEmail" type="text" placeholder="email address"/>
+      <input id="signUpPass" type="text" placeholder="password"/>
+      <button name="create-button" type="submit" id="create-button">create</button>
+      <p class="message">Already registered? <a href="#">Sign In</a></p>
+    </form>
+    <form id="loginForm" class="login-form">
+      <h1>Log In</h1>
+      <input id="create-userName" type="text" placeholder="username"/>
+      <input id="signInEmail" type="text" placeholder="email" name="login-email"/>
+      <input id="signInPass" type="text" placeholder="password" name="login-password"/>
+
+<!-- <div class="form-check">
+  
+  <input class="form-check-input" type="checkbox" value="" id="checkDefault">
+  <label class="form-check-label" for="checkDefault">
+    Remember me
+  </label>
+</div> -->
+
+       <!-- <p>Remember me</p> -->
+       <!-- <p> Forgot password</p> -->
+      <button name="login-button" type="submit" id="login-button">login</button>
+
+     <!-- <p> Or Sign with </p> -->
+
+     <!-- add images of Google -->
+
       <p class="message">Don't have an account? <a href="#">Sign Up</a></p>
     </form>
   </div>
@@ -87,6 +127,22 @@
   <label for="floatingPassword">Confirm Password</label>
 </div>
 
+
+ <div class="form-floating mb-3">
+  <input type="phone number" class="form-control" id="floatingInput" placeholder="">
+  <label for="floatingInput">Phone number</label>
+</div>
+
+<div class="form-floating">
+  <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+  <label for="floatingPassword">Password</label>
+</div>
+
+<div class="form-floating">
+  <input type="password" class="form-control" id="floatingPassword" placeholder="Password">
+  <label for="floatingPassword">Confirm Password</label>
+</div>
+
 <button type="button" class="btn btn-primary" >Sign Up</button>
 
 <p> OR </p>
@@ -107,11 +163,15 @@
 
 
 
+<body onload="showName()">
+
+<h1 id="displayName"></h1>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
     <script src="../js/KS script.js"></script>
+    <script type="module" src="../js/firebase.js"></script>
 
 </header>
 </body>

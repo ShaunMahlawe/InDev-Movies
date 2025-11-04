@@ -164,6 +164,59 @@
 
   </div>
 <section>
+ <div class="container">
+        <header>
+            <h1>Movies</h1>
+            <div class="toggle-buttons">
+                <button class="toggle active">Series</button>
+                <button class="toggle">Original Series</button>
+            </div>
+            <input type="text" id="search" placeholder="Search...">
+        </header>
+
+        <div class="filters">
+            <div class="genre-filter">
+                <button class="filter-button active">Action</button>
+                <button class="filter-button">Adventure</button>
+                <button class="filter-button">Animation</button>
+                <button class="filter-button">Biography</button>
+                <button class="filter-button">Crime</button>
+                <button class="filter-button">Comedy</button>
+                <button class="filter-button">Documentary</button>
+                <button class="filter-button">Drama</button>
+            </div>
+            <div class="sort-options">
+                <label for="sort">Sort by:</label>
+                <select id="sort">
+                    <option value="latest">Latest</option>
+                    <option value="year">Year</option>
+                    <option value="a-z">A-Z</option>
+                </select>
+            </div>
+            <div class="rating-filter">
+                <label for="rating">Rating:</label>
+                <input type="range" id="rating" min="0" max="10" step="0.1" value="5">
+                <span id="rating-value">5.0</span>
+            </div>
+        </div>
+
+        <div class="movie-list" id="movie-list">
+          
+        </div>
+
+        <div class="trailer-modal" id="trailer-modal">
+            <div class="trailer-content">
+                <span class="close" id="close-modal">&times;</span>
+                <h2 id="modal-title">Movie Title</h2>
+                <p id="modal-description">Movie description goes here.</p>
+                <video id="trailer-video" controls>
+                    <source src="Asset/videos/" id="video-source" type="video/mp4">
+                   
+                </video>
+            </div>
+        </div>
+    </div>
+
     <div class="container-fluid">
         <header class="header">
             <div class="content-selector">
@@ -178,6 +231,57 @@
             
 
 <!-- 
+                <label>
+                    <input type="radio" name="content_type" value="series">
+                    <span>Series</span>
+                </label>
+                <label>
+                    <input type="radio" name="content_type" value="original">
+                    <span>Original Series</span>
+                </label>
+            </div>
+            <div class="search-box">
+                <input type="text" placeholder="Search">
+                <span class="search-icon">🔍</span>
+            </div>
+        </header>
+
+        <section class="filters">
+            <div class="genre-tags">
+                <button class="tag active">Action</button>
+                <button class="tag">Adventure</button>
+                <button class="tag">Animation</button>
+                <button class="tag">Biography</button>
+                <button class="tag">Crime</button>
+                <button class="tag">Comedy</button>
+                <button class="tag">Documentary</button>
+                <button class="tag">Drama</button>
+                <button class="tag tag-more">...</button>
+            </div>
+            <div class="sort-options">
+                <div class="sort-by">Sort By: <button class="sort-button">Latest</button></div>
+                <div class="sort-by">Year: <button class="sort-button">2018</button></div>
+                <div class="sort-by">A-Z: <button class="sort-button">A-Z</button></div>
+                <div class="rating-filter">
+                    <span class="star">⭐</span> 5.0
+                </div>
+            </div>
+        </section>
+
+        <section class="movie-grid">
+            <div class="movie-card">
+                <div class="poster">
+                    <img src="Asset/img/Jurassic World Rebirth.jpeg" alt="Jurassic World Rebirth Poster">
+                </div>
+                <div class="details">
+                    <p class="title">Jurassic World Rebirth</p>
+                    <p class="year-runtime">2018 | 2h</p>
+                    <div class="rating">
+                        <span class="star">⭐</span> 8.1
+                    </div>
+                </div>
+            </div>
+
             <div class="movie-card">
               <div class="poster">
                     <img src="Asset/img/The Woman in Cabin 10.jpeg" alt="The Woman in Cabin 10 Poster">
@@ -310,6 +414,7 @@
                     </div>
                 </div>
             </div> -->
+            </div>
 
         </section>
 
