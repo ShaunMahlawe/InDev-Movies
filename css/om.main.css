@@ -1,6 +1,6 @@
 body{
-    margin: 0 auto;
-    /* font-family: 'Poppins' , sans-serif; */
+    background: #142b9c;
+    background: radial-gradient(circle, rgba(20,43,156,1)0%, rgba(80,0,102,1)81%);
 }
 
 nav{
