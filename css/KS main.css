@@ -1,0 +1,173 @@
+
+/* header{
+  height: 100vh;
+  width: 100%;
+  background-color: #202125;
+  
+}
+
+
+.signUp{
+display: flex;
+justify-content: center;
+align-content: center;
+
+   
+}
+
+
+.signupForm{
+width: 20%;
+padding: 10px 10px;
+color: rgb(28, 27, 27);
+background-color:#500068;
+border-radius: 12px;
+
+
+
+
+}
+
+.button{
+    display: flex;
+    justify-content: center;
+}
+
+p{
+    color: aliceblue;
+} */
+
+  
+
+
+
+
+
+@import url(https://fonts.googleapis.com/css?family=Roboto:300);
+/* Look at console */
+.login-page {
+  width: 35%;
+  padding: 8% 0 0;
+  margin: auto;
+}
+.form {
+  animation-name: launch;
+  animation-duration: 4s;
+  position: relative;
+  z-index: 1;
+  background: #fff8ff;
+  border-radius: 12px;
+
+ 
+  margin: 0 auto 0px;
+  padding: 45px;
+  text-align: center;
+  box-shadow: 0 0 20px 0 rgba(255, 1, 136, 0.889), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+}
+.form input {
+  font-family: "Roboto", sans-serif;
+  outline: 0;
+  background: #f7dffb;
+  width: 100%;
+  border: 5;
+  border-color: #500066;
+  border-radius: 12px;
+  margin: 0 0 15px;
+  padding: 15px;
+  box-sizing: border-box;
+  font-size: 14px;
+  color: #500066;
+}
+.form button {
+  font-family: "Roboto", sans-serif;
+  text-transform: uppercase;
+  outline: 0;
+  background: #500066;
+  width: 100%;
+  border: 12px;
+  padding: 15px;
+  color: #FFFFFF;
+  font-size: 14px;
+  -webkit-transition: all 0.3 ease;
+  transition: all 0.3 ease;
+  cursor: pointer;
+}
+.form button:hover,.form button:active,.form button:focus {
+  background: #330140;
+}
+.form .message {
+  margin: 15px 0 0;
+  color: #3c0e42a4;
+  font-size: 16px;
+}
+.form .message a {
+  color: #800ab6;
+  text-decoration: none;
+}
+.form .login-form {
+  display: none;
+}
+.container {
+  position: relative;
+  z-index: 1;
+  max-width: 300px;
+  margin: 0 auto;
+}
+.container:before, .container:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+.container .info {
+  margin: 50px auto;
+  text-align: center;
+}
+
+.container .info h1 {
+  margin: 0 0 15px;
+  padding: 0;
+  font-size: 36px;
+  font-weight: 300;
+  color: #500066;
+}
+.container .info span {
+  color: #500066;
+  font-size: 12px;
+}
+.container .info span a {
+  color: #500066;
+  text-decoration: none;
+}
+.container .info span .fa {
+  color: #800e97;
+}
+body {
+background: #142b9c;
+background: radial-gradient(circle, rgba(20, 43, 156, 1) 0%, rgba(80, 0, 102, 1) 81%);
+    
+}
+
+@media only screen and (max-width: 850px) {
+  .login-page {
+    width: 80%;
+    height: 80%;
+  }
+}
+
+#create-username.error {
+  color: red;
+}
+
+#create-password.error {
+  color: red;
+}
+
+#create-email.error {
+  color: red;
+}
+
+
+
+
+
+    
