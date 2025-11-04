@@ -293,7 +293,14 @@ video {
     border-radius: 5px;
 }
 
-.movie-card img {
+#movie-card {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 20px;
+}
+
+.movie-card image {
     width: 100%;
     border-radius: 10px;
 }
@@ -312,6 +319,16 @@ video {
     display: inline-block;
     margin-top: 10px;
 }
+
+.movie-card :hover {
+    transform: scale(0.8);
+}
+
+.card-img-top {
+    width: 100%;
+    height: auto;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .container {

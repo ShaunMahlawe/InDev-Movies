@@ -148,191 +148,73 @@ document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener('click', tryUnmuteActive, { passive: true });
         document.addEventListener('keydown', onKey);
     }
-
-    /* ---------- movies / filters section (safe guards) ---------- */
-    const movies = [
-        { title: 'Movie 1', genre: 'Action', year: 2021, rating: 8.0 },
-        { title: 'Movie 2', genre: 'Comedy', year: 2019, rating: 7.5 },
-        { title: 'Movie 3', genre: 'Drama', year: 2020, rating: 9.0 },
-        { title: 'Movie 4', genre: 'Animation', year: 2022, rating: 6.5 },
-        { title: 'Movie 5', genre: 'Crime', year: 2018, rating: 8.5 },
-        { title: 'Movie 6', genre: 'Documentary', year: 2023, rating: 7.0 },
-    ];
-
-    let selectedGenres = [];
-
-    const movieListElement = document.getElementById('movie-list');
-    const ratingInput = document.getElementById('rating');
-    const ratingValueElement = document.getElementById('rating-value');
-
-    function renderMovies() {
-        if (!movieListElement) return;
-        movieListElement.innerHTML = '';
-
-        const minRating = ratingInput ? parseFloat(ratingInput.value || 0) : 0;
-
-        const filteredMovies = movies.filter(movie => {
-            return (
-                (selectedGenres.length === 0 || selectedGenres.includes(movie.genre)) &&
-                movie.rating >= minRating
-            );
-        });
-
-        filteredMovies.forEach(movie => {
-            const movieCard = document.createElement('div');
-            movieCard.className = 'movie-card';
-            movieCard.innerHTML = `<h3>${movie.title}</h3><p>${movie.genre}</p><p>Rating: ${movie.rating}</p>`;
-            movieListElement.appendChild(movieCard);
-        });
-    }
-
-    document.querySelectorAll('.filter-button').forEach(button => {
-        button.addEventListener('click', () => {
-            const genre = button.textContent.trim();
-            button.classList.toggle('active');
-
-            if (selectedGenres.includes(genre)) {
-                selectedGenres = selectedGenres.filter(g => g !== genre);
-            } else {
-                selectedGenres.push(genre);
-            }
-
-            renderMovies();
-        });
-    });
-
-    if (ratingInput && ratingValueElement) {
-        ratingInput.addEventListener('input', () => {
-            const ratingValue = ratingInput.value;
-            ratingValueElement.textContent = ratingValue;
-            renderMovies();
-        });
-    }
-
-    renderMovies();
 });
 
-document.addEventListener('DOMContentLoaded', () => {
-    const movies = [
-        {
-            title: 'Deadpool 2',
-            genre: 'Action',
-            year: 2018,
-            rating: 8.1,
-            description: 'The merc with a mouth returns for more action and hilarious antics.',
-            trailer: 'path/to/deadpool2_trailer.mp4'
-        },
-        {
-            title: 'The Meg',
-            genre: 'Action',
-            year: 2018,
-            rating: 6.4,
-            description: 'A deep-sea submersible is attacked by a giant prehistoric shark.',
-            trailer: 'path/to/meg_trailer.mp4'
-        },
-    ];
+class Movie{
+    constructor(image, year, title, duration, rating, link){
+        this.image = image;
+        this.year = title;
+        this.duration = duration;
+        this.rating = rating;
+        this.link = link;
+    }
+}
 
-    const movieListElement = document.getElementById('movie-list');
-    const ratingInput = document.getElementById('rating');
-    const ratingValueElement = document.getElementById('rating-value');
-    const trailerModal = document.getElementById('trailer-modal');
-    const closeModal = document.getElementById('close-modal');
-    const modalTitle = document.getElementById('modal-title');
-    const modalDescription = document.getElementById('modal-description');
-    const trailerVideo = document.getElementById('trailer-video');
-    const videoSource = document.getElementById('video-source');
+function isHighlyRated(movie){
+    return parseInt(movie.rating) >= 9;
+}
 
-    function renderMovies() {
-        if (!movieListElement) return;
+!async function(){
+    const url = 'https://moviesverse1.p.rapidapi.com/top-movies-of-all-time';
+const options = {
+	method: 'GET',
+	headers: {
+		'x-rapidapi-key': '1e4b942479msh20a441535ffa565p139ba7jsnad11b0324a16',
+		'x-rapidapi-host': 'moviesverse1.p.rapidapi.com'
+	}
+};
 
-        movieListElement.innerHTML = ''; // Clear existing movies
-        const minRating = parseFloat(ratingInput.value || 0);
+    let data = await fetch(url, options)
+                    .then((response)=> response.json())
+                    .then((result)=>{return result})
+                    .catch((error)=> console.log(error));
+    
+    console.log(data);
 
-        const filteredMovies = movies.filter(movie => movie.rating >= minRating);
+    let movieList = [];
 
-        filteredMovies.forEach(movie => {
-            const movieCard = document.createElement('div');
-            movieCard.className = 'movie-card';
-            movieCard.innerHTML = `
-                <h3>${movie.title}</h3>
-                <p>${movie.year}</p>
-                <p>Rating: ${movie.rating}</p>
-            `;
-            movieCard.addEventListener('click', () => showTrailer(movie));
-            movieListElement.appendChild(movieCard);
-        });
+    for(i = 0; i < data.movies.length; i++){
+
+        let image = data.movies[i].image;
+        let title = data.movies[i].title;
+        let year = data.movies[i].year;
+        let rating = data.movies[i].imdbRating;
+        let duration = data.movies[i].timeline;
+        let link = data.movies[i].link;
+
+        movieList.push(window["movie_" + i] = new Movie(image, year, title, duration, rating, link));
+
     }
 
-    function showTrailer(movie) {
-        modalTitle.textContent = movie.title;
-        modalDescription.textContent = movie.description;
-        videoSource.src = movie.trailer;
-        trailerVideo.load();
-        trailerModal.style.display = 'flex';
-    }
+    console.log(movieList);
 
-    closeModal.addEventListener('click', () => {
-        trailerModal.style.display = 'none';
-        trailerVideo.pause(); // Stop video playback
-        videoSource.src = ''; // Clear source to stop loading
+    let bestMovies = movieList.filter(isHighlyRated);
+
+    console.log(bestMovies);
+
+    bestMovies.forEach(movie => {
+        document.getElementById("movie-card").innerHTML += ` <div class="col-md-3">
+        <div class="card">
+        <img src="${movie.image}" class="card-img-top" alt="...">
+        <div class="card-body">
+        <h5 class="card-title">${movie.title}</h5>
+        <p class="card-text">IMDB rating is ${movie.rating}</p>
+        <a href="#" class="btn btn-primary">Go somewhere</a>
+        </div>
+        </div>
+        </div>
+        
+        `
     });
 
-    ratingInput.addEventListener('input', () => {
-        const ratingValue = ratingInput.value;
-        ratingValueElement.textContent = ratingValue;
-        renderMovies();
-    });
-
-    renderMovies(); // Initial rendering of movies
-});
-
-// Additional scripts can be added here as needed 
-
-document.addEventListener('DOMContentLoaded', () => {
-    const contentRadios = document.querySelectorAll('input[name="content_type"]');
-    const headerTitle = document.querySelector('.content-selector'); // Assuming the title is inside this
-
-    // Function to update the title text
-    const updateTitle = (type) => {
-        // Simple logic to change a visible title (if we had one separate from the radio buttons)
-        // Since we are styling the radio labels, this is more for demonstrating content change
-        console.log(`Switched view to: ${type.toUpperCase()}`);
-    };
-
-    // Event listener for content selection
-    contentRadios.forEach(radio => {
-        radio.addEventListener('change', (event) => {
-            // The value is 'movies', 'series', or 'original'
-            const selectedType = event.target.value;
-            updateTitle(selectedType);
-
-            // In a real application, you would load different data here:
-            // loadContent(selectedType);
-        });
-    });
-
-    // Handle closing the featured section
-    const closeButton = document.querySelector('.featured-hero .close-btn');
-    const featuredHero = document.querySelector('.featured-hero');
-
-    if (closeButton && featuredHero) {
-        closeButton.addEventListener('click', () => {
-            // Hides the entire featured section (or could add a class to animate it)
-            featuredHero.style.display = 'none';
-        });
-    }
-
-    // Handle genre button clicks (Example: toggling the active class)
-    const genreTags = document.querySelectorAll('.genre-tags .tag');
-    genreTags.forEach(tag => {
-        tag.addEventListener('click', () => {
-            // Remove active from all other tags
-            genreTags.forEach(t => t.classList.remove('active'));
-            // Add active class to the clicked tag
-            tag.classList.add('active');
-            
-            // In a real application, you would filter the grid data here:
-            // filterGrid(tag.textContent); 
-        });
-    });
-});
+}();
