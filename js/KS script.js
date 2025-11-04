@@ -89,3 +89,31 @@ $(document).ready(function() {
 		}, "fast");
 	});
 });
+
+
+const container = document.querySelector('.container');
+const registerBtn = document.querySelector('.register-btn');
+const loginBtn = document.querySelector('.login-btn');
+
+registerBtn.addEventListener('click', () => {
+    container.classList.add('active');
+})
+
+loginBtn.addEventListener('click', () => {
+    container.classList.remove('active');
+})
+
+
+let username;
+
+document.getElementById('loginForm').addEventListener ("submit", e  =>{
+e.preventDefault();
+username = document.getElementById("signInEmail").value;
+localStorage.setItem("userName",username );
+
+});
+
+function showName(){
+    let savedName = localStorage.getItem("userNme");
+    document.getElementById('displayname').innerHTML = "Welcome" + savedName
+}
