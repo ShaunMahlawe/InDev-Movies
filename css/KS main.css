@@ -46,7 +46,7 @@ p{
 @import url(https://fonts.googleapis.com/css?family=Roboto:300);
 /* Look at console */
 .login-page {
-  width: 360px;
+  width: 35%;
   padding: 8% 0 0;
   margin: auto;
 }
@@ -55,23 +55,28 @@ p{
   animation-duration: 4s;
   position: relative;
   z-index: 1;
-  background: #FFFFFF;
-  max-width: 360px;
-  margin: 0 auto 100px;
+  background: #fff8ff;
+  border-radius: 12px;
+
+ 
+  margin: 0 auto 0px;
   padding: 45px;
   text-align: center;
-  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+  box-shadow: 0 0 20px 0 rgba(255, 1, 136, 0.889), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
 }
 .form input {
   font-family: "Roboto", sans-serif;
   outline: 0;
-  background: #f2f2f2;
+  background: #f7dffb;
   width: 100%;
-  border: 0;
+  border: 5;
+  border-color: #500066;
+  border-radius: 12px;
   margin: 0 0 15px;
   padding: 15px;
   box-sizing: border-box;
   font-size: 14px;
+  color: #500066;
 }
 .form button {
   font-family: "Roboto", sans-serif;
@@ -92,7 +97,7 @@ p{
 }
 .form .message {
   margin: 15px 0 0;
-  color: #b3b3b3;
+  color: #3c0e42a4;
   font-size: 16px;
 }
 .form .message a {
@@ -117,32 +122,35 @@ p{
   margin: 50px auto;
   text-align: center;
 }
+
 .container .info h1 {
   margin: 0 0 15px;
   padding: 0;
   font-size: 36px;
   font-weight: 300;
-  color: #1a1a1a;
+  color: #500066;
 }
 .container .info span {
   color: #500066;
   font-size: 12px;
 }
 .container .info span a {
-  color: #000000;
+  color: #500066;
   text-decoration: none;
 }
 .container .info span .fa {
   color: #800e97;
 }
 body {
-  background: #500066;     
+background: #142b9c;
+background: radial-gradient(circle, rgba(20, 43, 156, 1) 0%, rgba(80, 0, 102, 1) 81%);
+    
 }
 
-@media only screen and (max-width: 400px) {
+@media only screen and (max-width: 850px) {
   .login-page {
-    width: 100%;
-    height: 100%;
+    width: 80%;
+    height: 80%;
   }
 }
 
@@ -157,6 +165,8 @@ body {
 #create-email.error {
   color: red;
 }
+
+
 
 
 
