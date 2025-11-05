@@ -32,7 +32,7 @@ document.getElementById('signupForm').addEventListener("submit", async(e)=>{
     try {
         await createUserWithEmailAndPassword(auth, email, password);
         alert("Account has been created succesfully");
-        window.location.href = "Signup.html";
+        window.location.href = "../index.html";
     }catch (error){
             alert(error.message);
         }
