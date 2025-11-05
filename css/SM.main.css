@@ -13,26 +13,60 @@ body, html {
   gap:16px;
   position: absolute;
   margin-bottom:40px;
-  background-color: rgba(0, 0, 0, 0.384);
+background-color: #12121281;
+    backdrop-filter: blur(10px);
   top:0;
   z-index: 1000;
   width: 100%;
   padding: 20px 40px;
 }
 
-.nav-left {
+nav {
     display: flex;
     align-items: center;
     gap: 28px;
+    
 }
 
-.navbar {
-    background: var(--background);
-    padding: 12px 0;
-    border-bottom: 1px solid var(--muted);
-    position: sticky;
+.sidebar {
+   position: fixed;
     top: 0;
-    z-index: 1000;
+    right: 0;
+    height: 100vh;
+    width: 250px;
+    z-index: 1001;
+    background-color: #12121281;
+    backdrop-filter: blur(10px);
+    box-shadow: -10px 0 15px rgba(0, 0, 0, 0.5);
+    display: none;
+    flex-direction: column;
+    align-content: flex-start;
+    justify-content: flex-start;
+    padding: 20px;
+    transform: translateX(0);
+    transition: transform 0.3s ease-in-out;
+
+}
+
+.sidebar li {
+    width: 100%;
+}
+
+.sidebar a {
+    width: 100%;
+}
+
+@media (max-width: 800px) {
+    .hide-on-mobile {
+        display: none;
+    }
+}
+
+@media (min-width: 400px) {
+    .sidebar {
+        width: 100%;
+
+    }
 }
 
 .logo {
@@ -51,33 +85,39 @@ nav ul {
     display: flex;
     gap: 20px;
     align-items: center;
+    width: 100%;
 }
 
+nav li {
+    display: inline;
+    height: 50px;
+
+}
 nav a {
+    height: 100%;
+    padding: 0 30px;
     text-decoration: none;
     color: var(--text);
     font-weight: 600;
     font-size: 15px;
+    display: flex;
+    align-items: center;
 }
 
 nav a:hover {
-    color: var(--primary);
+    background-color: #1e1e1e;
+    color: red;
+    border-radius: 40px;
 }
 
-.nav-right {
-    display: flex;
-    align-items: center;
-    gap: 16px;
+nav li:first-child {
+    margin-left: auto;
 }
 
-.icon-btn {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    background: var(--muted);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+.nav-right:hover {
+    background-color: #1e1e1e;
+    color: red;
+    border-radius: 40px;
 }
 
 .trailer-container {
@@ -152,7 +192,7 @@ nav a:hover {
     top: 0;
     bottom: 0;
     z-index: 1;
-    display: flex; /* Added semicolon */
+    display: flex; 
     align-items: center;
     justify-content: center;
     width: 5%;
@@ -161,7 +201,7 @@ nav a:hover {
     background: 0 0;
     border: 0;
     opacity: 0.5;
-    transition: opacity .15s ease; /* Added semicolon */
+    transition: opacity .15s ease; 
 }
 
 .carousel-indicators button[data-bs-target],
@@ -199,64 +239,6 @@ header {
     margin-bottom: 20px;
 }
 
-.toggle-buttons {
-    display: flex;
-}
-
-.toggle {
-    margin: 0 10px;
-    padding: 10px 20px;
-    background-color: #1b1b1b;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-
-.toggle.active {
-    background-color: #007bff;
-}
-
-.filters {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-}
-
-.genre-filter {
-    display: flex;
-}
-
-.filter-button {
-    padding: 10px;
-    background-color: #1b1b1b;
-    color: white;
-    border: none;
-    cursor: pointer;
-    margin-right: 5px;
-}
-
-.filter-button.active {
-    background-color: #007bff;
-}
-
-.movie-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 15px;
-    margin-top: 20px;
-}
-
-.movie-card {
-    background-color: #1b1b1b;
-    border-radius: 5px;
-    padding: 10px;
-    text-align: center;
-    cursor: pointer;
-}
-
-.movie-card h3 {
-    font-size: 1.2em;
-}
 
 .trailer-modal {
     display: none;
@@ -293,43 +275,7 @@ video {
     border-radius: 5px;
 }
 
-#movie-card {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    padding: 20px;
-}
 
-.movie-card image {
-    width: 100%;
-    border-radius: 10px;
-}
-.movie-card h3 {
-    margin: 10px 0 5px 0;
-    font-size: 18px;
-}
-.movie-card p {
-    margin: 5px 0;
-    font-size: 14px;
-}
-.movie-card .rating {
-    background-color: #e50914;
-    padding: 5px;
-    border-radius: 5px;
-    display: inline-block;
-    margin-top: 10px;
-}
-
-.movie-card :hover {
-    transform: scale(0.8);
-}
-
-.card-img-top {
-    width: 100%;
-    height: auto;
-}
-
-/* Responsive Design */
 @media (max-width: 768px) {
     .container {
         width: 95%;
@@ -359,16 +305,13 @@ video {
         max-width: 90%;
     }
 }
-/* End of CSS */  
 
-/* GLOBAL STYLES & DARK MODE SETUP */
 :root {
-    --primary-red: #e50914; /* Netflix Red */
-    --background-dark: #000000;
-    --card-dark: #1e1e1e;
     --text-light: #f5f5f5;
     --text-secondary: #aaaaaa;
     --grid-gap: 20px;
+background: #142b9c;
+background: radial-gradient(circle, rgba(20, 43, 156, 1) 0%, rgba(80, 0, 102, 1) 81%);
 }
 
 * {
@@ -409,170 +352,10 @@ button {
     padding: 30px 0;
 }
 
-.content-selector {
-    display: flex;
-    align-items: center;
-    gap: 30px;
-    font-size: 24px;
-    font-weight: bold;
-}
 
-.content-selector label {
-    cursor: pointer;
-    display: flex; /* To align text and input */
-    align-items: center;
-}
-
-.content-selector span {
-    color: var(--text-secondary); /* Default color for unselected */
-}
-
-/* Style the text when the radio is checked */
-.content-selector input:checked + span {
-    color: var(--text-light);
-}
-
-/* Hide the actual radio button */
-.content-selector input[type="radio"] {
-    display: none;
-}
-
-.search-box {
-    display: flex;
-    align-items: center;
-    background: var(--card-dark);
-    border-radius: 20px;
-    padding: 5px 15px;
-}
-
-.search-box input {
-    background: none;
-    border: none;
-    color: var(--text-light);
-    padding: 5px;
-    font-size: 16px;
-    outline: none;
-}
-
-.search-icon {
-    color: var(--text-secondary);
-}
-
-/* -------------------------------------- */
-/* 2. FILTERS (Genre Tags and Sort Options) */
-/* -------------------------------------- */
-.filters {
-    padding: 20px 0;
-    border-bottom: 1px solid var(--card-dark);
-}
-
-.genre-tags {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.tag {
-    background-color: var(--card-dark);
-    padding: 8px 18px;
-    border-radius: 20px;
-    font-weight: bold;
-    color: var(--text-secondary);
-}
-
-.tag.active {
-    background-color: var(--primary-red);
-    color: var(--text-light);
-}
-
-.sort-options {
-    display: flex;
-    align-items: center;
-    gap: 30px;
-    font-size: 14px;
-    color: var(--text-secondary);
-}
-
-.sort-by {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-}
-
-.sort-button {
-    background: var(--card-dark);
-    padding: 5px 10px;
-    border-radius: 20px;
-    font-weight: bold;
-}
-
-.rating-filter {
-    margin-left: auto; /* Pushes the rating filter to the far right */
-    color: var(--text-light);
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-}
-
-.rating-filter .star {
-    margin-right: 5px;
-}
-
-/* -------------------------------------- */
-/* 3. CONTENT GRID */
-/* -------------------------------------- */
-.movie-grid {
-    display: grid;
-    /* Create 6 columns (or adjust based on viewport) */
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: var(--grid-gap);
-    padding: 40px 0;
-}
-
-.movie-card {
-    background-color: rgba(169, 169, 169, 0);
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-.poster img {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-    object-fit: cover;
-    display: block;
-}
-
-.details {
-    padding-top: 10px;
-    font-size: 14px;
-}
-
-.title {
-    font-weight: bold;
-    margin-bottom: 2px;
-}
-
-.year-runtime {
-    color: var(--text-secondary);
-    font-size: 12px;
-}
-
-.rating {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    margin-top: 5px;
-    font-weight: bold;
-    color: var(--text-light);
-}
-
-/* -------------------------------------- */
-/* 4. FEATURED HERO SECTION */
-/* -------------------------------------- */
 .featured-hero {
     position: relative;
-    height: 500px; /* Fixed height for the hero section */
+    height: 500px;
     border-radius: 12px;
     overflow: hidden;
     margin-bottom: 40px;
@@ -597,29 +380,37 @@ button {
     height: 100%;
     z-index: 2;
     padding: 40px 60px;
-    
-    /* Gradient overlay to make text readable */
     background: linear-gradient(to right, rgba(0, 0, 0, 0.9) 30%, rgba(0, 0, 0, 0.1) 70%);
-    
-    /* Use flexbox to position content at the bottom */
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
 }
 
-.close-btn {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    z-index: 3;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    line-height: 1;
-    font-size: 18px;
-    font-weight: bold;
+.btn-btn-list {
+    background-color: rgb(0, 0, 0);
+    color: white;
+    font-weight: 800;
+    border-color: #d0d0d0;
+    padding: 10px 15px;
+    border-radius: 40px;
+    cursor: pointer;
+    width: 140px;
+    height: 40px;
+    font-size: 16px;
 }
+
+.btn-btn-watch {
+    background-color: rgb(211, 6, 6);
+    color: white;
+    font-weight: 800;
+    padding: 10px 15px;
+    border-radius: 40px;
+    cursor: pointer;
+    width: 140px;
+    height: 40px;
+    font-size: 16px;
+}
+
 
 .duration-tags {
     display: flex;
@@ -630,7 +421,7 @@ button {
 }
 
 .duration-tags .rating {
-    color: #ffcc00; /* Yellow star */
+    color: #ffcc00;
 }
 
 .hero-title {
@@ -653,21 +444,6 @@ button {
     margin-bottom: 40px;
 }
 
-.btn {
-    padding: 12px 25px;
-    font-weight: bold;
-}
-
-.btn-watch {
-    background-color: var(--primary-red);
-    color: var(--text-light);
-}
-
-.btn-list {
-    background-color: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
 .hero-footer-nav {
     display: flex;
     gap: 20px;
@@ -686,3 +462,148 @@ button {
     border-bottom: 2px solid var(--primary-red);
     padding-bottom: 20px;
 }
+
+.movie-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 35px;
+    padding: 12px;
+    align-items: start;
+}
+
+.card-body{
+    display: flex;
+    flex-direction: column;
+    height: 200%;
+    width: 250px;
+}
+
+.movie-card {
+    background: #0f0f0fa3;
+    color: #de0c0c;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    transition: transform .18s ease, box-shadow .18s ease;
+    min-height: 320px;
+    max-width: 300px;
+}
+
+.movie-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 30px rgba(0,0,0,0.6);
+}
+
+.movie-image {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: none;
+    display: block;
+    overflow: hidden;
+    height: 200%;
+    transition: transform .25s ease;
+}
+
+.movie-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    
+}
+
+img {
+    display: block;
+    max-width: 100%;
+    height: 500px;
+}
+
+.movie-card:hover .movie-image img {
+    transform: scale(1.03);
+}
+
+.movie-info {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1 1 auto;
+}
+
+.movie-title {
+    margin: 0;
+    font-size: 1.05rem;
+    line-height: 1.2;
+    font-weight: 700;
+    color: #fff;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.movie-meta {
+    font-size: 0.9rem;
+    color: #bdbdbd;
+}
+
+.movie-desc {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #d0d0d0;
+    flex: 1 1 auto;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+}
+
+.card.h-100 {
+    width: 400%;
+}
+
+.movie-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.btn-add-list {
+    background: none;
+    color: #fff;
+    border: #bdbdbd;
+    transition: background .15s ease, transform .12s ease;
+    border-radius: 40px;
+    
+}
+.btn-add-list.active {
+    background: #16a34a;
+    border-radius: 40px;
+}
+
+.content-selector label {
+    cursor: pointer;
+    margin-right: 20px;
+    font-size: 4rem;
+    font-weight: 600;
+}
+
+.btn-watch {
+    background: #b21818;
+    color: #fff;
+    border: none;
+    border-radius: 40px;
+    width: 110px;
+    text-align: center;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-decoration: none;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+}
+
+.movie-actions { display:flex; gap:8px; margin-top:8px; }
