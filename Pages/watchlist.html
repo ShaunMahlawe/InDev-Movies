@@ -1,0 +1,523 @@
+<!DOCTYPE html><!--This is a comment-->
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8"><!--Types of letters and symbols-->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!--browser compatibility-->
+    <meta name="viewport" content="width-device-width, initial-scale-1.0"><!--initial size-->
+    <meta name="keywords" content="HTML,CSS, Template, Bootstrap"><!-- keywords nb!-->
+    <meta name="author" content="Ora">
+
+    <title>Movie Watch List Page</title>
+
+    <!--Bootstrap, Javascript, Google Fonts, CSS-->
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="../css/om.main.css">
+    
+
+</head>
+
+<body> 
+<body style="background-color: rgba(0, 0, 0, 0.158);" onload="pageCheck=`index`;retrieveLogin();"> 
+
+    <header class="headerSectionWatchlist">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid topNav">
+                
+              <a href="../index.html"><img src="../omassets/Logo.png" width="120px"></a>
+
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse" id="navbarScroll">
+                <ul class="navbar-nav m-auto my-2 my-lg-0">
+
+                  <div class="topNavLinks">
+                    <a class="nav-link active" href="../pages/HomePage.html">Home</a>
+                  </div>
+
+                  <div class="topNavLinks">
+                    <a class="nav-link" href="../pages/Movie Library Page.html">Library</a>
+                  </div>
+
+                  <li class="topNavLinks">
+                    <a class="nav-link" href="../pages/Individual Movie Page.html">Movies</a>
+                   
+                  </li>
+                  <li class="topNavLinks">
+                    <a class="nav-link" href="watchlist.html">My List</a>
+                  </li>
+            </div>
+            </ul>
+
+
+          </div>
+          </nav>
+          
+    </header>
+
+  <div class="watchlistHeading-container mt-3 mb-4 p-4">
+    <div class="watchlistHeading-container mt-3 mb-4 p-4">
+        <h1 class="text-start text-white">My Watch List</h1>
+        <div id="watchlistHeading" class="movie-body"></div>
+    </div>
+
+    <div class="watchlistMovie-container p-4">
+    
+     <div class="container-fluid p4">
+
+    <div class="card" style="width: 18rem;">
+    <img src="../omassets/behind her eyes series poster.jpg" width="100%" class="card-img-top" alt="...">
+    <div class="card-body">
+    <h5 class="card-title">Behind Her Eyes</h5>
+    <p class="card-text">1 season | Thriller</p>
+    <a href="#" class="btn btn-primary">Watch</a>
+  </div>
+  </div>
+
+  <div class="card" style="width: 18rem;">
+  <img src="../omassets/Blackbird series poster.jpg " width="100%" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">Blackbird</h5>
+    <p class="card-text">1 season | Thriller</p>
+    <a href="#" class="btn btn-primary">Watch</a>
+  </div>
+  </div>
+
+  <div div class="card" style="width: 18rem;">
+  <img src="../omassets/parasite-2019 poster.jpg" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">Parasite</h5>
+    <p class="card-text">2hrs 12min | Thriller</p>
+    <a href="#" class="btn btn-primary">Watch</a>
+  </div>
+  </div>
+
+  <div class="card" style="width: 18rem;">
+  <img src="../omassets/Dont worry Darling movieposter.jpg" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">Don't worry darling</h5>
+    <p class="card-text">2hrs 2min | Thriller</p>
+    <a href="#" class="btn btn-primary">Watch</a>
+  </div>
+  </div>
+  </div>
+
+  <div class="container-fluid">
+
+    <div class="card" style="width: 18rem;">
+    <img src="../omassets/spirited away movie poster.jpg" class="card-img-top" alt="...">
+    <div class="card-body">
+    <h5 class="card-title">Spirited Away</h5>
+    <p class="card-text">2hrs 5min</p>
+    <a href="#" class="btn btn-primary">Watch</a>
+  </div>
+  </div>
+
+  <div class="card" style="width: 18rem;">
+  <img src="../omassets/The Watcher series poster.jpg" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">The Watcher</h5>
+    <p class="card-text">1 season | Horror</p>
+    <a href="#" class="btn btn-primary">Watch</a>
+  </div>
+  </div>
+
+  <div class="card" style="width: 18rem;">
+  <img src="../omassets/Dispicable me 4.jpg" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">Dispicable Me 4</h5>
+    <p class="card-text">1hr 34min | Comedy</p>
+    <a href="#" class="btn btn-primary">Watch</a>
+  </div>
+  </div>
+
+  <div class="card" style="width: 18rem;">
+  <img src="../omassets/Dont Move movie poster.webp" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">Don't move</h5>
+    <p class="card-text">1hr 32min | Horror</p>
+    <a href="#" class="btn btn-primary">Watch</a>
+  </div>
+  </div>
+  </div>
+
+  <div class="container-fluid">
+
+    <div class="card" style="width: 18rem;">
+    <img src="../omassets/Challengers movie poster.jpg" class="card-img-top" alt="...">
+    <div class="card-body">
+    <h5 class="card-title">Challengers</h5>
+    <p class="card-text">Some </p>
+    <a href="#" class="btn btn-primary">Watch</a>
+  </div>
+  </div>
+
+  <div class="card" style="width: 18rem;">
+  <img src="../omassets/Industry poster.jpg" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">Industry</h5>
+    <p class="card-text">3 seasons | Drama</p>
+    <a href="#" class="btn btn-primary">Watch</a>
+  </div>
+  </div>
+
+  <div class="card" style="width: 18rem;">
+  <img src="../omassets/oppenheimer.jpg" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">Oppenheimer</h5>
+    <p class="card-text">3hrs | Thriller</p>
+    <a href="#" class="btn btn-primary">Watch</a>
+  </div>
+  </div>
+
+  <div class="card" style="width: 18rem;">
+  <img src="../omassets/English-Teacher poster.webp" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">English Teacher</h5>
+    <p class="card-text">2 seasons | Comedy</p>
+    <a href="#" class="btn btn-primary">Watch</a>
+  </div>
+  </div>
+  </div>
+
+  <div class="watchlistHeading-container mt-3 mb-4 p-4">
+        <h1 class="text-start text-white">Recommended Movies and Shows </h1>
+        <div id="watchlistHeading" class="movie-body"></div>
+    </div>
+
+    <div class="watchlistMovie-container p-4">
+    
+     <div class="container-fluid">
+
+    <div class="card" style="width: 18rem;">
+    <img src="../omassets/Bed rest movie poster.jpg" class="card-img-top" alt="...">
+    <div class="card-body">
+    <h5 class="card-title">Bed Rest</h5>
+    <p class="card-text">1hr 30min | Horror</p>
+    <a href="#" class="btn btn-primary">Watch</a>
+  </div>
+  </div>
+
+  <div class="card" style="width: 18rem;">
+  <img src="../omassets/colonials poster.jpg" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">Colonials</h5>
+    <p class="card-text">1hr 20min | Sci-fi/Action</p>
+    <a href="#" class="btn btn-primary">watch</a>
+  </div>
+  </div>
+
+  <div div class="card" style="width: 18rem;">
+  <img src="../omassets/Intrution movie poster.jpg" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">Intrution</h5>
+    <p class="card-text">1 season | Drama</p>
+    <a href="#" class="btn btn-primary">Watch</a>
+  </div>
+  </div>
+
+  <div class="card" style="width: 18rem;">
+  <img src="../omassets/You series image.jpg" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">You</h5>
+    <p class="card-text">5 seasons | Thriller</p>
+    <a href="#" class="btn btn-primary">Watch</a>
+  </div>
+  </div>
+  </div>
+
+  <div class="watchlistHeading-container mt-3 mb-4 p-4">
+        <h1 class="text-start text-white">New Releases</h1>
+        <div id="watchlistHeading" class="movie-body"></div>
+    </div>
+
+    <div class="watchlistMovie-container p-4">
+    
+     <div class="container-fluid">
+
+    <div class="card" style="width: 18rem;">
+    <img src="../omassets/The monkey movie poster.jpeg" class="card-img-top" alt="...">
+    <div class="card-body">
+    <h5 class="card-title">The monkey</h5>
+    <p class="card-text">1hr 38min | Horror/Comedy</p>
+    <a href="#" class="btn btn-primary">Watch</a>
+    </div>
+    </div>
+
+    <div class="card" style="width: 18rem;">
+      <img src="../omassets/Sinners-2025-Film-Poster.webp" class="card-img-top" alt="...">
+      <div class="card-body">
+      <h5 class="card-title">Sinners-2025-Film-Poster</h5>
+      <p class="card-text">2hrs 17min | Horror/Action</p>
+      <a href="#" class="btn btn-primary">Watch</a>
+    </div>
+  </div>
+
+  <div div class="card" style="width: 18rem;">
+  <img src="../omassets/love hurts movie poster.jpg" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">Love Hurts</h5>
+    <p class="card-text"></p>
+    <a href="#" class="btn btn-primary">Watch</a>
+  </div>
+  </div>
+
+  <div class="card" style="width: 18rem;">
+  <img src="../omassets/lilo and stich movie poster.jpeg" class="card-img-top" alt="...">
+  <div class="card-body">
+    <h5 class="card-title">Lilo & Stich</h5>
+    <p class="card-text">1hr 48min | Comedy/Sci-Fi</p>
+    <a href="#" class="btn btn-primary">Watch</a>
+  </div>
+  </div>
+  </div>
+</section>
+
+  <!-- footer-->
+    <footer class="bg-white text-dark py-4">
+      <div class="footer-container px-4">
+        <div class="row">
+          <div class="col-6 col-lg-4 ms-4">
+            <img src="../omassets/Logo.png" width="120px">
+          </div>
+
+          <div class="col">
+            <h3 class="text-start text-dark pt-3">Menu</h3>
+              <ul class="list-unstyled">
+                <li><a href="#" class="text-decoration-non text-dark">Movies</a></li>
+                <li><a href="#" class="text-decoration-non text-dark">Series</a></li>
+              </ul>
+          </div>
+
+          <div class="col">
+            <h3 class="text-start text-dark pt-3">About Us</h3>
+               <ul class="list-unstyled">
+                <li><a href="#" class="text-decoration-non text-dark">Home</a></li>
+                <li><a href="#" class="text-decoration-non text-dark">Contact Us</a></li>
+                
+              </ul>
+          </div>
+
+          <div class="col-6 col-lg-3 pt-3">
+            <h4 class="text-start text-dark">Social Media Icons</h4>
+            <div>
+              <a href="#" ><i class="bi bi-instagram fs-2 me-3"></i></a>
+              <a href="#" ><i class="bi bi-facebook fs-2 me-3"></i></a>
+              <a href="#" ><i class="bi bi-pinterest fs-2 me-3"></i></a>
+              <a href="#" ><i class="bi bi-linkedin fs-2 me-3"></i></a>
+            </div>
+          </div>
+          
+        </div>
+        <hr>
+        <div class="d-flex justify-content-between ms-4">
+          
+          <div>
+            <p>2025. TakeTwo. All Rights Reserved.</p>
+            <a href="#" class="text-decoration-non text-dark me-4">Terms of use</a>
+            <a href="#" class="text-decoration-non text-dark me-4">Privacy Policy</a>
+          </div>
+          
+
+        </div>
+      </div>
+     
+    </footer>
+  
+
+
+    
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <div class="row row-cols-4">
+    <div class="col">
+      <img src="../omassets/behind her eyes series poster.jpg" class="img-fluid" alt="...">
+      <div class="watchlistMovieTitle-container mt-4 mb-4 ">
+        <h4 class="text-start text-white">Behind Her Eyes</h4>
+        <p>1 Season | Thriller</p>
+        <div id="watchlistMovieTitle" class="movie-body"></div>
+    </div>
+    </div>
+
+    <div class="col">
+      <img src="../omassets/Blackbird series poster.jpg" class="img-fluid" alt="...">
+       <div class="watchlistMovieTitle-container mt-4 mb-4 ">
+        <h4 class="text-start text-white">Black Bird</h4>
+        <p>1 Season | Thriller</p>
+        <div id="watchlistMovieTitle" class="movie-body"></div>
+    </div>
+    </div>
+    <div class="col">
+      <img src="../omassets/parasite-2019 poster.jpg" class="img-fluid" alt="...">
+       <div class="watchlistMovieTitle-container mt-4 mb-4 ">
+        <h4 class="text-start text-white">Parasite</h4>
+        <p>2hrs | Thriller/Comedy</p>
+        <div id="watchlistMovieTitle" class="movie-body"></div>
+    </div>
+    </div>
+    <div class="col">
+      <img src="../omassets/Shogun poster.jpg" class="img-fluid" alt="...">
+       <div class="watchlistMovieTitle-container mt-4 mb-4 ">
+        <h4 class="text-start text-white">Shogun</h4>
+        <p>1 Season | Drama</p>
+        <div id="watchlistMovieTitle" class="movie-body"></div>
+    </div>
+    </div>
+  </div>
+  </div>
+
+  
+  <div class="watchlist-container p-4">
+  <div class="row row-cols-4">
+    <div class="col">
+      <img src="../omassets/Dont worry Darling movieposter.jpg" class="img-fluid" alt="...">
+      <div class="watchlistMovieTitle-container">
+        <h4 class="text-start text-white">Don't Worry Darling</h4>
+        <p>2hrs | Drama</p>
+      </div>
+      
+    </div>
+
+    <div class="col">
+      <img src="../omassets/colonials poster.jpg" class="img-fluid" alt="...">
+    </div>
+    <div class="col">
+      <img src="../omassets/English-Teacher poster.webp" class="img-fluid" alt="...">
+    </div>
+    <div class="col">
+      <img src="../omassets/Fractured poster.jpg" class="img-fluid" alt="...">
+    </div>
+  </div>
+  </div>
+
+  <div div class="watchlist-container p-4">
+  <div class="row row-cols-4">
+    <div class="col">
+      <img src="../omassets/Dont Move movie poster.webp" class="img-fluid" alt="...">
+    </div>
+
+    <div class="col">
+      <img src="../omassets/Intrution movie poster.jpg" class="img-fluid" alt="...">
+    </div>
+    <div class="col">
+      <img src="../omassets/Industry poster.jpg" class="img-fluid" alt="...">
+    </div>
+    <div class="col">
+      <img src="../omassets/oppenheimer.jpg" class="img-fluid" alt="...">
+    </div>
+  </div>
+  </div>
+
+   <div class="watchlistHeading-container mt-2 mb-2 p-4">
+        <h2 class="text-start text-white">Recommended Movies & Shows</h2>
+        <div id="watchlist" class="movie-body"></div>
+    </div>
+    
+    <div class="watchlistMovie-container p-4">
+    <div class="row row-cols-4">
+    <div class="col">
+      <img src="../omassets/The Crow Movie poster.jpg" class="img-fluid" alt="...">
+    </div>
+
+    <div class="col">
+      <img src="../omassets/Them movie poster.jpg" class="img-fluid" alt="...">
+    </div>
+    <div class="col">
+      <img src="../omassets/Avatar, way of the water.jpg" class="img-fluid" alt="...">
+    </div>
+    <div class="col">
+      <img src="../omassets/You series image.jpg" class="img-fluid" alt="...">
+    </div>
+  </div>
+  </div>
+
+  <div class="watchlistHeading-container mt-2 mb-2 p-4">
+        <h2 class="text-start text-white">New Releases</h2>
+        <div id="watchlist" class="movie-body"></div>
+    </div>
+    
+    <div class="watchlistMovie-container p-4">
+    <div class="row row-cols-4">
+    <div class="col">
+      <img src="../omassets/The Watcher series poster.jpg" class="img-fluid" alt="...">
+    </div>
+
+    <div class="col">
+      <img src="../omassets/TheConjuring movieposter.jpeg" class="img-fluid" alt="...">
+    </div>
+    <div class="col">
+      <img src="../omassets/Challengers movie poster.jpg" class="img-fluid" alt="...">
+    </div>
+    <div class="col">
+      <img src="../omassets/Bed rest movie poster.jpg" class="img-fluid" alt="...">
+    </div>
+  </div>
+  </div>
+
+  <div class="watchlistHeading-container mt-2 mb-2 p-4">
+        <h2 class="text-start text-white">Top 10 Movies in South Africa Today</h2>
+        <div id="watchlist" class="movie-body"></div>
+    </div>
+    
+    <div class="watchlistMovie-container p-4">
+    <div class="row row-cols-4">
+    <div class="col">
+      <img src="../omassets/behind her eyes series poster.jpg" class="img-fluid" alt="...">
+    </div>
+
+    <div class="col">
+      <img src="../omassets/Blackbird series poster.jpg" class="img-fluid" alt="...">
+    </div>
+    <div class="col">
+      <img src="../omassets/parasite-2019 poster.jpg" class="img-fluid" alt="...">
+    </div>
+    <div class="col">
+      <img src="../omassets/Shogun poster.jpg" class="img-fluid" alt="...">
+    </div>
+  </div>
+  </div>
+
+
+
+</section>
+
+  <!-- footer-->
+  <div class="card text-center">
+  <div class="card-header">
+    Featured
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">Special title treatment</h5>
+    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+    <a href="#" class="btn btn-primary">Go somewhere</a>
+  </div>
+  <div class="card-footer text-body-secondary">
+    2 days ago
+  </div>
+</div>
+
+
+    
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+<script src="../js/om.script.js"></script>
+
+</body>
+
+</html>
