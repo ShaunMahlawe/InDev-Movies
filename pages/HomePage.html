@@ -12,6 +12,7 @@
 
     <!--Bootstrap, Javascript, Google Fonts, CSS-->
 
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=close" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -40,6 +41,56 @@
             <div class="muted">🔔</div>
             <div class="icon-btn">🙂</div>
         </div>
+<style>
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+}
+</style>
+    <header class="hero-header">
+       
+        <div class="navbar">
+            <div><li><a href="../Pages/HomePage.html" class="logo">LOGO</a></li></div>
+            <nav>
+                <ul class="sidebar">
+            <div> <li onclick=hideSidebar()><a href="#"></a><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg></li></div>
+                    <li><a href="../Pages/HomePage.html">Home</a></li>
+                    <li><a href="../Pages/Movie Library Page.html">Library</a></li>
+                    <li><a href="../Pages/Individual Movie Page.html">Movies</a></li>
+                    <li><a href="../Pages/watchlist.html">My List</a></li>
+                    <li><a href="../index.html">Login</a></li>
+    
+                </ul>
+
+                <ul>
+                    <li><a class="hide-on-mobile" href="../Pages/HomePage.html">Home</a></li>
+                    <li><a class="hide-on-mobile" href="../Pages/Movie Library Page.html">Library</a></li>
+                    <li><a class="hide-on-mobile" href="../Pages/Individual Movie Page.html">Movies</a></li>
+                    <li><a class="hide-on-mobile" href="../Pages/watchlist.html">My List</a></li>
+                    <li><a class="hide-on-mobile" href="../index.html">Login</a></li>
+                </ul>
+                    
+            </nav>
+        </div>
+        <div class="nav-right">
+                <ul>
+                    <li onclick=showSidebar()><a href="#"></a><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg></li>
+                </ul>  
+        </div>
+
+        <script>
+            function showSidebar(){
+                const sidebar = document.querySelector('.sidebar')
+                sidebar.style.display = 'flex';
+            }
+            function hideSidebar(){
+                const sidebar = document.querySelector('.sidebar')
+                sidebar.style.display = 'none';
+            }
+        </script>
     </header>
 
   <div id="heroCarousel" class="carousel-slide" data-bs-ride="carousel">
@@ -420,6 +471,15 @@
 
         <section class="featured-hero">
             <button class="close-btn">X</button>
+                    <span>Now Trending</span>
+                </label>
+        </header>
+
+<section class="movie-grid" id="movie-card">
+<div id="movieCards" class="movie-grid" aria-live="polite"></div>
+</section>
+
+        <section class="featured-hero">
             <div class="hero-content">
                 <div class="duration-tags">
                     <span>Duration: 2h 9m</span>
@@ -433,6 +493,8 @@
                 <div class="hero-actions">
                     <button class="btn btn-watch">▶️ WATCH</button>
                     <button class="btn btn-list">+ ADD LIST</button>
+                    <button class="btn-btn-watch">WATCH</button>
+                    <button class="btn-btn-list">ADD LIST</button>
                 </div>
                 <div class="hero-footer-nav">
                     <button class="footer-link active">GENERAL INFORMATION</button>
@@ -454,6 +516,12 @@
   <script src="../js/SM.scripts.js"></script>
   <script src="../js/SM.scripts.js"></script>
   <script src="../js/SM.scripts.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script src="../js/jquery.js"></script>
+  <script src="../js/carousel.js"></script>
+  <script src="../js/navbar.js"></script>
+  <script src="../js/main.js"></script>
   <script src="../js/SM.scripts.js"></script>
 
 </body>

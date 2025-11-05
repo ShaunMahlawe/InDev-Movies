@@ -151,70 +151,136 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 class Movie{
-    constructor(image, year, title, duration, rating, link){
-        this.image = image;
-        this.year = title;
-        this.duration = duration;
+    constructor(title, rating, link, image){
+        this.title = title;
         this.rating = rating;
         this.link = link;
+        this.image = image;
     }
 }
 
-function isHighlyRated(movie){
-    return parseInt(movie.rating) >= 9;
-}
+(async function() {
+    const url = 'https://imdb236.p.rapidapi.com/api/imdb/top-box-office';
+    const options = {
+        method: 'GET',
+        headers: {
+            'x-rapidapi-key': 'ecdd572f6fmsh055b23482742d2cp1af123jsn9b1d66941f6f',
+            'x-rapidapi-host': 'imdb236.p.rapidapi.com'
+        }
+    };
 
-!async function(){
-    const url = 'https://moviesverse1.p.rapidapi.com/top-movies-of-all-time';
-const options = {
-	method: 'GET',
-	headers: {
-		'x-rapidapi-key': '1e4b942479msh20a441535ffa565p139ba7jsnad11b0324a16',
-		'x-rapidapi-host': 'moviesverse1.p.rapidapi.com'
-	}
-};
+    let data = null;
+    try {
+        const resp = await fetch(url, options);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status} ${resp.statusText}`);
 
-    let data = await fetch(url, options)
-                    .then((response)=> response.json())
-                    .then((result)=>{return result})
-                    .catch((error)=> console.log(error));
-    
-    console.log(data);
+        // parse result
+        data = await resp.json();
+        console.log('Full API response:', data);
 
-    let movieList = [];
+        const list = Array.isArray(data) ? data : (data.array || data.items || data.results || data.titles || []);
+        if (!Array.isArray(list) || list.length === 0) {
+            console.warn('No movies array in response');
+            return;
+        }
 
-    for(i = 0; i < data.movies.length; i++){
+        const first25 = list.slice(0, 25);
 
-        let image = data.movies[i].image;
-        let title = data.movies[i].title;
-        let year = data.movies[i].year;
-        let rating = data.movies[i].imdbRating;
-        let duration = data.movies[i].timeline;
-        let link = data.movies[i].link;
+        const container = document.getElementById('movieCards') || document.getElementById('movie-container');
+        if (!container) {
+            console.error('No #movieCards or #movie-container element found');
+            return;
+        }
 
-        movieList.push(window["movie_" + i] = new Movie(image, year, title, duration, rating, link));
+        container.classList.add('movie-grid');
 
+        container.innerHTML = first25.map(item => {
+            const image = (item.primaryImage && (item.primaryImage.url || item.primaryImage)) || item.image || item.poster || '';
+            const title = item.primaryTitle || item.title || item.name || 'Untitled';
+            const year = item.releaseDate || item.year || item.releaseYear || '';
+            const description = item.description || item.plot || item.summary || '';
+            const link = (item.trailer && (item.trailer.url || item.trailer)) || item.link || '#';
+
+            return makeCardHTML({
+                image,
+                title,
+                year,
+                description,
+                link
+            });
+        }).join('');
+
+        container.addEventListener('click', (e) => {
+            const addBtn = e.target.closest('.btn-add-list');
+            if (addBtn) {
+                e.preventDefault();
+                const title = addBtn.dataset.title;
+                const img = addBtn.dataset.image;
+                const year = addBtn.dataset.year;
+                const link = addBtn.dataset.link || '#';
+
+            
+                addBtn.classList.toggle('active');
+                addBtn.textContent = addBtn.classList.contains('active') ? 'Added' : 'Add List';
+
+            
+                const key = 'userMovieList';
+                let list = [];
+                try {
+                    list = JSON.parse(localStorage.getItem(key) || '[]');
+                } catch (err) { list = []; }
+                if (addBtn.classList.contains('active')) {
+                
+                    if (!list.some(m => m.title === title)) list.push({ title, image: img, year, link });
+                } else {
+                    list = list.filter(m => m.title !== title);
+                }
+                try { localStorage.setItem(key, JSON.stringify(list)); } catch (err) { console.warn('Could not save list', err); }
+                return;
+            }
+        }, { passive: true });
+
+        container.querySelectorAll('.movie-card').forEach(card => {
+            const add = card.querySelector('.btn-add-list');
+            if (add) {
+                const titleEl = card.querySelector('.movie-title');
+                const meta = card.querySelector('.movie-meta');
+                const imgEl = card.querySelector('.movie-image img');
+                add.dataset.title = titleEl ? titleEl.textContent.trim() : '';
+                add.dataset.year = meta ? meta.textContent.replace('Year:','').trim() : '';
+                add.dataset.image = imgEl ? (imgEl.src || '') : '';
+                const watch = card.querySelector('.btn-watch');
+                add.dataset.link = watch ? (watch.getAttribute('href') || '#') : '#';
+            }
+        });
+
+    } catch (err) {
+        console.error('Fetch/render error:', err);
+        const container = document.getElementById('movieCards') || document.getElementById('movie-container');
+        if (container) container.innerHTML = '<div class="alert alert-danger">Failed to load movies. See console.</div>';
+    } finally {
+        window.castTitlesData = data;
+        window.getCastTitles = () => {
+            const d = window.castTitlesData;
+            return Array.isArray(d) ? d : (d && (d.array || d.items || d.results || d.titles)) || [];
+        };
     }
+})();
 
-    console.log(movieList);
-
-    let bestMovies = movieList.filter(isHighlyRated);
-
-    console.log(bestMovies);
-
-    bestMovies.forEach(movie => {
-        document.getElementById("movie-card").innerHTML += ` <div class="col-md-3">
-        <div class="card">
-        <img src="${movie.image}" class="card-img-top" alt="...">
-        <div class="card-body">
-        <h5 class="card-title">${movie.title}</h5>
-        <p class="card-text">IMDB rating is ${movie.rating}</p>
-        <a href="#" class="btn btn-primary">Go somewhere</a>
+function makeCardHTML({ image, title, year, description, link }) {
+    return `
+    <div class="movie-card" role="article">
+        <div class="movie-image">
+            <img src="${image || 'images/placeholder.jpg'}" alt="${(title||'Movie')}" loading="lazy" />
         </div>
+        <div class="movie-info">
+            <h3 class="movie-title">${title || 'Untitled'}</h3>
+            <div class="movie-meta">${year ? `Year: ${year}` : ''}</div>
+            <p class="movie-desc">${description ? (description.length > 200 ? description.slice(0,197) + '...' : description) : ''}</p>
+            <div class="movie-actions">
+                <button class="btn-small btn-add-list" data-title="${title}">Add List</button>
+                <a class="btn-small btn-watch" href="${link || '#'}" target="_blank" rel="noopener">Watch</a>
+            </div>
         </div>
-        </div>
-        
-        `
-    });
-
-}();
+    </div>`;
+}
