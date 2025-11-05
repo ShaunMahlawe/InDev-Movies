@@ -194,6 +194,59 @@
 
   </div>
 <section>
+ <div class="container">
+        <header>
+            <h1>Movies</h1>
+            <div class="toggle-buttons">
+                <button class="toggle active">Series</button>
+                <button class="toggle">Original Series</button>
+            </div>
+            <input type="text" id="search" placeholder="Search...">
+        </header>
+
+        <div class="filters">
+            <div class="genre-filter">
+                <button class="filter-button active">Action</button>
+                <button class="filter-button">Adventure</button>
+                <button class="filter-button">Animation</button>
+                <button class="filter-button">Biography</button>
+                <button class="filter-button">Crime</button>
+                <button class="filter-button">Comedy</button>
+                <button class="filter-button">Documentary</button>
+                <button class="filter-button">Drama</button>
+            </div>
+            <div class="sort-options">
+                <label for="sort">Sort by:</label>
+                <select id="sort">
+                    <option value="latest">Latest</option>
+                    <option value="year">Year</option>
+                    <option value="a-z">A-Z</option>
+                </select>
+            </div>
+            <div class="rating-filter">
+                <label for="rating">Rating:</label>
+                <input type="range" id="rating" min="0" max="10" step="0.1" value="5">
+                <span id="rating-value">5.0</span>
+            </div>
+        </div>
+
+        <div class="movie-list" id="movie-list">
+          
+        </div>
+
+        <div class="trailer-modal" id="trailer-modal">
+            <div class="trailer-content">
+                <span class="close" id="close-modal">&times;</span>
+                <h2 id="modal-title">Movie Title</h2>
+                <p id="modal-description">Movie description goes here.</p>
+                <video id="trailer-video" controls>
+                    <source src="../Asset/videos/" id="video-source" type="video/mp4">
+                   
+                </video>
+            </div>
+        </div>
+    </div>
+
     <div class="container-fluid">
         <header class="header">
             <div class="content-selector">
@@ -239,6 +292,9 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   <script src="../js/jquery.js"></script>
+  <script src="../js/SM.scripts.js"></script>
+  <script src="../js/SM.scripts.js"></script>
+  <script src="../js/SM.scripts.js"></script>
   <script src="../js/carousel.js"></script>
   <script src="../js/navbar.js"></script>
   <script src="../js/main.js"></script>

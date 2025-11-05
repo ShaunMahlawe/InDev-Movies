@@ -11,6 +11,7 @@
     <title>Home Page</title>
 
     <!--Bootstrap, Javascript, Google Fonts, CSS-->
+
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=close" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -20,6 +21,26 @@
 
 </head>
 <body> 
+    <header class="hero-header">
+       
+        <div class="nav-left">
+            <div class="logo">LOGO</div>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="Pages/Movie Library Page.html">Library</a></li>
+                    <li><a href="Pages/Individual Movie Page.html">Movies</a></li>
+                    <li><a href="Pages/Movie Watch List Page.html">My List</a></li>
+                    <li><a href="#">About Us</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="nav-right">
+            <div class="muted">🔍</div>
+            <div class="muted">🔔</div>
+            <div class="icon-btn">🙂</div>
+        </div>
 <style>
 .material-symbols-outlined {
   font-variation-settings:
@@ -194,10 +215,262 @@
 
   </div>
 <section>
+ <div class="container">
+        <header>
+            <h1>Movies</h1>
+            <div class="toggle-buttons">
+                <button class="toggle active">Series</button>
+                <button class="toggle">Original Series</button>
+            </div>
+            <input type="text" id="search" placeholder="Search...">
+        </header>
+
+        <div class="filters">
+            <div class="genre-filter">
+                <button class="filter-button active">Action</button>
+                <button class="filter-button">Adventure</button>
+                <button class="filter-button">Animation</button>
+                <button class="filter-button">Biography</button>
+                <button class="filter-button">Crime</button>
+                <button class="filter-button">Comedy</button>
+                <button class="filter-button">Documentary</button>
+                <button class="filter-button">Drama</button>
+            </div>
+            <div class="sort-options">
+                <label for="sort">Sort by:</label>
+                <select id="sort">
+                    <option value="latest">Latest</option>
+                    <option value="year">Year</option>
+                    <option value="a-z">A-Z</option>
+                </select>
+            </div>
+            <div class="rating-filter">
+                <label for="rating">Rating:</label>
+                <input type="range" id="rating" min="0" max="10" step="0.1" value="5">
+                <span id="rating-value">5.0</span>
+            </div>
+        </div>
+
+        <div class="movie-list" id="movie-list">
+          
+        </div>
+
+        <div class="trailer-modal" id="trailer-modal">
+            <div class="trailer-content">
+                <span class="close" id="close-modal">&times;</span>
+                <h2 id="modal-title">Movie Title</h2>
+                <p id="modal-description">Movie description goes here.</p>
+                <video id="trailer-video" controls>
+                    <source src="../Asset/videos/" id="video-source" type="video/mp4">
+                   
+                </video>
+            </div>
+        </div>
+    </div>
+
     <div class="container-fluid">
         <header class="header">
             <div class="content-selector">
                 <label>
+                    <input type="radio" name="content_type" value="movies" checked>
+                    <span>Movies</span>
+                </label>
+        </header>
+
+        <section class="movie-grid" id="movie-card">
+            <div class="movie-card"></div>
+            
+
+<!-- 
+                <label>
+                    <input type="radio" name="content_type" value="series">
+                    <span>Series</span>
+                </label>
+                <label>
+                    <input type="radio" name="content_type" value="original">
+                    <span>Original Series</span>
+                </label>
+            </div>
+            <div class="search-box">
+                <input type="text" placeholder="Search">
+                <span class="search-icon">🔍</span>
+            </div>
+        </header>
+
+        <section class="filters">
+            <div class="genre-tags">
+                <button class="tag active">Action</button>
+                <button class="tag">Adventure</button>
+                <button class="tag">Animation</button>
+                <button class="tag">Biography</button>
+                <button class="tag">Crime</button>
+                <button class="tag">Comedy</button>
+                <button class="tag">Documentary</button>
+                <button class="tag">Drama</button>
+                <button class="tag tag-more">...</button>
+            </div>
+            <div class="sort-options">
+                <div class="sort-by">Sort By: <button class="sort-button">Latest</button></div>
+                <div class="sort-by">Year: <button class="sort-button">2018</button></div>
+                <div class="sort-by">A-Z: <button class="sort-button">A-Z</button></div>
+                <div class="rating-filter">
+                    <span class="star">⭐</span> 5.0
+                </div>
+            </div>
+        </section>
+
+        <section class="movie-grid">
+            <div class="movie-card">
+                <div class="poster">
+                    <img src="Asset/img/Jurassic World Rebirth.jpeg" alt="Jurassic World Rebirth Poster">
+                </div>
+                <div class="details">
+                    <p class="title">Jurassic World Rebirth</p>
+                    <p class="year-runtime">2018 | 2h</p>
+                    <div class="rating">
+                        <span class="star">⭐</span> 8.1
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card">
+              <div class="poster">
+                    <img src="Asset/img/The Woman in Cabin 10.jpeg" alt="The Woman in Cabin 10 Poster">
+                </div>
+                <div class="details">
+                    <p class="title">The Woman in Cabin 10</p>
+                    <p class="year-runtime">2018 | 2h</p>
+                    <div class="rating">
+                        <span class="star">⭐</span> 8.1
+                    </div>
+                </div>
+            </div>
+            <div class="movie-card">
+              <div class="poster">
+                  <img src="Asset/img/Play Dirty.jpeg" alt="Play Dirty Poster">
+                </div>
+                <div class="details">
+                    <p class="title">Play Dirty</p>
+                    <p class="year-runtime">2018 | 2h</p>
+                    <div class="rating">
+                    <span class="star">⭐</span> 8.1
+                    </div>
+                </div>
+            </div>
+            <div class="movie-card">
+                            <div class="poster">
+                    <img src="Asset/img/Freakier Friday.jpeg" alt="Freakier Friday Poster">
+                </div>
+                <div class="details">
+                    <p class="title">Freakier Friday</p>
+                    <p class="year-runtime">2018 | 2h</p>
+                    <div class="rating">
+                        <span class="star">⭐</span> 8.1
+                    </div>
+                </div>
+            </div>
+            <div class="movie-card">
+                            <div class="poster">
+                    <img src="Asset/img/The Lost Bus.jpeg" alt="The Lost Bus Poster">
+                </div>
+                <div class="details">
+                    <p class="title">The Lost Bus</p>
+                    <p class="year-runtime">2018 | 2h</p>
+                    <div class="rating">
+                        <span class="star">⭐</span> 8.1
+                    </div>
+                </div>
+            </div>
+            <div class="movie-card">
+                            <div class="poster">
+                    <img src="Asset/img/The Fantastic Four- First Steps.jpeg" alt="The Fantastic Four: First Steps Poster">
+                </div>
+                <div class="details">
+                    <p class="title">The Fantastic Four: First Steps</p>
+                    <p class="year-runtime">2018 | 2h</p>
+                    <div class="rating">
+                        <span class="star">⭐</span> 8.1
+                    </div>
+                </div>
+            </div>
+            <div class="movie-card">
+                            <div class="poster">
+                    <img src="Asset/img/A Line of Fire.jpeg" alt="A Line of Fire Poster">
+                </div>
+                <div class="details">
+                    <p class="title">A Line of Fire</p>
+                    <p class="year-runtime">2018 | 2h</p>
+                    <div class="rating">
+                        <span class="star">⭐</span> 8.1
+                    </div>
+                </div>
+            </div>
+            <div class="movie-card">
+                            <div class="poster">
+                    <img src="Asset/img/Swiped.jpeg" alt="Swiped Poster">
+                </div>
+                <div class="details">
+                    <p class="title">Swiped</p>
+                    <p class="year-runtime">2018 | 2h</p>
+                    <div class="rating">
+                        <span class="star">⭐</span> 8.1
+                    </div>
+                </div>
+            </div>
+            <div class="movie-card">
+                            <div class="poster">
+                    <img src="Asset/img/Hunting Jessica Brok.jpeg" alt="Hunting Jessica Brok Poster">
+                </div>
+                <div class="details">
+                    <p class="title">Hunting Jessica Brok</p>
+                    <p class="year-runtime">2018 | 2h</p>
+                    <div class="rating">
+                        <span class="star">⭐</span> 8.1
+                    </div>
+                </div>
+            </div>
+            <div class="movie-card">
+                            <div class="poster">
+                    <img src="Asset/img/Mission- Impossible – The Final Reckoning.jpg" alt="Mission: Impossible – The Final Reckoning Poster">
+                </div>
+                <div class="details">
+                    <p class="title">Mission: Impossible – The Final Reckoning</p>
+                    <p class="year-runtime">2018 | 2h</p>
+                    <div class="rating">
+                        <span class="star">⭐</span> 8.1
+                    </div>
+                </div>
+            </div>
+            <div class="movie-card">
+                            <div class="poster">
+                    <img src="Asset/img/Ruth & Boaz.jpeg" alt="Ruth & Boaz Poster">
+                </div>
+                <div class="details">
+                    <p class="title">Ruth & Boaz</p>
+                    <p class="year-runtime">2018 | 2h</p>
+                    <div class="rating">
+                        <span class="star">⭐</span> 8.1
+                    </div>
+                </div>
+            </div>
+            <div class="movie-card">
+                            <div class="poster">
+                    <img src="Asset/img/Oh, Hi!.jpeg" alt="Oh, Hi Poster">
+                </div>
+                <div class="details">
+                    <p class="title">Oh, Hi</p>
+                    <p class="year-runtime">2018 | 2h</p>
+                    <div class="rating">
+                        <span class="star">⭐</span> 8.1
+                    </div>
+                </div>
+            </div> -->
+            </div>
+
+        </section>
+
+        <section class="featured-hero">
+            <button class="close-btn">X</button>
                     <span>Now Trending</span>
                 </label>
         </header>
@@ -218,6 +491,8 @@
                     When the island's dormant volcano begins roaring to life, Owen and Claire mount a campaign to rescue the remaining dinosaurs from this extinction-level event.
                 </p>
                 <div class="hero-actions">
+                    <button class="btn btn-watch">▶️ WATCH</button>
+                    <button class="btn btn-list">+ ADD LIST</button>
                     <button class="btn-btn-watch">WATCH</button>
                     <button class="btn-btn-list">ADD LIST</button>
                 </div>
@@ -236,6 +511,11 @@
         </section>
     </div>
 </section>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <script src="../js/jquery.js"></script>
+  <script src="../js/SM.scripts.js"></script>
+  <script src="../js/SM.scripts.js"></script>
+  <script src="../js/SM.scripts.js"></script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   <script src="../js/jquery.js"></script>
