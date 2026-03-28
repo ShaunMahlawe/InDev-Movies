@@ -423,6 +423,26 @@
             trendRow.__loopResizeHandler = null;
         }
 
+        if (trendRow.__pauseLoopOnEnterHandler) {
+            trendRow.removeEventListener("mouseenter", trendRow.__pauseLoopOnEnterHandler);
+            trendRow.__pauseLoopOnEnterHandler = null;
+        }
+
+        if (trendRow.__resumeLoopOnLeaveHandler) {
+            trendRow.removeEventListener("mouseleave", trendRow.__resumeLoopOnLeaveHandler);
+            trendRow.__resumeLoopOnLeaveHandler = null;
+        }
+
+        if (trendRow.__autoLoopRafId) {
+            window.cancelAnimationFrame(trendRow.__autoLoopRafId);
+            trendRow.__autoLoopRafId = null;
+        }
+
+        if (trendRow.__autoLoopResumeTimeoutId) {
+            window.clearTimeout(trendRow.__autoLoopResumeTimeoutId);
+            trendRow.__autoLoopResumeTimeoutId = null;
+        }
+
         // Remove any prior loop clones before rebuilding the loop structure.
         trendRow.querySelectorAll('.poster-card[data-clone]').forEach((node) => node.remove());
 
@@ -507,23 +527,60 @@
             }
         };
 
+        let autoPaused = false;
+        const autoScrollStep = 0.45;
+
+        const pauseAutoLoop = () => {
+            autoPaused = true;
+        };
+
+        const resumeAutoLoop = () => {
+            autoPaused = false;
+        };
+
+        const pauseAutoLoopTemporarily = (durationMs = 900) => {
+            pauseAutoLoop();
+            if (trendRow.__autoLoopResumeTimeoutId) {
+                window.clearTimeout(trendRow.__autoLoopResumeTimeoutId);
+            }
+            trendRow.__autoLoopResumeTimeoutId = window.setTimeout(() => {
+                resumeAutoLoop();
+                trendRow.__autoLoopResumeTimeoutId = null;
+            }, durationMs);
+        };
+
+        const autoLoopTick = () => {
+            if (!autoPaused) {
+                trendRow.scrollLeft += autoScrollStep;
+                keepLoopContinuous();
+            }
+            trendRow.__autoLoopRafId = window.requestAnimationFrame(autoLoopTick);
+        };
+
         prevButton.disabled = false;
         nextButton.disabled = false;
 
         prevButton.onclick = () => {
+            pauseAutoLoopTemporarily();
             trendRow.scrollBy({ left: -scrollStep, behavior: "smooth" });
         };
 
         nextButton.onclick = () => {
+            pauseAutoLoopTemporarily();
             trendRow.scrollBy({ left: scrollStep, behavior: "smooth" });
         };
 
         trendRow.__loopScrollHandler = keepLoopContinuous;
         trendRow.__loopResizeHandler = recalculateCycle;
+        trendRow.__pauseLoopOnEnterHandler = pauseAutoLoop;
+        trendRow.__resumeLoopOnLeaveHandler = resumeAutoLoop;
 
         trendRow.addEventListener("scroll", trendRow.__loopScrollHandler);
         window.addEventListener("resize", trendRow.__loopResizeHandler);
+        trendRow.addEventListener("mouseenter", trendRow.__pauseLoopOnEnterHandler);
+        trendRow.addEventListener("mouseleave", trendRow.__resumeLoopOnLeaveHandler);
         jumpTo(cycleStart);
+        trendRow.__autoLoopRafId = window.requestAnimationFrame(autoLoopTick);
     }
 
     function bindTrendGenreFilters(movies) {
