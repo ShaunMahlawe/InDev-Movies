@@ -217,6 +217,30 @@ nav a {
     height: 100%;
 }
 
+.carousel-slide .carousel-inner {
+    overflow: hidden;
+}
+
+.carousel-slide .carousel-item {
+    width: 100%;
+    margin-right: -100%;
+    margin-left: 0;
+    transition: transform 900ms cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+.carousel-slide.carousel-fade .carousel-item {
+    margin-right: 0;
+    transition: opacity 900ms ease-in-out;
+    transform: none;
+    background: #05070f;
+}
+
+.carousel-slide.carousel-fade .carousel-item-next,
+.carousel-slide.carousel-fade .carousel-item-prev,
+.carousel-slide.carousel-fade .carousel-item.active {
+    transform: none;
+}
+
 .trailer-container {
     position: relative;
     overflow: hidden;
@@ -348,7 +372,45 @@ nav a {
 }
 
 .custom-indicators .active {
-    background: rgba(255, 255, 255, 0.95);
+    background: var(--primary-red);
+}
+
+.hero-carousel-control {
+    position: absolute;
+    top: 50%;
+    z-index: 4;
+    width: 46px;
+    height: 46px;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 50%;
+    background: rgba(6, 10, 24, 0.58);
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    transform: translateY(-50%);
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    backdrop-filter: blur(8px);
+}
+
+.hero-carousel-control:hover {
+    background: rgba(255, 22, 58, 0.72);
+    border-color: rgba(255, 22, 58, 0.86);
+    transform: translateY(-50%) scale(1.03);
+}
+
+.hero-carousel-control:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.9);
+    outline-offset: 2px;
+}
+
+.hero-carousel-control.prev {
+    left: 18px;
+}
+
+.hero-carousel-control.next {
+    right: 18px;
 }
 
 .home-shell {
@@ -436,7 +498,7 @@ nav a {
     height: 550px;
     margin-left: calc(50% - 50vw);
     margin-right: calc(50% - 50vw);
-    padding: 16px 0 14px 12px;
+    padding: 16px 0 14px 16px;
     border: none;
 }
 
@@ -902,6 +964,18 @@ nav a {
         height: clamp(430px, 72vh, 560px);
     }
 
+    .trailer-frame {
+        width: 120vw;
+        height: 67.5vw;
+        min-width: 150%;
+        min-height: 100%;
+        transform: translate(-50%, -50%) scale(1.08);
+    }
+
+    .trailer-container::after {
+        background: linear-gradient(90deg, rgba(3, 4, 10, 0.72) 0%, rgba(3, 4, 10, 0.4) 30%, rgba(3, 4, 10, 0.22) 56%, rgba(3, 4, 10, 0.1) 74%, rgba(3, 4, 10, 0.46) 100%);
+    }
+
     .info {
         left: 16px;
         bottom: 86px;
@@ -935,12 +1009,118 @@ nav a {
         grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
         gap: 12px;
     }
+
+    .trends-block {
+        width: 100vw;
+        height: auto;
+        min-height: 480px;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        padding: 14px 10px 14px;
+    }
+
+    .trends-block .section-topline {
+        height: auto;
+        min-height: 56px;
+        padding-left: 0;
+        padding-bottom: 10px;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .trends-title {
+        font-size: 1.16rem;
+    }
+
+    .trends-title::after {
+        left: 41px;
+        bottom: -8px;
+    }
+
+    .trends-block .topline-links {
+        width: 100%;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .trends-block .topline-link {
+        font-size: 0.76rem;
+    }
+
+    .trends-block .chip-row {
+        width: 100%;
+        margin-top: 12px;
+        margin-bottom: 18px;
+        justify-content: flex-start;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 3px;
+    }
+
+    .trends-block .chip-row::-webkit-scrollbar {
+        display: none;
+    }
+
+    .trends-block .chip {
+        min-width: 124px;
+        font-size: 0.78rem;
+        padding: 9px 10px;
+    }
+
+    .trend-nav-btn {
+        height: 208px;
+    }
+
+    .trends-block .poster-card {
+        min-width: 150px;
+        max-width: 150px;
+    }
+
+    .trends-block .poster-image {
+        width: 150px;
+        height: 208px;
+    }
+
+    .hero-carousel-control {
+        width: 40px;
+        height: 40px;
+        font-size: 1.05rem;
+    }
+
+    .hero-carousel-control.prev {
+        left: 12px;
+    }
+
+    .hero-carousel-control.next {
+        right: 12px;
+    }
 }
 
 @media (max-width: 640px) {
     .carousel-slide {
-        height: 80vh;
-        min-height: 470px;
+        height: min(72vh, 520px);
+        min-height: 390px;
+    }
+
+    .trailer-frame {
+        width: 132vw;
+        height: 74.25vw;
+        min-width: 185%;
+        min-height: 100%;
+        transform: translate(-50%, -50%) scale(1.03);
+    }
+
+    .trailer-container::before {
+        background: linear-gradient(0deg, rgba(3, 4, 10, 0.98) 0%, rgba(3, 4, 10, 0.78) 28%, rgba(3, 4, 10, 0.24) 58%, rgba(3, 4, 10, 0) 100%);
+    }
+
+    .trailer-container::after {
+        background: linear-gradient(90deg, rgba(3, 4, 10, 0.56) 0%, rgba(3, 4, 10, 0.3) 35%, rgba(3, 4, 10, 0.18) 60%, rgba(3, 4, 10, 0.08) 78%, rgba(3, 4, 10, 0.3) 100%);
     }
 
     .title {
@@ -966,6 +1146,20 @@ nav a {
         width: 28px;
     }
 
+    .hero-carousel-control {
+        width: 36px;
+        height: 36px;
+        font-size: 0.96rem;
+    }
+
+    .hero-carousel-control.prev {
+        left: 8px;
+    }
+
+    .hero-carousel-control.next {
+        right: 8px;
+    }
+
     .movies-toolbar {
         align-items: flex-start;
         flex-direction: column;
@@ -979,12 +1173,49 @@ nav a {
         padding: 18px;
     }
 
+    .trends-block {
+        min-height: 430px;
+        padding: 12px 8px 12px;
+    }
+
+    .trends-block .section-topline {
+        min-height: auto;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 8px;
+        padding-bottom: 10px;
+    }
+
     .trends-title {
-        font-size: 1.5rem;
+        font-size: 1rem;
     }
 
     .trends-title::after {
-        left: 44px;
+        left: 36px;
+        bottom: -7px;
+    }
+
+    .trends-block .topline-links {
+        width: 100%;
+        justify-content: space-between;
+        gap: 6px;
+    }
+
+    .trends-block .topline-link {
+        font-size: 0.7rem;
+        gap: 5px;
+    }
+
+    .trends-block .chip-row {
+        margin-top: 10px;
+        margin-bottom: 14px;
+        gap: 7px;
+    }
+
+    .trends-block .chip {
+        min-width: 102px;
+        font-size: 0.72rem;
+        padding: 8px 9px;
     }
 
     .trend-carousel-shell {

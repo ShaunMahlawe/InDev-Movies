@@ -704,6 +704,17 @@
             `;
             inner.appendChild(item);
         });
+
+        if (window.bootstrap && window.bootstrap.Carousel) {
+            const instance = window.bootstrap.Carousel.getOrCreateInstance(carousel, {
+                interval: 7000,
+                ride: false,
+                pause: "hover",
+                wrap: true,
+                touch: true
+            });
+            instance.cycle();
+        }
     }
 
     function renderWatchlistCards(movies) {
