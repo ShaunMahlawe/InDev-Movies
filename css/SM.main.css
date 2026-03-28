@@ -423,8 +423,6 @@ nav a {
 
 .content-block {
     background: var(--surface-strong);
-    border: 1px solid var(--line);
-    border-radius: 18px;
     padding: 22px;
     box-shadow: 0 18px 42px rgba(0, 0, 0, 0.35);
 }
@@ -433,9 +431,10 @@ nav a {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     gap: 100px;
-    margin-bottom: 14px;
+    height: 80px;
+    padding: 0 250px 0 250px;
 }
 
 .section-topline h2 {
