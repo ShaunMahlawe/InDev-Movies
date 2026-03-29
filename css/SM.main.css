@@ -1,6 +1,6 @@
 :root {
-    --background-dark: #080a14;
-    --surface-dark: #0f1324;
+    --background-dark: #02040c;
+    --surface-dark: #060810;
     --surface-soft: rgba(255, 255, 255, 0.08);
     --surface-strong: rgba(7, 10, 20, 0.86);
     --text: #ffffff;
@@ -27,7 +27,7 @@ body {
 body {
     font-family: "Poppins", Arial, sans-serif;
     color: var(--text-light);
-    background: radial-gradient(circle at top left, #111735 0%, #080a14 45%, #06070e 100%);
+    background: #02040c;
     line-height: 1.5;
 }
 
@@ -484,10 +484,144 @@ nav a {
 }
 
 .content-block {
-    background: linear-gradient(180deg, rgba(2, 4, 12, 0.99) 0%, rgba(3, 6, 16, 0.97) 100%);
+    background: rgba(2, 4, 12, 0.99);
     padding: 22px;
     box-shadow: 0 18px 42px rgba(0, 0, 0, 0.35);
 }
+
+/* ===== About Us Block ===== */
+.about-us-block {
+    background: rgba(2, 4, 12, 0.99);
+    padding: 80px 22px;
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.35);
+    min-height: 700px;
+}
+
+.about-us-inner {
+    max-width: 1400px;
+    margin: 0 250px 0 200px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 250px;
+    min-height: 560px;
+}
+
+.about-posters {
+    position: relative;
+    width: min(100%, 520px);
+    height: 560px;
+    min-height: 560px;
+    margin: 0 auto;
+}
+
+.about-poster {
+    position: absolute;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65);
+}
+
+/* Poster 1 — large, top-left (dominant) */
+.about-poster-back {
+    width: 58%;
+    top: 3%;
+    left: 6%;
+    z-index: 1;
+    filter: brightness(0.8);
+}
+
+/* Poster 2 — medium, top-right, overlaps poster 1 */
+.about-poster-mid {
+    width: 48%;
+    top: 10%;
+    right: -3%;
+    z-index: 2;
+    filter: brightness(0.88);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Poster 3 — smallest, bottom-left, in front of both */
+.about-poster-front {
+    width: 40%;
+    bottom: 0%;
+    left: 30%;
+    z-index: 3;
+    border: 3px solid rgba(255, 255, 255, 0.14);
+}
+
+.about-label {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--primary-red);
+    margin-bottom: 14px;
+}
+
+.about-heading {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.25;
+    color: #ffffff;
+    margin: 0 0 32px;
+}
+
+.about-heading span {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-top: 12px;
+}
+    
+.about-features {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.about-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.about-feature-icon {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: rgba(255, 22, 58, 0.15);
+    border: 1px solid rgba(255, 22, 58, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-red);
+    font-size: 1rem;
+}
+
+
+
+.about-feature h4 {
+    margin: 0 0 5px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.about-feature p {
+    margin: 0;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+}
+/* ===== End About Us Block ===== */
 
 .section-topline {
     display: flex;
@@ -682,7 +816,8 @@ nav a {
     color: #ffffff;
 }
 
-.movies-block .chip-row {
+.movies-block .chip-row,
+.new-releases-block .chip-row {
     display: flex;
     flex-wrap: nowrap;
     gap: 8px;
@@ -694,7 +829,8 @@ nav a {
     justify-content: center;
 }
 
-.movies-block .chip {
+.movies-block .chip,
+.new-releases-block .chip {
     min-width: 165px;
     border: 0;
     background: rgba(255, 255, 255, 0.08);
@@ -709,7 +845,9 @@ nav a {
 }
 
 .movies-block .chip.active,
-.movies-block .chip:hover {
+.movies-block .chip:hover,
+.new-releases-block .chip.active,
+.new-releases-block .chip:hover {
     background: var(--primary-red);
     color: #ffffff;
 }
@@ -860,6 +998,20 @@ nav a {
     font-size: 0.76rem;
 }
 
+.new-releases-block .section-topline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 100px;
+    height: 80px;
+    padding: 0 250px 0 250px;
+}
+
+.new-releases-block .section-topline h2 {
+    margin: 0;
+}
+
 .movies-toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -877,6 +1029,10 @@ nav a {
     gap: 8px;
     color: var(--text-secondary);
     font-size: 0.86rem;
+}
+
+.sort-group .rating-group {
+    margin-left: 10px;
 }
 
 .search-group {
@@ -1100,7 +1256,8 @@ nav a {
 }
 
 .featured-player.has-card-anchor {
-    border-radius: none;
+    border-radius: 14px;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.58), 0 0 0 1px rgba(255, 255, 255, 0.14);
 }
 
 .featured-player.is-closed {

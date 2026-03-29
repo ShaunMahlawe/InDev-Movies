@@ -988,14 +988,15 @@
 
         const width = Math.max(320, Math.round(featured.offsetWidth || 0));
         const height = Math.max(320, Math.round(featured.offsetHeight || 0));
-        const radius = 28;
-        const notchHeight = 18;
-        const notchHalfWidth = 16;
+        const radius = 14;
+        const notchHeight = 28;
+        const notchHalfWidth = 24;
         const boundedAnchorX = Math.max(radius + notchHalfWidth, Math.min(width - radius - notchHalfWidth, anchorX));
         const path = [
             `M ${radius} ${notchHeight}`,
             `L ${boundedAnchorX - notchHalfWidth} ${notchHeight}`,
-            `Q ${boundedAnchorX} 0 ${boundedAnchorX + notchHalfWidth} ${notchHeight}`,
+            `L ${boundedAnchorX} 0`,
+            `L ${boundedAnchorX + notchHalfWidth} ${notchHeight}`,
             `L ${width - radius} ${notchHeight}`,
             `Q ${width} ${notchHeight} ${width} ${notchHeight + radius}`,
             `L ${width} ${height - radius}`,
@@ -1013,12 +1014,16 @@
 
     function updateFeaturedBubbleAnchor(sourceCard) {
         const featured = document.getElementById("featuredPlayer");
-        const grid = document.getElementById("movieCards");
+        const movieGrid = document.getElementById("movieCards");
+        const nrGrid = document.getElementById("newReleasesCards");
+        const grid = (nrGrid && sourceCard && nrGrid.contains(sourceCard)) ? nrGrid : movieGrid;
 
         if (!featured || !grid || !sourceCard || !grid.contains(sourceCard)) {
             if (featured) {
                 featured.classList.remove("has-card-anchor");
                 featured.style.removeProperty("--featured-anchor-x");
+                featured.style.removeProperty("clip-path");
+                featured.style.removeProperty("-webkit-clip-path");
             }
             return;
         }
@@ -1035,7 +1040,10 @@
 
     function placeFeaturedPlayerAtCardRow(sourceCard) {
         const featured = document.getElementById("featuredPlayer");
-        const grid = document.getElementById("movieCards");
+
+        const movieGrid = document.getElementById("movieCards");
+        const nrGrid = document.getElementById("newReleasesCards");
+        const grid = (nrGrid && sourceCard && nrGrid.contains(sourceCard)) ? nrGrid : movieGrid;
 
         if (!featured || !grid || !sourceCard || !grid.contains(sourceCard)) {
             return;
@@ -1396,10 +1404,10 @@
         applyPosterFallbacks(container);
     }
 
-    function setupTrendRowControls() {
-        const trendRow = document.getElementById("trendCards");
-        const prevButton = document.getElementById("trendPrev");
-        const nextButton = document.getElementById("trendNext");
+    function setupScrollCarousel(rowId, prevId, nextId) {
+        const trendRow = document.getElementById(rowId);
+        const prevButton = document.getElementById(prevId);
+        const nextButton = document.getElementById(nextId);
 
         if (!trendRow || !prevButton || !nextButton) {
             return;
@@ -1577,30 +1585,260 @@
         trendRow.__autoLoopRafId = window.requestAnimationFrame(autoLoopTick);
     }
 
-    function bindTrendGenreFilters(movies) {
-        const chips = Array.from(document.querySelectorAll(".trends-block .chip-row .chip"));
-        if (chips.length === 0) {
+    function renderNewReleasesCards(movies) {
+        const container = document.getElementById("newReleasesCards");
+        if (!container) {
             return;
         }
 
-        const renderFromSelectedChips = () => {
-            const selectedGenres = chips
-                .filter((chip) => chip.classList.contains("active"))
-                .map((chip) => chip.dataset.genre || chip.textContent || "");
+        container.innerHTML = "";
 
-            const trendMovies = getTrendMoviesByGenres(movies, selectedGenres);
-            renderPosterRow("trendCards", trendMovies);
-            setupTrendRowControls();
+        if (!Array.isArray(movies) || movies.length === 0) {
+            container.innerHTML = `
+                <article class="movie-empty-state" aria-live="polite">
+                    <h3>No matches found</h3>
+                    <p>Try a different title or loosen your filters.</p>
+                </article>
+            `;
+            return;
+        }
+
+        movies.forEach((movie) => {
+            const card = document.createElement("article");
+            card.className = "movie-card";
+
+            card.innerHTML = `
+                <div class="movie-image">
+                    <img src="${getPoster(movie)}" alt="${getTitle(movie)} poster" loading="lazy">
+                </div>
+                <div class="movie-info">
+                    <h3 class="movie-title">${getTitle(movie)}</h3>
+                    <p class="movie-meta">${formatMeta(movie)}</p>
+                    <p class="movie-meta">Rating: ${formatRating(movie)}</p>
+                    <div class="movie-actions">
+                        <button class="btn-watch" type="button">WATCH</button>
+                        <button class="btn-add-list" type="button">+ ADD LIST</button>
+                    </div>
+                </div>
+            `;
+
+            const watchButton = card.querySelector(".btn-watch");
+            if (watchButton) {
+                watchButton.addEventListener("click", async () => {
+                    const withTrailer = await ensureTrailerOnDemand(movie);
+                    openFeaturedPlayer(withTrailer, card);
+                });
+            }
+
+            container.appendChild(card);
+        });
+
+        applyPosterFallbacks(container);
+    }
+
+    function bindNewReleasesFilters(allMovies) {
+        const currentYear = new Date().getFullYear();
+
+        const getBasePool = async (tab) => {
+            const recentMovies = allMovies.filter((m) => Number(m.startYear) >= currentYear - 2);
+            const moviePool = recentMovies.length >= 6 ? recentMovies : allMovies;
+
+            if (tab === "new-movies") {
+                return moviePool;
+            }
+            if (tab === "new-series") {
+                const tv = await fetchTvShows("series");
+                const recentTv = tv.filter((m) => Number(m.startYear) >= currentYear - 2);
+                return recentTv.length >= 4 ? recentTv : tv;
+            }
+            if (tab === "new-originals") {
+                const tv = await fetchTvShows("originals");
+                const recentTv = tv.filter((m) => Number(m.startYear) >= currentYear - 2);
+                return recentTv.length >= 4 ? recentTv : tv;
+            }
+            return moviePool;
         };
+
+        const tabs = Array.from(document.querySelectorAll(".new-releases-block .topline-links .topline-link"));
+        const chips = Array.from(document.querySelectorAll(".new-releases-block .chip-row .chip"));
+        const sortButtons = Array.from(document.querySelectorAll(".new-releases-block .sort-group .mini-pill"));
+        const ratingInput = document.getElementById("nrRatingFilter");
+        const ratingValue = document.getElementById("nrRatingValue");
+        const searchInput = document.getElementById("nrSearchInput");
+        const searchButton = document.getElementById("nrSearchBtn");
+
+        if (!ratingInput || !ratingValue) {
+            return;
+        }
+
+        const state = {
+            tab: "new-movies",
+            selectedGenres: [],
+            sortMode: "newest",
+            minRating: 0,
+            query: ""
+        };
+
+        const render = async () => {
+            const container = document.getElementById("newReleasesCards");
+            if (container) {
+                container.innerHTML = "<p style=\"color:var(--text-secondary);padding:20px 0;text-align:center;\">Loading...</p>";
+            }
+
+            let pool = await getBasePool(state.tab);
+
+            if (state.selectedGenres.length > 0) {
+                const normalized = state.selectedGenres.map(normalizeGenre);
+                const filtered = pool.filter((m) =>
+                    (Array.isArray(m.genres) ? m.genres : []).some((g) => normalized.includes(normalizeGenre(g)))
+                );
+                if (filtered.length > 0) {
+                    pool = filtered;
+                }
+            }
+
+            pool = pool.filter((m) => getMovieNumericRating(m) >= state.minRating);
+
+            const q = state.query.trim().toLowerCase();
+            if (q) {
+                pool = pool.filter((m) => getTitle(m).toLowerCase().includes(q));
+            }
+
+            if (state.sortMode === "newest") {
+                pool = [...pool].sort((a, b) => Number(b.startYear || 0) - Number(a.startYear || 0));
+            } else if (state.sortMode === "az") {
+                pool = [...pool].sort((a, b) => getTitle(a).localeCompare(getTitle(b)));
+            } else if (state.sortMode === "rating") {
+                pool = [...pool].sort((a, b) => getMovieNumericRating(b) - getMovieNumericRating(a));
+            }
+
+            ratingValue.textContent = state.minRating.toFixed(1);
+            renderNewReleasesCards(pool.slice(0, HOME_MOVIE_LIMIT));
+        };
+
+        tabs.forEach((tab) => {
+            tab.addEventListener("click", () => {
+                tabs.forEach((t) => t.classList.remove("active"));
+                tab.classList.add("active");
+                state.tab = tab.dataset.tab || "new-movies";
+                render();
+            });
+        });
 
         chips.forEach((chip) => {
             chip.addEventListener("click", () => {
                 chip.classList.toggle("active");
-                renderFromSelectedChips();
+                state.selectedGenres = chips
+                    .filter((c) => c.classList.contains("active"))
+                    .map((c) => c.dataset.genre || c.textContent || "");
+                render();
             });
         });
 
-        renderFromSelectedChips();
+        sortButtons.forEach((btn) => {
+            btn.addEventListener("click", () => {
+                sortButtons.forEach((b) => b.classList.remove("active"));
+                btn.classList.add("active");
+                state.sortMode = btn.dataset.sort || "newest";
+                render();
+            });
+        });
+
+        ratingInput.addEventListener("input", () => {
+            state.minRating = Number(ratingInput.value);
+            render();
+        });
+
+        const doSearch = () => {
+            state.query = searchInput ? searchInput.value : "";
+            render();
+        };
+
+        if (searchButton) {
+            searchButton.addEventListener("click", doSearch);
+        }
+        if (searchInput) {
+            searchInput.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") {
+                    doSearch();
+                }
+            });
+        }
+
+        render();
+    }
+
+    function bindTrendGenreFilters(movies) {
+        const chips = Array.from(document.querySelectorAll(".trends-block .chip-row .chip"));
+        const tabs = Array.from(document.querySelectorAll(".trends-block .topline-links .topline-link"));
+        if (chips.length === 0) {
+            return;
+        }
+
+        let activeTab = "popular";
+
+        const getMoviesForTab = (selectedGenres) => {
+            if (activeTab === "popular") {
+                return getTrendMoviesByGenres(movies, selectedGenres);
+            }
+
+            // Apply genre filter first (for premieres / recently added)
+            let pool = movies;
+            if (selectedGenres.length > 0) {
+                const normalized = selectedGenres.map(normalizeGenre);
+                const genreFiltered = movies.filter((m) =>
+                    (Array.isArray(m.genres) ? m.genres : []).some((g) => normalized.includes(normalizeGenre(g)))
+                );
+                if (genreFiltered.length >= 4) {
+                    pool = genreFiltered;
+                }
+            }
+
+            if (activeTab === "premieres") {
+                const currentYear = new Date().getFullYear();
+                const recent = pool.filter((m) => Number(m.startYear) >= currentYear - 2);
+                const base = recent.length >= 4 ? recent : pool;
+                return [...base]
+                    .sort((a, b) => Number(b.startYear || 0) - Number(a.startYear || 0))
+                    .slice(0, TREND_MOVIE_LIMIT);
+            }
+
+            if (activeTab === "recently") {
+                return [...pool]
+                    .sort((a, b) => Number(b.startYear || 0) - Number(a.startYear || 0))
+                    .slice(0, TREND_MOVIE_LIMIT);
+            }
+
+            return getTrendMoviesByGenres(movies, selectedGenres);
+        };
+
+        const renderFromState = () => {
+            const selectedGenres = chips
+                .filter((chip) => chip.classList.contains("active"))
+                .map((chip) => chip.dataset.genre || chip.textContent || "");
+
+            const trendMovies = getMoviesForTab(selectedGenres);
+            renderPosterRow("trendCards", trendMovies);
+            setupScrollCarousel("trendCards", "trendPrev", "trendNext");
+        };
+
+        tabs.forEach((tab) => {
+            tab.addEventListener("click", () => {
+                tabs.forEach((t) => t.classList.remove("active"));
+                tab.classList.add("active");
+                activeTab = tab.dataset.trend || "popular";
+                renderFromState();
+            });
+        });
+
+        chips.forEach((chip) => {
+            chip.addEventListener("click", () => {
+                chip.classList.toggle("active");
+                renderFromState();
+            });
+        });
+
+        renderFromState();
     }
 
     function bindMovieGenreFilters(initialMovies) {
@@ -1895,6 +2133,7 @@
 
             renderCarouselTrailers(movies);
             bindTrendGenreFilters(movies);
+            bindNewReleasesFilters(movies);
             const movieFilters = bindMovieGenreFilters(movies);
             bindMoviesTabSwitcher(movies, movieFilters);
             bindFeaturedPlayerControls();

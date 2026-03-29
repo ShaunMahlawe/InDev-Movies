@@ -97,9 +97,9 @@
             <div class="section-topline">
                 <h2 class="trends-title"><i class="fa fa-line-chart" aria-hidden="true"></i> Trends Now</h2>
                 <div class="topline-links">
-                    <button class="topline-link active" type="button"><i class="fa fa-fire" aria-hidden="true"></i> Popular</button>
-                    <button class="topline-link" type="button"><i class="fa fa-star" aria-hidden="true"></i> Premieres</button>
-                    <button class="topline-link" type="button"><i class="fa fa-plus" aria-hidden="true"></i> Recently Added</button>
+                    <button class="topline-link active" type="button" data-trend="popular"><i class="fa fa-fire" aria-hidden="true"></i> Popular</button>
+                    <button class="topline-link" type="button" data-trend="premieres"><i class="fa fa-star" aria-hidden="true"></i> Premieres</button>
+                    <button class="topline-link" type="button" data-trend="recently"><i class="fa fa-plus" aria-hidden="true"></i> Recently Added</button>
                 </div>
             </div>
 
@@ -122,6 +122,43 @@
                 <button id="trendNext" class="trend-nav-btn" type="button" aria-label="Scroll trends right">
                     <i class="fa fa-angle-right" aria-hidden="true"></i>
                 </button>
+            </div>
+        </section>
+
+        <section class="about-us-block">
+            <div class="about-us-inner">
+                <div class="about-posters">
+                    <img class="about-poster about-poster-back" src="../omassets/parasite-2019 poster.jpg" alt="Movie poster" loading="lazy">
+                    <img class="about-poster about-poster-mid" src="../omassets/oppenheimer.jpg" alt="Movie poster" loading="lazy">
+                    <img class="about-poster about-poster-front" src="../omassets/Sinners-2025-Film-Poster.webp" alt="Movie poster" loading="lazy">
+                </div>
+                <div class="about-content">
+                    <span class="about-label">ABOUT US</span>
+                    <h2 class="about-heading">Best Pick For Hassle-Free<br>Streaming Experience.<br><span>InDev Movies offers a seamless streaming experience, allowing you to enjoy your favorite films and shows effortlessly.</span></h2>
+                    <ul class="about-features">
+                        <li class="about-feature">
+                            <div class="about-feature-icon"><i class="fa fa-plane" aria-hidden="true"></i></div>
+                            <div>
+                                <h4>Access While Traveling</h4>
+                                <p>Stream your favorite movies from anywhere in the world with InDev Movies. Stay connected to entertainment, no matter where you go.</p>
+                            </div>
+                        </li>
+                        <li class="about-feature">
+                            <div class="about-feature-icon"><i class="fa fa-wifi" aria-hidden="true"></i></div>
+                            <div>
+                                <h4>Stream With No Interruptions</h4>
+                                <p>Enjoy high-quality streaming without buffering or interruptions. Dive straight into the action with InDev Movies.</p>
+                            </div>
+                        </li>
+                        <li class="about-feature">
+                            <div class="about-feature-icon"><i class="fa fa-shield" aria-hidden="true"></i></div>
+                            <div>
+                                <h4>Stay Secure At All Times</h4>
+                                <p>Your privacy matters. InDev Movies ensures a secure viewing experience, protecting your data while you enjoy your films.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </section>
 
@@ -152,11 +189,11 @@
                     <button class="mini-pill active" type="button" data-sort="latest">Latest</button>
                     <button class="mini-pill" type="button" data-sort="year">Year</button>
                     <button class="mini-pill" type="button" data-sort="az">A-Z</button>
-                </div>
-                <div class="rating-group">
-                    <span class="rating-star">★</span>
-                    <input type="range" min="0" max="10" step="0.1" value="5" aria-label="rating filter" id="movieRatingFilter">
-                    <span id="movieRatingValue">5.0</span>
+                    <div class="rating-group">
+                        <span class="rating-star">★</span>
+                        <input type="range" min="0" max="10" step="0.1" value="5" aria-label="rating filter" id="movieRatingFilter">
+                        <span id="movieRatingValue">5.0</span>
+                    </div>
                 </div>
                 <div class="search-group" role="search" aria-label="Movie search">
                     <i class="fa fa-search" aria-hidden="true"></i>
@@ -167,6 +204,51 @@
 
             <section class="movie-grid" id="movie-card">
                 <div id="movieCards" class="movie-grid" aria-live="polite"></div>
+            </section>
+        </section>
+
+        <section class="content-block new-releases-block">
+            <div class="section-topline movies-head">
+                <h2 class="movies-title"><i class="fa fa-certificate" aria-hidden="true"></i> New Releases</h2>
+                <div class="topline-links">
+                    <button class="topline-link active" type="button" data-tab="new-movies">New Movies</button>
+                    <button class="topline-link" type="button" data-tab="new-series">New Series</button>
+                    <button class="topline-link" type="button" data-tab="new-originals">New Original Series</button>
+                </div>
+            </div>
+
+            <div class="chip-row">
+                <button class="chip" type="button" data-genre="Action">Action</button>
+                <button class="chip" type="button" data-genre="Adventure">Adventure</button>
+                <button class="chip" type="button" data-genre="Animation">Animation</button>
+                <button class="chip" type="button" data-genre="Biography">Biography</button>
+                <button class="chip" type="button" data-genre="Crime">Crime</button>
+                <button class="chip" type="button" data-genre="Comedy">Comedy</button>
+                <button class="chip" type="button" data-genre="Documentary">Documentary</button>
+                <button class="chip" type="button" data-genre="Drama">Drama</button>
+            </div>
+
+            <div class="movies-toolbar">
+                <div class="sort-group">
+                    <span>Sort by:</span>
+                    <button class="mini-pill active" type="button" data-sort="newest">Newest</button>
+                    <button class="mini-pill" type="button" data-sort="az">A-Z</button>
+                    <button class="mini-pill" type="button" data-sort="rating">Top Rated</button>
+                    <div class="rating-group">
+                        <span class="rating-star">★</span>
+                        <input type="range" min="0" max="10" step="0.1" value="0" aria-label="new releases rating filter" id="nrRatingFilter">
+                        <span id="nrRatingValue">0.0</span>
+                    </div>
+                </div>
+                <div class="search-group" role="search" aria-label="New releases search">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                    <input type="search" id="nrSearchInput" placeholder="Search new releases" aria-label="Search new releases">
+                    <button class="search-btn" type="button" id="nrSearchBtn">Search</button>
+                </div>
+            </div>
+
+            <section class="movie-grid" id="nr-card">
+                <div id="newReleasesCards" class="movie-grid" aria-live="polite"></div>
             </section>
         </section>
 
