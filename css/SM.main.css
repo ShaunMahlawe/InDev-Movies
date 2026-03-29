@@ -190,14 +190,77 @@ nav a {
 }
 
 .profile-badge {
-    width: 30px;
-    height: 30px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
-    border: 1.5px solid rgba(255, 255, 255, 0.95);
-    font-size: 0.76rem;
-    font-weight: 700;
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.08);
+    font-size: 0.9rem;
+    font-weight: 600;
     line-height: 1;
     color: #ffffff;
+}
+
+.profile-badge i {
+    font-size: 0.9rem;
+}
+
+.profile-menu {
+    position: relative;
+}
+
+.profile-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    min-width: 176px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    background: rgba(10, 12, 20, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 12px;
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.45);
+    padding: 6px;
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    z-index: 1205;
+}
+
+.profile-dropdown li {
+    width: 100%;
+}
+
+.profile-dropdown a {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: flex-start;
+    border-radius: 8px;
+    padding: 9px 10px;
+    font-size: 0.86rem;
+    color: rgba(242, 246, 255, 0.9);
+    text-decoration: none;
+}
+
+.profile-dropdown a i {
+    width: 14px;
+    text-align: center;
+    opacity: 0.92;
+}
+
+.profile-dropdown a:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+}
+
+.profile-menu.is-open .profile-dropdown {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
 }
 
 .mobile-menu-toggle {
@@ -816,6 +879,51 @@ nav a {
     font-size: 0.86rem;
 }
 
+.search-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: min(100%, 340px);
+    padding: 6px 8px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.search-group i {
+    color: rgba(242, 246, 255, 0.76);
+    font-size: 0.88rem;
+}
+
+.search-group input {
+    flex: 1;
+    min-width: 120px;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: #ffffff;
+    font-size: 0.86rem;
+}
+
+.search-group input::placeholder {
+    color: rgba(242, 246, 255, 0.56);
+}
+
+.search-btn {
+    border: 0;
+    border-radius: 999px;
+    padding: 6px 12px;
+    background: var(--primary-red-soft);
+    color: #ffffff;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.search-btn:hover {
+    background: rgba(255, 22, 58, 0.34);
+}
+
 .mini-pill {
     border: 1px solid rgba(255, 255, 255, 0.16);
     background: rgba(255, 255, 255, 0.08);
@@ -882,6 +990,27 @@ nav a {
 
 .movie-grid > .featured-player {
     grid-column: 1 / -1;
+}
+
+.movie-empty-state {
+    grid-column: 1 / -1;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.04);
+    padding: 20px;
+    color: rgba(242, 246, 255, 0.88);
+}
+
+.movie-empty-state h3 {
+    margin: 0 0 6px;
+    font-size: 1rem;
+    color: #ffffff;
+}
+
+.movie-empty-state p {
+    margin: 0;
+    font-size: 0.86rem;
+    color: var(--text-secondary);
 }
 
 .movie-card {

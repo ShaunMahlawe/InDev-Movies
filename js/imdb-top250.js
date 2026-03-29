@@ -1309,6 +1309,16 @@
 
         container.innerHTML = "";
 
+        if (!Array.isArray(movies) || movies.length === 0) {
+            container.innerHTML = `
+                <article class="movie-empty-state" aria-live="polite">
+                    <h3>No matches found</h3>
+                    <p>Try a different title or loosen your filters.</p>
+                </article>
+            `;
+            return;
+        }
+
         movies.forEach((movie) => {
             const card = document.createElement("article");
             card.className = "movie-card";
@@ -1599,6 +1609,8 @@
         const sortButtons = Array.from(document.querySelectorAll(".movies-block .sort-group .mini-pill"));
         const ratingInput = document.getElementById("movieRatingFilter");
         const ratingValue = document.getElementById("movieRatingValue");
+        const searchInput = document.getElementById("movieSearchInput");
+        const searchButton = document.getElementById("movieSearchBtn");
 
         if (chips.length === 0 || !ratingInput || !ratingValue) {
             return null;
@@ -1607,13 +1619,18 @@
         const state = {
             selectedGenres: [],
             sortMode: (sortButtons.find((button) => button.classList.contains("active"))?.dataset.sort || "latest").toLowerCase(),
-            minRating: Number(ratingInput.value || 0)
+            minRating: Number(ratingInput.value || 0),
+            query: ""
         };
 
         const renderFromSelectedChips = () => {
             const genreFilteredMovies = getMoviesMatchingGenres(currentMovies, state.selectedGenres);
             const ratingFilteredMovies = genreFilteredMovies.filter((movie) => getMovieNumericRating(movie) >= state.minRating);
-            const sortedMovies = sortHomeMovies(ratingFilteredMovies, state.sortMode);
+            const normalizedQuery = state.query.trim().toLowerCase();
+            const searchFilteredMovies = normalizedQuery
+                ? ratingFilteredMovies.filter((movie) => getTitle(movie).toLowerCase().includes(normalizedQuery))
+                : ratingFilteredMovies;
+            const sortedMovies = sortHomeMovies(searchFilteredMovies, state.sortMode);
             const homeMovies = sortedMovies.slice(0, HOME_MOVIE_LIMIT);
 
             ratingValue.textContent = state.minRating.toFixed(1);
@@ -1647,6 +1664,28 @@
             renderFromSelectedChips();
         });
 
+        if (searchInput) {
+            searchInput.addEventListener("input", () => {
+                state.query = searchInput.value || "";
+                renderFromSelectedChips();
+            });
+
+            searchInput.addEventListener("keydown", (event) => {
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    state.query = searchInput.value || "";
+                    renderFromSelectedChips();
+                }
+            });
+        }
+
+        if (searchButton) {
+            searchButton.addEventListener("click", () => {
+                state.query = searchInput?.value || "";
+                renderFromSelectedChips();
+            });
+        }
+
         // Set initial track fill
         const initPct = ((ratingInput.value - ratingInput.min) / (ratingInput.max - ratingInput.min)) * 100;
         ratingInput.style.setProperty("--val", initPct + "%");
@@ -1659,11 +1698,15 @@
                 state.selectedGenres = [];
                 state.sortMode = "latest";
                 state.minRating = Number(ratingInput.min || 0);
+                state.query = "";
                 chips.forEach((chip) => chip.classList.remove("active"));
                 sortButtons.forEach((btn, i) => btn.classList.toggle("active", i === 0));
                 ratingInput.value = ratingInput.min;
                 ratingInput.style.setProperty("--val", "0%");
                 ratingValue.textContent = Number(ratingInput.min).toFixed(1);
+                if (searchInput) {
+                    searchInput.value = "";
+                }
                 renderFromSelectedChips();
             }
         };

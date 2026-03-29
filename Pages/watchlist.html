@@ -44,7 +44,6 @@
             <li><a href="../Pages/Movie Library Page.html">Library</a></li>
             <li><a href="../Pages/Movie Library Page.html">Movies</a></li>
             <li><a href="../Pages/watchlist.html">My List</a></li>
-            <li><a href="../index.html">Login</a></li>
           </ul>
 
           <ul class="nav-main">
@@ -52,16 +51,22 @@
             <li><a class="hide-on-mobile nav-main-link" href="../Pages/Movie Library Page.html">Library</a></li>
             <li><a class="hide-on-mobile nav-main-link" href="../Pages/Movie Library Page.html">Movies</a></li>
             <li><a class="hide-on-mobile nav-main-link active" href="../Pages/watchlist.html">My List</a></li>
-            <li><a class="hide-on-mobile nav-main-link" href="../index.html">Login</a></li>
           </ul>
         </nav>
       </div>
 
       <div class="nav-right">
         <ul class="nav-icons hide-on-mobile">
-          <li><a href="#" aria-label="Search"><i class="fa fa-search" aria-hidden="true"></i></a></li>
-          <li><a href="#" aria-label="Notifications"><i class="fa fa-bell" aria-hidden="true"></i></a></li>
-          <li><a href="#" class="profile-badge" aria-label="Profile">A</a></li>
+          <li class="profile-menu">
+            <a href="#" class="profile-badge" aria-label="Profile menu">
+              <i class="fa fa-user" aria-hidden="true"></i>
+            </a>
+            <ul class="profile-dropdown" aria-label="Profile menu">
+              <li><a href="#"><i class="fa fa-cog" aria-hidden="true"></i><span>Settings</span></a></li>
+              <li><a href="#"><i class="fa fa-bell" aria-hidden="true"></i><span>Notifications</span></a></li>
+              <li><a href="#"><i class="fa fa-sign-out" aria-hidden="true"></i><span>Logout</span></a></li>
+            </ul>
+          </li>
         </ul>
         <ul class="mobile-menu-toggle">
           <li onclick="showSidebar()">
@@ -87,7 +92,7 @@
 
   <div class="watchlistHeading-container mt-3 mb-4 p-4">
         <h1 class="text-start text-white">My Watch List</h1>
-        <div id="watchlistHeading" class="movie-body"></div>
+      <div class="movie-body watchlist-heading"></div>
     </div>
 
     <div class="watchlistMovie-container p-4">
@@ -112,7 +117,7 @@
   </div>
   </div>
 
-  <div div class="card" style="width: 18rem;">
+  <div class="card" style="width: 18rem;">
   <img src="../omassets/parasite-2019 poster.jpg" class="card-img-top" alt="...">
   <div class="card-body">
     <h5 class="card-title">Parasite</h5>
@@ -211,7 +216,7 @@
 
   <div class="watchlistHeading-container mt-3 mb-4 p-4">
         <h1 class="text-start text-white">Recommended Movies and Shows </h1>
-        <div id="watchlistHeading" class="movie-body"></div>
+      <div class="movie-body watchlist-heading"></div>
     </div>
 
     <div class="watchlistMovie-container p-4">
@@ -236,7 +241,7 @@
   </div>
   </div>
 
-  <div div class="card" style="width: 18rem;">
+  <div class="card" style="width: 18rem;">
   <img src="../omassets/Intrution movie poster.jpg" class="card-img-top" alt="...">
   <div class="card-body">
     <h5 class="card-title">Intrution</h5>
@@ -257,7 +262,7 @@
 
   <div class="watchlistHeading-container mt-3 mb-4 p-4">
         <h1 class="text-start text-white">New Releases</h1>
-        <div id="watchlistHeading" class="movie-body"></div>
+      <div class="movie-body watchlist-heading"></div>
     </div>
 
     <div class="watchlistMovie-container p-4">
@@ -282,7 +287,7 @@
     </div>
   </div>
 
-  <div div class="card" style="width: 18rem;">
+  <div class="card" style="width: 18rem;">
   <img src="../omassets/love hurts movie poster.jpg" class="card-img-top" alt="...">
   <div class="card-body">
     <h5 class="card-title">Love Hurts</h5>
@@ -359,8 +364,9 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="../js/navbar.js?v=2"></script>
   <script src="../js/api-config.js?v=1"></script>
-  <script src="../js/imdb-top250.js?v=api-fallback-23"></script>
+  <script src="../js/imdb-top250.js?v=api-fallback-24"></script>
 
 </body>
 
