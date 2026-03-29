@@ -160,23 +160,40 @@
             </section>
         </section>
 
-        <section class="featured-player" id="featuredPlayer">
+        <section class="featured-player is-closed" id="featuredPlayer">
+            <div class="featured-media" id="featuredMedia"></div>
             <div class="featured-overlay">
-                <p class="featured-status">Watching</p>
-                <h3 id="featuredTitle">Featured Movie</h3>
-                <div class="player-controls">
-                    <div class="control-left">
-                        <button type="button">❚❚</button>
-                        <span id="featuredRuntime">00:00</span>
+                <div class="featured-top">
+                    <div class="featured-heading">
+                        <h3 id="featuredTitle">Featured Movie</h3>
+                        <p class="featured-watching"><i class="fa fa-eye" aria-hidden="true"></i> <span id="featuredWatching">Watching</span></p>
                     </div>
-                    <div class="progress-track">
-                        <div class="progress-fill"></div>
-                    </div>
-                    <div class="control-right">
-                        <button type="button">🔈</button>
-                        <button type="button">⤢</button>
+                    <div class="featured-icon-actions" aria-hidden="true">
+                        <button type="button" aria-label="Like"><i class="fa fa-heart"></i></button>
+                        <button type="button" aria-label="Add"><i class="fa fa-plus"></i></button>
                     </div>
                 </div>
+
+                <div class="featured-controls" aria-hidden="true">
+                    <div class="featured-controls-left">
+                        <button type="button" id="featuredPlayPauseBtn" aria-label="Play or pause"><i class="fa fa-pause" id="featuredPlayPauseIcon"></i></button>
+                        <button type="button" id="featuredRewindBtn" aria-label="Rewind 10 seconds"><i class="fa fa-undo"></i></button>
+                        <span id="featuredCurrentTime">28:04</span>
+                    </div>
+                    <div class="featured-progress-track" id="featuredProgressTrack" role="slider" aria-label="Playback position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="30">
+                        <div class="featured-progress-fill" id="featuredProgressFill"></div>
+                        <div class="featured-progress-thumb" id="featuredProgressThumb"></div>
+                    </div>
+                    <div class="featured-controls-right">
+                        <span id="featuredTotalTime">-01:40:06</span>
+                        <button type="button" id="featuredCcBtn" aria-label="Closed captions">CC</button>
+                        <button type="button" id="featuredVolumeBtn" aria-label="Mute or unmute"><i class="fa fa-volume-up" id="featuredVolumeIcon"></i></button>
+                        <input type="range" id="featuredVolumeRange" class="featured-volume-range" min="0" max="100" step="1" value="100" aria-label="Volume">
+                        <button type="button" id="featuredExpandBtn" aria-label="Fullscreen"><i class="fa fa-expand"></i></button>
+                    </div>
+                </div>
+
+                <div class="featured-live-captions" id="featuredLiveCaptions" hidden>Live captions</div>
             </div>
         </section>
 
@@ -189,7 +206,7 @@
   <script src="../js/carousel.js"></script>
   <script src="../js/navbar.js"></script>
     <script src="../js/api-config.js?v=1"></script>
-    <script src="../js/imdb-top250.js?v=api-fallback-14"></script>
+    <script src="../js/imdb-top250.js?v=api-fallback-23"></script>
   <script src="../js/main.js"></script>
 
 </body>
