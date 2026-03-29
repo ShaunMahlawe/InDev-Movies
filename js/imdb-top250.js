@@ -5,6 +5,9 @@
     const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
     const TMDB_SITE_BASE = "https://www.themoviedb.org/movie";
     const TMDB_BEARER_TOKEN = "";
+    const TREND_MOVIE_LIMIT = 23;
+    const HOME_MOVIE_LIMIT = 21;
+    const TMDB_FALLBACK_PAGE_COUNT = 2;
     const TMDB_GENRE_MAP = {
         12: "Adventure",
         14: "Fantasy",
@@ -98,7 +101,7 @@
     function getTrendMoviesByGenre(movies, genreLabel) {
         const preferred = movies.filter((movie) => movieHasGenre(movie, genreLabel));
         const selected = preferred.length >= 6 ? preferred : movies;
-        return selected.slice(0, 14);
+        return selected.slice(0, TREND_MOVIE_LIMIT);
     }
 
     function getTrendMoviesByGenres(movies, genreLabels) {
@@ -107,7 +110,7 @@
             : [];
 
         if (normalizedGenres.length === 0) {
-            return movies.slice(0, 14);
+            return movies.slice(0, TREND_MOVIE_LIMIT);
         }
 
         const preferred = movies.filter((movie) => {
@@ -116,7 +119,72 @@
         });
 
         const selected = preferred.length >= 6 ? preferred : movies;
-        return selected.slice(0, 14);
+        return selected.slice(0, TREND_MOVIE_LIMIT);
+    }
+
+    function getMoviesMatchingGenres(movies, genreLabels) {
+        const normalizedGenres = Array.isArray(genreLabels)
+            ? genreLabels.map((genre) => normalizeGenre(genre)).filter(Boolean)
+            : [];
+
+        if (normalizedGenres.length === 0) {
+            return movies;
+        }
+
+        const preferred = movies.filter((movie) => {
+            const genres = Array.isArray(movie.genres) ? movie.genres : [];
+            return genres.some((genre) => normalizedGenres.includes(normalizeGenre(genre)));
+        });
+
+        return preferred.length > 0 ? preferred : movies;
+    }
+
+    function getHomeMoviesByGenres(movies, genreLabels) {
+        return getMoviesMatchingGenres(movies, genreLabels).slice(0, HOME_MOVIE_LIMIT);
+    }
+
+    function getMovieNumericRating(movie) {
+        const rating = Number(movie.averageRating || movie.rating);
+        return Number.isFinite(rating) ? rating : 0;
+    }
+
+    function sortHomeMovies(movies, sortMode) {
+        const sortableMovies = [...movies];
+
+        if (sortMode === "year") {
+            sortableMovies.sort((leftMovie, rightMovie) => {
+                const leftYear = Number(leftMovie.startYear || leftMovie.year || 0);
+                const rightYear = Number(rightMovie.startYear || rightMovie.year || 0);
+                return rightYear - leftYear;
+            });
+            return sortableMovies;
+        }
+
+        if (sortMode === "az") {
+            sortableMovies.sort((leftMovie, rightMovie) => {
+                return getTitle(leftMovie).localeCompare(getTitle(rightMovie));
+            });
+            return sortableMovies;
+        }
+
+        return sortableMovies;
+    }
+
+    async function fetchTmdbTrendingPage(page, headers) {
+        const url = new URL(TMDB_TRENDING_URL);
+        url.searchParams.set("page", String(page));
+
+        const response = await fetch(url.toString(), {
+            method: "GET",
+            headers
+        });
+
+        if (!response.ok) {
+            throw new Error(`TMDB fallback request failed (${response.status})`);
+        }
+
+        const payload = await response.json();
+        return Array.isArray(payload.results) ? payload.results : [];
     }
 
     function applyPosterFallbacks(scopeElement) {
@@ -271,17 +339,11 @@
             return [];
         }
 
-        const response = await fetch(TMDB_TRENDING_URL, {
-            method: "GET",
-            headers
+        const pageRequests = Array.from({ length: TMDB_FALLBACK_PAGE_COUNT }, (_unused, index) => {
+            return fetchTmdbTrendingPage(index + 1, headers);
         });
-
-        if (!response.ok) {
-            throw new Error(`TMDB fallback request failed (${response.status})`);
-        }
-
-        const payload = await response.json();
-        const results = Array.isArray(payload.results) ? payload.results.slice(0, 24) : [];
+        const pageResults = await Promise.all(pageRequests);
+        const results = pageResults.flat();
 
         const trailerTargets = results.slice(0, 6);
         const trailerPairs = await Promise.all(trailerTargets.map(async (movie) => {
@@ -609,6 +671,60 @@
         renderFromSelectedChips();
     }
 
+    function bindMovieGenreFilters(movies) {
+        const chips = Array.from(document.querySelectorAll(".movies-block .chip-row .chip"));
+        const sortButtons = Array.from(document.querySelectorAll(".movies-block .sort-group .mini-pill"));
+        const ratingInput = document.getElementById("movieRatingFilter");
+        const ratingValue = document.getElementById("movieRatingValue");
+
+        if (chips.length === 0 || !ratingInput || !ratingValue) {
+            return;
+        }
+
+        const state = {
+            selectedGenres: [],
+            sortMode: (sortButtons.find((button) => button.classList.contains("active"))?.dataset.sort || "latest").toLowerCase(),
+            minRating: Number(ratingInput.value || 0)
+        };
+
+        const renderFromSelectedChips = () => {
+            const genreFilteredMovies = getMoviesMatchingGenres(movies, state.selectedGenres);
+            const ratingFilteredMovies = genreFilteredMovies.filter((movie) => getMovieNumericRating(movie) >= state.minRating);
+            const sortedMovies = sortHomeMovies(ratingFilteredMovies, state.sortMode);
+            const homeMovies = sortedMovies.slice(0, HOME_MOVIE_LIMIT);
+
+            ratingValue.textContent = state.minRating.toFixed(1);
+            renderHomeCards(homeMovies);
+        };
+
+        chips.forEach((chip) => {
+            chip.addEventListener("click", () => {
+                chip.classList.toggle("active");
+                state.selectedGenres = chips
+                    .filter((activeChip) => activeChip.classList.contains("active"))
+                    .map((activeChip) => activeChip.dataset.genre || activeChip.textContent || "");
+                renderFromSelectedChips();
+            });
+        });
+
+        sortButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                sortButtons.forEach((sortButton) => {
+                    sortButton.classList.toggle("active", sortButton === button);
+                });
+                state.sortMode = (button.dataset.sort || "latest").toLowerCase();
+                renderFromSelectedChips();
+            });
+        });
+
+        ratingInput.addEventListener("input", () => {
+            state.minRating = Number(ratingInput.value || 0);
+            renderFromSelectedChips();
+        });
+
+        renderFromSelectedChips();
+    }
+
     function renderFeaturedPlayer(movie) {
         const featured = document.getElementById("featuredPlayer");
         const title = document.getElementById("featuredTitle");
@@ -751,13 +867,12 @@
     async function loadMovies() {
         try {
             const movies = await fetchTop250();
-            const homeMovies = movies.slice(0, 12);
-            const recommendedMovies = movies.slice(12, 18);
+            const recommendedMovies = movies.slice(HOME_MOVIE_LIMIT, HOME_MOVIE_LIMIT + 6);
             const watchlistMovies = movies.slice(0, 8);
 
             renderCarouselTrailers(movies);
             bindTrendGenreFilters(movies);
-            renderHomeCards(homeMovies);
+            bindMovieGenreFilters(movies);
             renderFeaturedPlayer(movies[6]);
             renderPosterRow("recommendedCards", recommendedMovies);
             renderWatchlistCards(watchlistMovies);
