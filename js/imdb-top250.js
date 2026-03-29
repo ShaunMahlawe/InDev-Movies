@@ -550,8 +550,71 @@
         player: null,
         progressTimerId: null,
         captionsEnabled: false,
-        sessionId: 0
+        sessionId: 0,
+        overlayIdleTimerId: null,
+        overlayActivityBound: false
     };
+
+    function clearFeaturedOverlayIdleTimer() {
+        if (featuredYouTubeState.overlayIdleTimerId) {
+            window.clearTimeout(featuredYouTubeState.overlayIdleTimerId);
+            featuredYouTubeState.overlayIdleTimerId = null;
+        }
+    }
+
+    function setFeaturedOverlayVisible(isVisible) {
+        const featured = document.getElementById("featuredPlayer");
+        if (!featured) {
+            return;
+        }
+
+        featured.classList.toggle("cursor-active", Boolean(isVisible));
+    }
+
+    function markFeaturedCursorActive() {
+        const featured = document.getElementById("featuredPlayer");
+        if (!featured || featured.classList.contains("is-closed")) {
+            return;
+        }
+
+        setFeaturedOverlayVisible(true);
+        clearFeaturedOverlayIdleTimer();
+        featuredYouTubeState.overlayIdleTimerId = window.setTimeout(() => {
+            setFeaturedOverlayVisible(false);
+            featuredYouTubeState.overlayIdleTimerId = null;
+        }, 1800);
+    }
+
+    function bindFeaturedOverlayActivity() {
+        if (featuredYouTubeState.overlayActivityBound) {
+            return;
+        }
+
+        const featured = document.getElementById("featuredPlayer");
+        if (!featured) {
+            return;
+        }
+
+        featured.addEventListener("mouseenter", markFeaturedCursorActive);
+        featured.addEventListener("mousemove", markFeaturedCursorActive);
+        featured.addEventListener("pointermove", markFeaturedCursorActive);
+        featured.addEventListener("mouseleave", () => {
+            clearFeaturedOverlayIdleTimer();
+            setFeaturedOverlayVisible(false);
+        });
+        featured.addEventListener("focusin", () => {
+            clearFeaturedOverlayIdleTimer();
+            setFeaturedOverlayVisible(true);
+        });
+        featured.addEventListener("focusout", () => {
+            if (!featured.contains(document.activeElement)) {
+                clearFeaturedOverlayIdleTimer();
+                setFeaturedOverlayVisible(false);
+            }
+        });
+
+        featuredYouTubeState.overlayActivityBound = true;
+    }
 
     function formatClock(seconds) {
         const value = Math.max(0, Math.floor(Number(seconds) || 0));
@@ -880,6 +943,12 @@
         }
 
         featuredYouTubeState.sessionId += 1;
+        clearFeaturedOverlayIdleTimer();
+        setFeaturedOverlayVisible(false);
+        featured.classList.remove("has-card-anchor");
+        featured.style.removeProperty("--featured-anchor-x");
+        featured.style.removeProperty("clip-path");
+        featured.style.removeProperty("-webkit-clip-path");
 
         destroyFeaturedYouTubePlayer();
 
@@ -899,7 +968,112 @@
         syncFeaturedProgressUI();
     }
 
-    function openFeaturedPlayer(movie) {
+    function scrollToFeaturedPlayer() {
+        const featured = document.getElementById("featuredPlayer");
+        if (!featured) {
+            return;
+        }
+
+        const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+        featured.scrollIntoView({
+            behavior: reduceMotion ? "auto" : "smooth",
+            block: "center"
+        });
+    }
+
+    function applyFeaturedBubbleShape(featured, anchorX) {
+        if (!featured) {
+            return;
+        }
+
+        const width = Math.max(320, Math.round(featured.offsetWidth || 0));
+        const height = Math.max(320, Math.round(featured.offsetHeight || 0));
+        const radius = 28;
+        const notchHeight = 18;
+        const notchHalfWidth = 16;
+        const boundedAnchorX = Math.max(radius + notchHalfWidth, Math.min(width - radius - notchHalfWidth, anchorX));
+        const path = [
+            `M ${radius} ${notchHeight}`,
+            `L ${boundedAnchorX - notchHalfWidth} ${notchHeight}`,
+            `Q ${boundedAnchorX} 0 ${boundedAnchorX + notchHalfWidth} ${notchHeight}`,
+            `L ${width - radius} ${notchHeight}`,
+            `Q ${width} ${notchHeight} ${width} ${notchHeight + radius}`,
+            `L ${width} ${height - radius}`,
+            `Q ${width} ${height} ${width - radius} ${height}`,
+            `L ${radius} ${height}`,
+            `Q 0 ${height} 0 ${height - radius}`,
+            `L 0 ${notchHeight + radius}`,
+            `Q 0 ${notchHeight} ${radius} ${notchHeight}`,
+            "Z"
+        ].join(" ");
+
+        featured.style.clipPath = `path('${path}')`;
+        featured.style.setProperty("-webkit-clip-path", `path('${path}')`);
+    }
+
+    function updateFeaturedBubbleAnchor(sourceCard) {
+        const featured = document.getElementById("featuredPlayer");
+        const grid = document.getElementById("movieCards");
+
+        if (!featured || !grid || !sourceCard || !grid.contains(sourceCard)) {
+            if (featured) {
+                featured.classList.remove("has-card-anchor");
+                featured.style.removeProperty("--featured-anchor-x");
+            }
+            return;
+        }
+
+        const featuredRect = featured.getBoundingClientRect();
+        const sourceRect = sourceCard.getBoundingClientRect();
+        const anchorX = sourceRect.left + (sourceRect.width / 2) - featuredRect.left;
+        const boundedAnchorX = Math.max(48, Math.min(featuredRect.width - 48, anchorX));
+
+        featured.style.setProperty("--featured-anchor-x", `${boundedAnchorX}px`);
+        featured.classList.add("has-card-anchor");
+        applyFeaturedBubbleShape(featured, boundedAnchorX);
+    }
+
+    function placeFeaturedPlayerAtCardRow(sourceCard) {
+        const featured = document.getElementById("featuredPlayer");
+        const grid = document.getElementById("movieCards");
+
+        if (!featured || !grid || !sourceCard || !grid.contains(sourceCard)) {
+            return;
+        }
+
+        const cards = Array.from(grid.querySelectorAll(".movie-card"));
+        if (cards.length === 0) {
+            return;
+        }
+
+        const clickedIndex = cards.indexOf(sourceCard);
+        if (clickedIndex < 0) {
+            return;
+        }
+
+        const firstRowTop = cards[0].offsetTop;
+        let cardsPerRow = 1;
+        for (let idx = 0; idx < cards.length; idx += 1) {
+            if (Math.abs(cards[idx].offsetTop - firstRowTop) > 1) {
+                break;
+            }
+            cardsPerRow += idx === 0 ? 0 : 1;
+        }
+
+        cardsPerRow = Math.max(1, cardsPerRow);
+        const rowIndex = Math.floor(clickedIndex / cardsPerRow);
+        const rowEndIndex = Math.min(cards.length - 1, (rowIndex + 1) * cardsPerRow - 1);
+        const anchorCard = cards[rowEndIndex];
+
+        if (!anchorCard) {
+            grid.appendChild(featured);
+            return;
+        }
+
+        grid.insertBefore(featured, anchorCard.nextSibling);
+    }
+
+    function openFeaturedPlayer(movie, sourceCard = null) {
         const featured = document.getElementById("featuredPlayer");
         const media = document.getElementById("featuredMedia");
         const title = document.getElementById("featuredTitle");
@@ -956,10 +1130,19 @@
             watching.textContent = "Watching";
         }
 
+        placeFeaturedPlayerAtCardRow(sourceCard);
+        bindFeaturedOverlayActivity();
         featured.classList.remove("is-closed");
+        window.requestAnimationFrame(() => {
+            updateFeaturedBubbleAnchor(sourceCard);
+        });
+        markFeaturedCursorActive();
+        scrollToFeaturedPlayer();
     }
 
     function bindFeaturedPlayerControls() {
+        bindFeaturedOverlayActivity();
+
         const actionButtons = document.querySelectorAll(".featured-icon-actions button");
         const playPauseButton = document.getElementById("featuredPlayPauseBtn");
         const rewindButton = document.getElementById("featuredRewindBtn");
@@ -1149,7 +1332,7 @@
             if (watchButton) {
                 watchButton.addEventListener("click", async () => {
                     const withTrailer = await ensureTrailerOnDemand(movie);
-                    openFeaturedPlayer(withTrailer);
+                    openFeaturedPlayer(withTrailer, card);
                 });
             }
 
