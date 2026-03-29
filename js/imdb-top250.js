@@ -2,6 +2,8 @@
     const API_URL = "https://imdb236.p.rapidapi.com/api/imdb/top250-movies";
     const FALLBACK_POSTER = "../omassets/Logo.png";
     const TMDB_TRENDING_URL = "https://api.themoviedb.org/3/trending/movie/week";
+    const TMDB_TV_TRENDING_URL = "https://api.themoviedb.org/3/trending/tv/week";
+    const TMDB_TV_TOP_RATED_URL = "https://api.themoviedb.org/3/tv/top_rated";
     const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
     const TMDB_SITE_BASE = "https://www.themoviedb.org/movie";
     const TMDB_BEARER_TOKEN = "";
@@ -26,7 +28,12 @@
         10402: "Music",
         10749: "Romance",
         10751: "Family",
-        10752: "War"
+        10752: "War",
+        10759: "Action",
+        10762: "Kids",
+        10765: "Sci-Fi",
+        10766: "Drama",
+        10768: "War"
     };
     const API_HEADERS = {
         "Content-Type": "application/json",
@@ -368,6 +375,52 @@
         }));
     }
 
+    function normalizeTvShow(show) {
+        return {
+            primaryTitle: show.name || show.original_name || "Untitled",
+            primaryImage: show.poster_path ? `${TMDB_IMAGE_BASE}${show.poster_path}` : "",
+            averageRating: Number(show.vote_average || 0),
+            startYear: parseYear(show.first_air_date) || "N/A",
+            runtimeMinutes: 0,
+            description: show.overview || "",
+            genres: Array.isArray(show.genre_ids)
+                ? show.genre_ids.map((id) => TMDB_GENRE_MAP[id]).filter(Boolean)
+                : [],
+            countriesOfOrigin: [],
+            trailer: "",
+            url: `https://www.themoviedb.org/tv/${show.id}`
+        };
+    }
+
+    async function fetchTmdbTvPage(type, page, headers) {
+        const baseUrl = type === "originals" ? TMDB_TV_TOP_RATED_URL : TMDB_TV_TRENDING_URL;
+        const url = new URL(baseUrl);
+        url.searchParams.set("page", String(page));
+
+        const response = await fetch(url.toString(), { method: "GET", headers });
+        if (!response.ok) {
+            throw new Error(`TMDB TV fetch failed (${response.status})`);
+        }
+
+        const payload = await response.json();
+        return Array.isArray(payload.results) ? payload.results : [];
+    }
+
+    async function fetchTvShows(type) {
+        const headers = getTmdbAuthHeaders();
+        if (!headers) {
+            console.warn("TMDB bearer token not set. Cannot fetch TV series.");
+            return [];
+        }
+
+        const [page1, page2] = await Promise.all([
+            fetchTmdbTvPage(type, 1, headers),
+            fetchTmdbTvPage(type, 2, headers)
+        ]);
+
+        return [...page1, ...page2].map(normalizeTvShow);
+    }
+
     async function fetchTop250() {
         try {
             return await fetchTop250FromRapidApi();
@@ -671,14 +724,15 @@
         renderFromSelectedChips();
     }
 
-    function bindMovieGenreFilters(movies) {
+    function bindMovieGenreFilters(initialMovies) {
+        let currentMovies = initialMovies;
         const chips = Array.from(document.querySelectorAll(".movies-block .chip-row .chip"));
         const sortButtons = Array.from(document.querySelectorAll(".movies-block .sort-group .mini-pill"));
         const ratingInput = document.getElementById("movieRatingFilter");
         const ratingValue = document.getElementById("movieRatingValue");
 
         if (chips.length === 0 || !ratingInput || !ratingValue) {
-            return;
+            return null;
         }
 
         const state = {
@@ -688,7 +742,7 @@
         };
 
         const renderFromSelectedChips = () => {
-            const genreFilteredMovies = getMoviesMatchingGenres(movies, state.selectedGenres);
+            const genreFilteredMovies = getMoviesMatchingGenres(currentMovies, state.selectedGenres);
             const ratingFilteredMovies = genreFilteredMovies.filter((movie) => getMovieNumericRating(movie) >= state.minRating);
             const sortedMovies = sortHomeMovies(ratingFilteredMovies, state.sortMode);
             const homeMovies = sortedMovies.slice(0, HOME_MOVIE_LIMIT);
@@ -719,10 +773,31 @@
 
         ratingInput.addEventListener("input", () => {
             state.minRating = Number(ratingInput.value || 0);
+            const pct = ((ratingInput.value - ratingInput.min) / (ratingInput.max - ratingInput.min)) * 100;
+            ratingInput.style.setProperty("--val", pct + "%");
             renderFromSelectedChips();
         });
 
+        // Set initial track fill
+        const initPct = ((ratingInput.value - ratingInput.min) / (ratingInput.max - ratingInput.min)) * 100;
+        ratingInput.style.setProperty("--val", initPct + "%");
+
         renderFromSelectedChips();
+
+        return {
+            reset(newMovies) {
+                currentMovies = newMovies;
+                state.selectedGenres = [];
+                state.sortMode = "latest";
+                state.minRating = Number(ratingInput.min || 0);
+                chips.forEach((chip) => chip.classList.remove("active"));
+                sortButtons.forEach((btn, i) => btn.classList.toggle("active", i === 0));
+                ratingInput.value = ratingInput.min;
+                ratingInput.style.setProperty("--val", "0%");
+                ratingValue.textContent = Number(ratingInput.min).toFixed(1);
+                renderFromSelectedChips();
+            }
+        };
     }
 
     function renderFeaturedPlayer(movie) {
@@ -864,6 +939,60 @@
         applyPosterFallbacks(firstGrid);
     }
 
+    function bindMoviesTabSwitcher(initialMovies, movieFilters) {
+        const tabs = Array.from(document.querySelectorAll(".movies-block .topline-links .topline-link"));
+        const container = document.getElementById("movieCards");
+        const heading = document.getElementById("moviesSectionTitle");
+        if (tabs.length === 0 || !movieFilters) {
+            return;
+        }
+
+        const tabLabels = { movies: "Movies", series: "Series", originals: "Original Series" };
+        const dataCache = { movies: initialMovies, series: null, originals: null };
+
+        const updateHeading = (tabKey) => {
+            if (!heading) {
+                return;
+            }
+            heading.innerHTML = `<i class="fa fa-film" aria-hidden="true"></i> ${tabLabels[tabKey] || "Movies"}`;
+        };
+
+        tabs.forEach((tab) => {
+            tab.addEventListener("click", async () => {
+                if (tab.classList.contains("active")) {
+                    return;
+                }
+
+                tabs.forEach((t) => t.classList.remove("active"));
+                tab.classList.add("active");
+
+                const tabKey = tab.dataset.tab;
+                updateHeading(tabKey);
+
+                if (tabKey === "movies") {
+                    movieFilters.reset(dataCache.movies);
+                    return;
+                }
+
+                if (container) {
+                    container.innerHTML = "<p style=\"color:var(--text-secondary);padding:20px 0;text-align:center;\">Loading...</p>";
+                }
+
+                try {
+                    if (!dataCache[tabKey]) {
+                        dataCache[tabKey] = await fetchTvShows(tabKey);
+                    }
+                    movieFilters.reset(dataCache[tabKey]);
+                } catch (err) {
+                    console.error("Failed to load tab data:", err);
+                    if (container) {
+                        container.innerHTML = "<p style=\"color:var(--text-secondary);padding:20px 0;text-align:center;\">Failed to load content. Please try again.</p>";
+                    }
+                }
+            });
+        });
+    }
+
     async function loadMovies() {
         try {
             const movies = await fetchTop250();
@@ -872,7 +1001,8 @@
 
             renderCarouselTrailers(movies);
             bindTrendGenreFilters(movies);
-            bindMovieGenreFilters(movies);
+            const movieFilters = bindMovieGenreFilters(movies);
+            bindMoviesTabSwitcher(movies, movieFilters);
             renderFeaturedPlayer(movies[6]);
             renderPosterRow("recommendedCards", recommendedMovies);
             renderWatchlistCards(watchlistMovies);
