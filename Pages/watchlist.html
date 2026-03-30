@@ -8,364 +8,503 @@
     <meta name="keywords" content="HTML,CSS, Template, Bootstrap"><!-- keywords nb!-->
     <meta name="author" content="Ora">
 
-    <title>Movie Watch List Page</title>
+    <title>My Watchlist</title>
 
     <!--Bootstrap, Javascript, Google Fonts, CSS-->
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
     <link rel="stylesheet" href="../css/main.css">
+
+    <style>
+        .watchlist-header {
+            padding-top: 100px;
+            background: linear-gradient(135deg, rgba(255, 22, 58, 0.15) 0%, rgba(0, 0, 0, 0.5) 100%);
+            padding: 100px 34px 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .watchlist-header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .watchlist-header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        .watchlist-header p {
+            font-size: 1.1rem;
+            color: rgba(245, 248, 255, 0.8);
+            margin: 0;
+        }
+
+        .watchlist-stats {
+            display: flex;
+            gap: 40px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-red);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: rgba(245, 248, 255, 0.7);
+        }
+
+        .watchlist-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 34px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--primary-red);
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h2 {
+            color: #ffffff;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .empty-state a {
+            background: var(--primary-red);
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 999px;
+            text-decoration: none;
+            transition: background 0.3s ease;
+            display: inline-block;
+        }
+
+        .empty-state a:hover {
+            background: #ff294a;
+        }
+    </style>
     
 
 </head>
 
-<body class="watchlist-page"> 
-
+<body>
     <header class="hero-header">
-      <div class="navbar">
-        <a href="../Pages/HomePage.html" class="logo">LOGO</a>
-        <nav>
-          <ul class="sidebar">
-            <li onclick="hideSidebar()">
-              <a href="#" aria-label="Close menu">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#e3e3e3"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
-              </a>
-            </li>
-            <li><a href="../Pages/HomePage.html">Home</a></li>
-            <li><a href="../Pages/Movie Library Page.html">Library</a></li>
-            <li><a href="../Pages/Movie Library Page.html">Movies</a></li>
-            <li><a href="../Pages/watchlist.html">My List</a></li>
-          </ul>
+        <div class="navbar">
+            <a href="../Pages/HomePage.html" class="logo">LOGO</a>
+            <nav>
+                <ul class="sidebar">
+                    <li onclick="hideSidebar()">
+                        <a href="#" aria-label="Close menu">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#e3e3e3"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+                        </a>
+                    </li>
+                    <li><a href="../Pages/HomePage.html">Home</a></li>
+                    <li><a href="../Pages/Movie Library Page.html">Library</a></li>
+                    <li><a href="../Pages/Movie Page.html">Movies</a></li>
+                    <li><a href="../Pages/watchlist.html">My List</a></li>
+                </ul>
 
-          <ul class="nav-main">
-            <li><a class="hide-on-mobile nav-main-link" href="../Pages/HomePage.html">Home</a></li>
-            <li><a class="hide-on-mobile nav-main-link" href="../Pages/Movie Library Page.html">Library</a></li>
-            <li><a class="hide-on-mobile nav-main-link" href="../Pages/Movie Library Page.html">Movies</a></li>
-            <li><a class="hide-on-mobile nav-main-link active" href="../Pages/watchlist.html">My List</a></li>
-          </ul>
-        </nav>
-      </div>
+                <ul class="nav-main">
+                    <li><a class="hide-on-mobile nav-main-link" href="../Pages/HomePage.html">Home</a></li>
+                    <li><a class="hide-on-mobile nav-main-link" href="../Pages/Movie Library Page.html">Library</a></li>
+                    <li><a class="hide-on-mobile nav-main-link" href="../Pages/Movie Page.html">Movies</a></li>
+                    <li><a class="hide-on-mobile nav-main-link active" href="../Pages/watchlist.html">My List</a></li>
+                </ul>
+            </nav>
+        </div>
 
-      <div class="nav-right">
-        <ul class="nav-icons hide-on-mobile">
-          <li class="profile-menu">
-            <a href="#" class="profile-badge" aria-label="Profile menu">
-              <i class="fa fa-user" aria-hidden="true"></i>
-            </a>
-            <ul class="profile-dropdown" aria-label="Profile menu">
-              <li><a href="#"><i class="fa fa-cog" aria-hidden="true"></i><span>Settings</span></a></li>
-              <li><a href="#"><i class="fa fa-bell" aria-hidden="true"></i><span>Notifications</span></a></li>
-              <li><a href="#"><i class="fa fa-sign-out" aria-hidden="true"></i><span>Logout</span></a></li>
+        <div class="nav-right">
+            <ul class="nav-icons hide-on-mobile">
+                <li class="profile-menu">
+                    <a href="#" class="profile-badge" aria-label="Profile menu">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                    </a>
+                    <ul class="profile-dropdown" aria-label="Profile menu">
+                        <li><a href="#"><i class="fa fa-cog" aria-hidden="true"></i><span>Settings</span></a></li>
+                        <li><a href="#"><i class="fa fa-bell" aria-hidden="true"></i><span>Notifications</span></a></li>
+                        <li><a href="#"><i class="fa fa-sign-out" aria-hidden="true"></i><span>Logout</span></a></li>
+                    </ul>
+                </li>
             </ul>
-          </li>
-        </ul>
-        <ul class="mobile-menu-toggle">
-          <li onclick="showSidebar()">
-            <a href="#" aria-label="Open menu">
-              <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#e3e3e3"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg>
-            </a>
-          </li>
-        </ul>
-      </div>
+            <ul class="mobile-menu-toggle">
+                <li onclick="showSidebar()">
+                    <a href="#" aria-label="Open menu">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#e3e3e3"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <script>
+            function showSidebar() {
+                const sidebar = document.querySelector('.sidebar');
+                sidebar.style.display = 'flex';
+            }
+
+            function hideSidebar() {
+                const sidebar = document.querySelector('.sidebar');
+                sidebar.style.display = 'none';
+            }
+
+            document.querySelector('.profile-badge').addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector('.profile-menu').classList.toggle('is-open');
+            });
+        </script>
     </header>
 
-    <script>
-      function showSidebar() {
-        const sidebar = document.querySelector('.sidebar');
-        sidebar.style.display = 'flex';
-      }
-
-      function hideSidebar() {
-        const sidebar = document.querySelector('.sidebar');
-        sidebar.style.display = 'none';
-      }
-    </script>
-
-  <div class="watchlistHeading-container mt-3 mb-4 p-4">
-        <h1 class="text-start text-white">My Watch List</h1>
-      <div class="movie-body watchlist-heading"></div>
-    </div>
-
-    <div class="watchlistMovie-container p-4">
-    
-     <div class="container-fluid p4">
-
-    <div class="card" style="width: 18rem;">
-    <img src="../omassets/behind her eyes series poster.jpg" width="100%" class="card-img-top" alt="...">
-    <div class="card-body">
-    <h5 class="card-title">Behind Her Eyes</h5>
-    <p class="card-text">1 season | Thriller</p>
-    <a href="#" class="btn btn-primary">Watch</a>
-  </div>
-  </div>
-
-  <div class="card" style="width: 18rem;">
-  <img src="../omassets/Blackbird series poster.jpg " width="100%" class="card-img-top" alt="...">
-  <div class="card-body">
-    <h5 class="card-title">Blackbird</h5>
-    <p class="card-text">1 season | Thriller</p>
-    <a href="#" class="btn btn-primary">Watch</a>
-  </div>
-  </div>
-
-  <div class="card" style="width: 18rem;">
-  <img src="../omassets/parasite-2019 poster.jpg" class="card-img-top" alt="...">
-  <div class="card-body">
-    <h5 class="card-title">Parasite</h5>
-    <p class="card-text">2hrs 12min | Thriller</p>
-    <a href="#" class="btn btn-primary">Watch</a>
-  </div>
-  </div>
-
-  <div class="card" style="width: 18rem;">
-  <img src="../omassets/Dont worry Darling movieposter.jpg" class="card-img-top" alt="...">
-  <div class="card-body">
-    <h5 class="card-title">Don't worry darling</h5>
-    <p class="card-text">2hrs 2min | Thriller</p>
-    <a href="#" class="btn btn-primary">Watch</a>
-  </div>
-  </div>
-  </div>
-
-  <div class="container-fluid">
-
-    <div class="card" style="width: 18rem;">
-    <img src="../omassets/spirited away movie poster.jpg" class="card-img-top" alt="...">
-    <div class="card-body">
-    <h5 class="card-title">Spirited Away</h5>
-    <p class="card-text">2hrs 5min</p>
-    <a href="#" class="btn btn-primary">Watch</a>
-  </div>
-  </div>
-
-  <div class="card" style="width: 18rem;">
-  <img src="../omassets/The Watcher series poster.jpg" class="card-img-top" alt="...">
-  <div class="card-body">
-    <h5 class="card-title">The Watcher</h5>
-    <p class="card-text">1 season | Horror</p>
-    <a href="#" class="btn btn-primary">Watch</a>
-  </div>
-  </div>
-
-  <div class="card" style="width: 18rem;">
-  <img src="../omassets/Dispicable me 4.jpg" class="card-img-top" alt="...">
-  <div class="card-body">
-    <h5 class="card-title">Dispicable Me 4</h5>
-    <p class="card-text">1hr 34min | Comedy</p>
-    <a href="#" class="btn btn-primary">Watch</a>
-  </div>
-  </div>
-
-  <div class="card" style="width: 18rem;">
-  <img src="../omassets/Dont Move movie poster.webp" class="card-img-top" alt="...">
-  <div class="card-body">
-    <h5 class="card-title">Don't move</h5>
-    <p class="card-text">1hr 32min | Horror</p>
-    <a href="#" class="btn btn-primary">Watch</a>
-  </div>
-  </div>
-  </div>
-
-  <div class="container-fluid">
-
-    <div class="card" style="width: 18rem;">
-    <img src="../omassets/Challengers movie poster.jpg" class="card-img-top" alt="...">
-    <div class="card-body">
-    <h5 class="card-title">Challengers</h5>
-    <p class="card-text">Some </p>
-    <a href="#" class="btn btn-primary">Watch</a>
-  </div>
-  </div>
-
-  <div class="card" style="width: 18rem;">
-  <img src="../omassets/Industry poster.jpg" class="card-img-top" alt="...">
-  <div class="card-body">
-    <h5 class="card-title">Industry</h5>
-    <p class="card-text">3 seasons | Drama</p>
-    <a href="#" class="btn btn-primary">Watch</a>
-  </div>
-  </div>
-
-  <div class="card" style="width: 18rem;">
-  <img src="../omassets/oppenheimer.jpg" class="card-img-top" alt="...">
-  <div class="card-body">
-    <h5 class="card-title">Oppenheimer</h5>
-    <p class="card-text">3hrs | Thriller</p>
-    <a href="#" class="btn btn-primary">Watch</a>
-  </div>
-  </div>
-
-  <div class="card" style="width: 18rem;">
-  <img src="../omassets/English-Teacher poster.webp" class="card-img-top" alt="...">
-  <div class="card-body">
-    <h5 class="card-title">English Teacher</h5>
-    <p class="card-text">2 seasons | Comedy</p>
-    <a href="#" class="btn btn-primary">Watch</a>
-  </div>
-  </div>
-  </div>
-
-  <div class="watchlistHeading-container mt-3 mb-4 p-4">
-        <h1 class="text-start text-white">Recommended Movies and Shows </h1>
-      <div class="movie-body watchlist-heading"></div>
-    </div>
-
-    <div class="watchlistMovie-container p-4">
-    
-     <div class="container-fluid">
-
-    <div class="card" style="width: 18rem;">
-    <img src="../omassets/Bed rest movie poster.jpg" class="card-img-top" alt="...">
-    <div class="card-body">
-    <h5 class="card-title">Bed Rest</h5>
-    <p class="card-text">1hr 30min | Horror</p>
-    <a href="#" class="btn btn-primary">Watch</a>
-  </div>
-  </div>
-
-  <div class="card" style="width: 18rem;">
-  <img src="../omassets/colonials poster.jpg" class="card-img-top" alt="...">
-  <div class="card-body">
-    <h5 class="card-title">Colonials</h5>
-    <p class="card-text">1hr 20min | Sci-fi/Action</p>
-    <a href="#" class="btn btn-primary">watch</a>
-  </div>
-  </div>
-
-  <div class="card" style="width: 18rem;">
-  <img src="../omassets/Intrution movie poster.jpg" class="card-img-top" alt="...">
-  <div class="card-body">
-    <h5 class="card-title">Intrution</h5>
-    <p class="card-text">1 season | Drama</p>
-    <a href="#" class="btn btn-primary">Watch</a>
-  </div>
-  </div>
-
-  <div class="card" style="width: 18rem;">
-  <img src="../omassets/You series image.jpg" class="card-img-top" alt="...">
-  <div class="card-body">
-    <h5 class="card-title">You</h5>
-    <p class="card-text">5 seasons | Thriller</p>
-    <a href="#" class="btn btn-primary">Watch</a>
-  </div>
-  </div>
-  </div>
-
-  <div class="watchlistHeading-container mt-3 mb-4 p-4">
-        <h1 class="text-start text-white">New Releases</h1>
-      <div class="movie-body watchlist-heading"></div>
-    </div>
-
-    <div class="watchlistMovie-container p-4">
-    
-     <div class="container-fluid">
-
-    <div class="card" style="width: 18rem;">
-    <img src="../omassets/The monkey movie poster.jpeg" class="card-img-top" alt="...">
-    <div class="card-body">
-    <h5 class="card-title">The monkey</h5>
-    <p class="card-text">1hr 38min | Horror/Comedy</p>
-    <a href="#" class="btn btn-primary">Watch</a>
-    </div>
-    </div>
-
-    <div class="card" style="width: 18rem;">
-      <img src="../omassets/Sinners-2025-Film-Poster.webp" class="card-img-top" alt="...">
-      <div class="card-body">
-      <h5 class="card-title">Sinners-2025-Film-Poster</h5>
-      <p class="card-text">2hrs 17min | Horror/Action</p>
-      <a href="#" class="btn btn-primary">Watch</a>
-    </div>
-  </div>
-
-  <div class="card" style="width: 18rem;">
-  <img src="../omassets/love hurts movie poster.jpg" class="card-img-top" alt="...">
-  <div class="card-body">
-    <h5 class="card-title">Love Hurts</h5>
-    <p class="card-text"></p>
-    <a href="#" class="btn btn-primary">Watch</a>
-  </div>
-  </div>
-
-  <div class="card" style="width: 18rem;">
-  <img src="../omassets/lilo and stich movie poster.jpeg" class="card-img-top" alt="...">
-  <div class="card-body">
-    <h5 class="card-title">Lilo & Stich</h5>
-    <p class="card-text">1hr 48min | Comedy/Sci-Fi</p>
-    <a href="#" class="btn btn-primary">Watch</a>
-  </div>
-  </div>
-  </div>
-</section>
-
-  <!-- footer-->
-    <footer class="bg-white text-dark py-4">
-      <div class="footer-container px-4">
-        <div class="row">
-          <div class="col-6 col-lg-4 ms-4">
-            <img src="../omassets/Logo.png" width="120px">
-          </div>
-
-          <div class="col">
-            <h3 class="text-start text-dark pt-3">Menu</h3>
-              <ul class="list-unstyled">
-                <li><a href="#" class="text-decoration-non text-dark">Movies</a></li>
-                <li><a href="#" class="text-decoration-non text-dark">Series</a></li>
-              </ul>
-          </div>
-
-          <div class="col">
-            <h3 class="text-start text-dark pt-3">About Us</h3>
-               <ul class="list-unstyled">
-                <li><a href="#" class="text-decoration-non text-dark">Home</a></li>
-                <li><a href="#" class="text-decoration-non text-dark">Contact Us</a></li>
-                
-              </ul>
-          </div>
-
-          <div class="col-6 col-lg-3 pt-3">
-            <h4 class="text-start text-dark">Social Media Icons</h4>
-            <div>
-              <a href="#" ><i class="bi bi-instagram fs-2 me-3"></i></a>
-              <a href="#" ><i class="bi bi-facebook fs-2 me-3"></i></a>
-              <a href="#" ><i class="bi bi-pinterest fs-2 me-3"></i></a>
-              <a href="#" ><i class="bi bi-linkedin fs-2 me-3"></i></a>
+    <!-- Watchlist Header Banner -->
+    <div class="watchlist-header">
+        <div class="watchlist-header-content">
+            <h1><i class="fa fa-heart" aria-hidden="true"></i> My Watchlist</h1>
+            <p>Keep track of movies and series you want to watch</p>
+            <div class="watchlist-stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="watchlistCount">0</div>
+                    <div class="stat-label">Items Saved</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="watchlistMovies">0</div>
+                    <div class="stat-label">Movies</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="watchlistSeries">0</div>
+                    <div class="stat-label">Series</div>
+                </div>
             </div>
-          </div>
-          
         </div>
-        <hr>
-        <div class="d-flex justify-content-between ms-4">
-          
-          <div>
-            <p>2025. TakeTwo. All Rights Reserved.</p>
-            <a href="#" class="text-decoration-non text-dark me-4">Terms of use</a>
-            <a href="#" class="text-decoration-non text-dark me-4">Privacy Policy</a>
-          </div>
-          
+    </div>
 
+    <main class="home-shell">
+        <!-- Watchlist Movies Section -->
+        <section class="content-block movies-block">
+            <div class="watchlist-container">
+                <div class="section-topline">
+                    <h2 class="movies-title" id="moviesSectionTitle"><i class="fa fa-list" aria-hidden="true"></i> Your Saved Items</h2>
+                    <div class="topline-links">
+                        <button class="topline-link active" type="button" data-filter="all">All</button>
+                        <button class="topline-link" type="button" data-filter="movie">Movies</button>
+                        <button class="topline-link" type="button" data-filter="series">Series</button>
+                    </div>
+                </div>
+
+                <div class="chip-row">
+                    <button class="chip" type="button" data-genre="Action">Action</button>
+                    <button class="chip" type="button" data-genre="Adventure">Adventure</button>
+                    <button class="chip" type="button" data-genre="Animation">Animation</button>
+                    <button class="chip" type="button" data-genre="Biography">Biography</button>
+                    <button class="chip" type="button" data-genre="Crime">Crime</button>
+                    <button class="chip" type="button" data-genre="Comedy">Comedy</button>
+                    <button class="chip" type="button" data-genre="Documentary">Documentary</button>
+                    <button class="chip" type="button" data-genre="Drama">Drama</button>
+                </div>
+
+                <div class="movies-toolbar">
+                    <div class="sort-group">
+                        <span>Sort by:</span>
+                        <button class="mini-pill active" type="button" data-sort="latest">Latest Added</button>
+                        <button class="mini-pill" type="button" data-sort="az">A-Z</button>
+                        <button class="mini-pill" type="button" data-sort="rating">Top Rated</button>
+                    </div>
+                    <div class="search-group" role="search" aria-label="Watchlist search">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                        <input type="search" id="watchlistSearchInput" placeholder="Search your list" aria-label="Search watchlist">
+                        <button class="search-btn" type="button" id="watchlistSearchBtn">Search</button>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <i class="fa fa-inbox"></i>
+                    <h2>Your watchlist is empty</h2>
+                    <p>Start adding movies and series to keep track of what you want to watch</p>
+                    <a href="../Pages/Movie Library Page.html">Explore Now</a>
+                </div>
+
+                <!-- Movie Grid -->
+                <section class="movie-grid" id="watchlist-card">
+                    <div id="watchlistCards" class="movie-grid" aria-live="polite"></div>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div id="footer" class="footer-content">
+                <div class="footer-copyright">
+                    <p>&copy; 2026 InDev Movies. All rights reserved.</p>
+                </div>
+                <div class="socials-group">
+                    <ul class="scg-list">
+                        <li class="item"><a href="#" class="sc-social-button dc-btn" aria-label="Discord"><i class="fa fa-discord"></i></a></li>
+                        <li class="item"><a href="#" class="sc-social-button tl-btn" aria-label="Twitter"><i class="fa fa-twitter"></i></a></li>
+                        <li class="item"><a href="#" class="sc-social-button rd-btn" aria-label="Reddit"><i class="fa fa-reddit"></i></a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
-      </div>
-     
     </footer>
-  
-
-
-    
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-  <script src="../js/navbar.js?v=2"></script>
-  <script src="../js/api-config.js?v=1"></script>
-  <script src="../js/imdb-top250.js?v=api-fallback-24"></script>
+    <script src="../js/jquery.js"></script>
+    <script>
+        // Watchlist management
+        class WatchlistManager {
+            constructor() {
+                this.watchlist = JSON.parse(localStorage.getItem('watchlist')) || [];
+                this.currentFilter = 'all';
+                this.currentSort = 'latest';
+                this.currentGenreFilter = '';
+                this.init();
+            }
+
+            init() {
+                this.loadWatchlist();
+                this.setupEventListeners();
+                this.updateStats();
+            }
+
+            loadWatchlist() {
+                const container = document.getElementById('watchlistCards');
+                const emptyState = document.getElementById('emptyState');
+
+                if (this.watchlist.length === 0) {
+                    emptyState.style.display = 'block';
+                    container.innerHTML = '';
+                    return;
+                }
+
+                emptyState.style.display = 'none';
+                this.displayWatchlist();
+            }
+
+            displayWatchlist() {
+                let filtered = [...this.watchlist];
+
+                // Apply type filter
+                if (this.currentFilter !== 'all') {
+                    filtered = filtered.filter(m => (m.Type || 'movie').toLowerCase() === this.currentFilter);
+                }
+
+                // Apply genre filter
+                if (this.currentGenreFilter) {
+                    filtered = filtered.filter(m => {
+                        const title = (m.Title || '').toLowerCase();
+                        return title.includes(this.currentGenreFilter.toLowerCase());
+                    });
+                }
+
+                // Apply sorting
+                filtered.sort((a, b) => {
+                    switch (this.currentSort) {
+                        case 'az':
+                            return (a.Title || '').localeCompare(b.Title || '');
+                        case 'rating':
+                            return (parseFloat(b.imdbRating) || 0) - (parseFloat(a.imdbRating) || 0);
+                        case 'latest':
+                        default:
+                            return (new Date(b.dateAdded) || 0) - (new Date(a.dateAdded) || 0);
+                    }
+                });
+
+                const container = document.getElementById('watchlistCards');
+                container.innerHTML = '';
+
+                filtered.forEach(movie => {
+                    const movieCard = document.createElement('div');
+                    movieCard.className = 'movie-card';
+                    movieCard.innerHTML = `
+                        <div class="movie-image">
+                            <img src="${movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/220x330?text=No+Image'}" 
+                                 alt="${movie.Title}" loading="lazy">
+                        </div>
+                        <div class="movie-info">
+                            <h3 class="movie-title">${movie.Title}</h3>
+                            <p class="movie-meta">${movie.Year} • ${movie.Type || 'Movie'}</p>
+                            <div class="movie-actions">
+                                <button class="btn-watch" type="button" data-imdb-id="${movie.imdbID}">Watch</button>
+                                <button class="btn-add-list" type="button" data-imdb-id="${movie.imdbID}" aria-label="Remove from watchlist">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+
+                    // Add remove from watchlist functionality
+                    movieCard.querySelector('.btn-add-list').addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.removeFromWatchlist(movie.imdbID);
+                    });
+
+                    container.appendChild(movieCard);
+                });
+            }
+
+            addToWatchlist(movie) {
+                if (!this.watchlist.find(m => m.imdbID === movie.imdbID)) {
+                    this.watchlist.push({
+                        ...movie,
+                        dateAdded: new Date().toISOString()
+                    });
+                    this.saveWatchlist();
+                    this.loadWatchlist();
+                    this.updateStats();
+                }
+            }
+
+            removeFromWatchlist(imdbID) {
+                this.watchlist = this.watchlist.filter(m => m.imdbID !== imdbID);
+                this.saveWatchlist();
+                this.loadWatchlist();
+                this.updateStats();
+            }
+
+            saveWatchlist() {
+                localStorage.setItem('watchlist', JSON.stringify(this.watchlist));
+            }
+
+            updateStats() {
+                document.getElementById('watchlistCount').textContent = this.watchlist.length;
+                document.getElementById('watchlistMovies').textContent = 
+                    this.watchlist.filter(m => (m.Type || 'movie').toLowerCase() === 'movie').length;
+                document.getElementById('watchlistSeries').textContent = 
+                    this.watchlist.filter(m => (m.Type || '').toLowerCase() === 'series').length;
+            }
+
+            setupEventListeners() {
+                // Filter buttons
+                document.querySelectorAll('[data-filter]').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('[data-filter]').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        this.currentFilter = btn.getAttribute('data-filter');
+                        this.loadWatchlist();
+                    });
+                });
+
+                // Genre filter
+                document.querySelectorAll('.chip').forEach(chip => {
+                    chip.addEventListener('click', (e) => {
+                        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+                        chip.classList.add('active');
+                        this.currentGenreFilter = chip.getAttribute('data-genre');
+                        this.loadWatchlist();
+                    });
+                });
+
+                // Sort buttons
+                document.querySelectorAll('[data-sort]').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('[data-sort]').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        this.currentSort = btn.getAttribute('data-sort');
+                        this.loadWatchlist();
+                    });
+                });
+
+                // Search
+                const searchInput = document.getElementById('watchlistSearchInput');
+                const searchBtn = document.getElementById('watchlistSearchBtn');
+
+                if (searchBtn) {
+                    searchBtn.addEventListener('click', () => this.performSearch());
+                }
+
+                if (searchInput) {
+                    searchInput.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            this.performSearch();
+                        }
+                    });
+                }
+            }
+
+            performSearch() {
+                const query = document.getElementById('watchlistSearchInput').value.toLowerCase();
+                const container = document.getElementById('watchlistCards');
+
+                if (!query) {
+                    this.loadWatchlist();
+                    return;
+                }
+
+                const filtered = this.watchlist.filter(m => 
+                    (m.Title || '').toLowerCase().includes(query)
+                );
+
+                container.innerHTML = '';
+
+                if (filtered.length === 0) {
+                    container.innerHTML = '<div class="movie-empty-state"><h3>No results found</h3><p>Try searching with a different title</p></div>';
+                    return;
+                }
+
+                filtered.forEach(movie => {
+                    const movieCard = document.createElement('div');
+                    movieCard.className = 'movie-card';
+                    movieCard.innerHTML = `
+                        <div class="movie-image">
+                            <img src="${movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/220x330?text=No+Image'}" 
+                                 alt="${movie.Title}" loading="lazy">
+                        </div>
+                        <div class="movie-info">
+                            <h3 class="movie-title">${movie.Title}</h3>
+                            <p class="movie-meta">${movie.Year} • ${movie.Type || 'Movie'}</p>
+                            <div class="movie-actions">
+                                <button class="btn-watch" type="button" data-imdb-id="${movie.imdbID}">Watch</button>
+                                <button class="btn-add-list" type="button" data-imdb-id="${movie.imdbID}" aria-label="Remove from watchlist">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+
+                    movieCard.querySelector('.btn-add-list').addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.removeFromWatchlist(movie.imdbID);
+                    });
+
+                    container.appendChild(movieCard);
+                });
+            }
+        }
+
+        // Initialize watchlist on page load
+        const watchlistManager = new WatchlistManager();
+
+        // Expose to global scope for adding from other pages
+        window.addToWatchlist = (movie) => watchlistManager.addToWatchlist(movie);
+    </script>
 
 </body>
 
