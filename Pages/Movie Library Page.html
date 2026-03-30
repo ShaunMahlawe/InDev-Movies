@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="HTML,CSS, Template, Bootstrap">
+    <meta name="author" content="Shaun Mahlawe">
+
+    <title>Movie Library</title>
+
+    <!--Bootstrap, Javascript, Google Fonts, CSS-->
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=close" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/main.css">
+
+    <style>
+        .library-header {
+            padding-top: 100px;
+            background: linear-gradient(135deg, rgba(255, 22, 58, 0.15) 0%, rgba(0, 0, 0, 0.5) 100%);
+            padding: 100px 34px 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .library-header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .library-header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        .library-header p {
+            font-size: 1.1rem;
+            color: rgba(245, 248, 255, 0.8);
+            margin: 0;
+        }
+
+        .library-stats {
+            display: flex;
+            gap: 40px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-red);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: rgba(245, 248, 255, 0.7);
+        }
+
+        .library-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 34px;
+        }
+
+        .library-filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 32px 0;
+        }
+
+        .filter-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .filter-card:hover {
+            background: rgba(255, 22, 58, 0.15);
+            border-color: rgba(255, 22, 58, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .filter-card i {
+            font-size: 2rem;
+            color: var(--primary-red);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .filter-card h3 {
+            font-size: 1rem;
+            color: #ffffff;
+            margin: 0;
+        }
+
+        .filter-card p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin: 4px 0 0;
+        }
+    </style>
+
+</head>
+<body>
+    <header class="hero-header">
+        <div class="navbar">
+            <a href="../Pages/HomePage.html" class="logo">LOGO</a>
+            <nav>
+                <ul class="sidebar">
+                    <li onclick="hideSidebar()">
+                        <a href="#" aria-label="Close menu">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#e3e3e3"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+                        </a>
+                    </li>
+                    <li><a href="../Pages/HomePage.html">Home</a></li>
+                    <li><a href="../Pages/Movie Library Page.html">Library</a></li>
+                    <li><a href="../Pages/Movie Page.html">Movies</a></li>
+                    <li><a href="../Pages/watchlist.html">My List</a></li>
+                </ul>
+
+                <ul class="nav-main">
+                    <li><a class="hide-on-mobile nav-main-link" href="../Pages/HomePage.html">Home</a></li>
+                    <li><a class="hide-on-mobile nav-main-link active" href="../Pages/Movie Library Page.html">Library</a></li>
+                    <li><a class="hide-on-mobile nav-main-link" href="../Pages/Movie Page.html">Movies</a></li>
+                    <li><a class="hide-on-mobile nav-main-link" href="../Pages/watchlist.html">My List</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="nav-right">
+            <ul class="nav-icons hide-on-mobile">
+                <li class="profile-menu">
+                    <a href="#" class="profile-badge" aria-label="Profile menu">
+                        <i class="fa fa-user" aria-hidden="true"></i>
+                    </a>
+                    <ul class="profile-dropdown" aria-label="Profile menu">
+                        <li><a href="#"><i class="fa fa-cog" aria-hidden="true"></i><span>Settings</span></a></li>
+                        <li><a href="#"><i class="fa fa-bell" aria-hidden="true"></i><span>Notifications</span></a></li>
+                        <li><a href="#"><i class="fa fa-sign-out" aria-hidden="true"></i><span>Logout</span></a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="mobile-menu-toggle">
+                <li onclick="showSidebar()">
+                    <a href="#" aria-label="Open menu">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#e3e3e3"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <script>
+            function showSidebar() {
+                const sidebar = document.querySelector('.sidebar');
+                sidebar.style.display = 'flex';
+            }
+
+            function hideSidebar() {
+                const sidebar = document.querySelector('.sidebar');
+                sidebar.style.display = 'none';
+            }
+
+            document.querySelector('.profile-badge').addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector('.profile-menu').classList.toggle('is-open');
+            });
+        </script>
+    </header>
+
+    <!-- Library Header Banner -->
+    <div class="library-header">
+        <div class="library-header-content">
+            <h1><i class="fa fa-film" aria-hidden="true"></i> Movie Library</h1>
+            <p>Browse, search, and explore our complete collection of movies and series</p>
+            <div class="library-stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalMovies">2,500+</div>
+                    <div class="stat-label">Movies</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">1,200+</div>
+                    <div class="stat-label">Series</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">4K</div>
+                    <div class="stat-label">Quality Available</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="home-shell">
+        <!-- Featured Section -->
+        <section class="featured-player is-closed" id="featuredPlayer">
+            <div class="featured-media" id="featuredMedia"></div>
+            <div class="featured-overlay">
+                <div class="featured-top">
+                    <div class="featured-heading">
+                        <h3 id="featuredTitle">Featured Movie</h3>
+                        <p class="featured-watching"><i class="fa fa-eye" aria-hidden="true"></i> <span id="featuredWatching">Now Streaming</span></p>
+                    </div>
+                    <div class="featured-icon-actions" aria-hidden="true">
+                        <button type="button" aria-label="Like"><i class="fa fa-heart"></i></button>
+                        <button type="button" aria-label="Add"><i class="fa fa-plus"></i></button>
+                    </div>
+                </div>
+
+                <div class="featured-controls" aria-hidden="true">
+                    <div class="featured-controls-left">
+                        <button type="button" id="featuredPlayPauseBtn" aria-label="Play or pause"><i class="fa fa-pause" id="featuredPlayPauseIcon"></i></button>
+                        <button type="button" id="featuredRewindBtn" aria-label="Rewind 10 seconds"><i class="fa fa-undo"></i></button>
+                        <span id="featuredCurrentTime">0:00</span>
+                    </div>
+                    <div class="featured-progress-track" id="featuredProgressTrack" role="slider" aria-label="Playback position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                        <div class="featured-progress-fill" id="featuredProgressFill"></div>
+                        <div class="featured-progress-thumb" id="featuredProgressThumb"></div>
+                    </div>
+                    <div class="featured-controls-right">
+                        <span id="featuredTotalTime">0:00</span>
+                        <button type="button" id="featuredCcBtn" aria-label="Closed captions">CC</button>
+                        <button type="button" id="featuredVolumeBtn" aria-label="Mute or unmute"><i class="fa fa-volume-up" id="featuredVolumeIcon"></i></button>
+                        <input type="range" id="featuredVolumeRange" class="featured-volume-range" min="0" max="100" step="1" value="100" aria-label="Volume">
+                        <button type="button" id="featuredExpandBtn" aria-label="Fullscreen"><i class="fa fa-expand"></i></button>
+                    </div>
+                </div>
+
+                <div class="featured-live-captions" id="featuredLiveCaptions" hidden>Live captions</div>
+            </div>
+        </section>
+
+        <!-- Browse Categories -->
+        <section class="content-block">
+            <div class="library-container">
+                <div class="section-topline" style="margin-top: 40px; margin-bottom: 20px;">
+                    <h2 style="margin: 0; color: #ffffff; font-size: 1.5rem; letter-spacing: 0.4px;">Browse By Category</h2>
+                </div>
+
+                <div class="library-filters">
+                    <div class="filter-card" data-genre="Action">
+                        <i class="fa fa-bomb"></i>
+                        <h3>Action</h3>
+                        <p>High-octane adventures</p>
+                    </div>
+                    <div class="filter-card" data-genre="Drama">
+                        <i class="fa fa-heart"></i>
+                        <h3>Drama</h3>
+                        <p>Compelling stories</p>
+                    </div>
+                    <div class="filter-card" data-genre="Comedy">
+                        <i class="fa fa-smile-o"></i>
+                        <h3>Comedy</h3>
+                        <p>Laugh out loud</p>
+                    </div>
+                    <div class="filter-card" data-genre="Thriller">
+                        <i class="fa fa-exclamation-circle"></i>
+                        <h3>Thriller</h3>
+                        <p>Edge of your seat</p>
+                    </div>
+                    <div class="filter-card" data-genre="Horror">
+                        <i class="fa fa-ghost"></i>
+                        <h3>Horror</h3>
+                        <p>Spine-tingling scares</p>
+                    </div>
+                    <div class="filter-card" data-genre="Animation">
+                        <i class="fa fa-paint-brush"></i>
+                        <h3>Animation</h3>
+                        <p>Family-friendly fun</p>
+                    </div>
+                    <div class="filter-card" data-genre="Documentary">
+                        <i class="fa fa-book"></i>
+                        <h3>Documentary</h3>
+                        <p>Real stories</p>
+                    </div>
+                    <div class="filter-card" data-genre="Adventure">
+                        <i class="fa fa-compass"></i>
+                        <h3>Adventure</h3>
+                        <p>Epic journeys</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- All Movies Section -->
+        <section class="content-block movies-block">
+            <div class="library-container">
+                <div class="section-topline">
+                    <h2 class="movies-title" id="moviesSectionTitle"><i class="fa fa-film" aria-hidden="true"></i> All Movies</h2>
+                    <div class="topline-links">
+                        <button class="topline-link active" type="button" data-tab="all-movies">All</button>
+                        <button class="topline-link" type="button" data-tab="movies">Movies</button>
+                        <button class="topline-link" type="button" data-tab="series">Series</button>
+                    </div>
+                </div>
+
+                <div class="chip-row">
+                    <button class="chip" type="button" data-genre="Action">Action</button>
+                    <button class="chip" type="button" data-genre="Adventure">Adventure</button>
+                    <button class="chip" type="button" data-genre="Animation">Animation</button>
+                    <button class="chip" type="button" data-genre="Biography">Biography</button>
+                    <button class="chip" type="button" data-genre="Crime">Crime</button>
+                    <button class="chip" type="button" data-genre="Comedy">Comedy</button>
+                    <button class="chip" type="button" data-genre="Documentary">Documentary</button>
+                    <button class="chip" type="button" data-genre="Drama">Drama</button>
+                </div>
+
+                <div class="movies-toolbar">
+                    <div class="sort-group">
+                        <span>Sort by:</span>
+                        <button class="mini-pill active" type="button" data-sort="latest">Latest</button>
+                        <button class="mini-pill" type="button" data-sort="year">Year</button>
+                        <button class="mini-pill" type="button" data-sort="az">A-Z</button>
+                        <div class="rating-group">
+                            <span class="rating-star">★</span>
+                            <input type="range" min="0" max="10" step="0.1" value="0" aria-label="rating filter" id="libraryRatingFilter">
+                            <span id="libraryRatingValue">0.0</span>
+                        </div>
+                    </div>
+                    <div class="search-group" role="search" aria-label="Movie search">
+                        <i class="fa fa-search" aria-hidden="true"></i>
+                        <input type="search" id="librarySearchInput" placeholder="Search movies or series" aria-label="Search movies or series">
+                        <button class="search-btn" type="button" id="librarySearchBtn">Search</button>
+                    </div>
+                </div>
+
+                <section class="movie-grid" id="library-card">
+                    <div id="libraryCards" class="movie-grid" aria-live="polite"></div>
+                </section>
+            </div>
+        </section>
+
+        <!-- Recommended Section -->
+        <section class="content-block">
+            <div class="library-container">
+                <div class="section-topline" style="margin-bottom: 20px;">
+                    <h2 class="movies-title"><i class="fa fa-star" aria-hidden="true"></i> Recommended For You</h2>
+                </div>
+
+                <div id="recommendedCards" class="poster-row" aria-live="polite"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div id="footer" class="footer-content">
+                <div class="footer-copyright">
+                    <p>&copy; 2026 InDev Movies. All rights reserved.</p>
+                </div>
+                <div class="socials-group">
+                    <ul class="scg-list">
+                        <li class="item"><a href="#" class="sc-social-button dc-btn" aria-label="Discord"><i class="fa fa-discord"></i></a></li>
+                        <li class="item"><a href="#" class="sc-social-button tl-btn" aria-label="Twitter"><i class="fa fa-twitter"></i></a></li>
+                        <li class="item"><a href="#" class="sc-social-button rd-btn" aria-label="Reddit"><i class="fa fa-reddit"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="../js/jquery.js"></script>
+    <script src="../js/carousel.js"></script>
+    <script src="../js/navbar.js?v=2"></script>
+    <script src="../js/api-config.js?v=1"></script>
+    <script src="../js/imdb-top250.js?v=api-fallback-24"></script>
+    <script src="../js/main.js"></script>
+
+    <script>
+        // Library page state
+        let allMoviesData = [];
+        let currentGenreFilter = '';
+        let currentSortMethod = 'latest';
+        let currentRatingFilter = 0;
+
+        // Initialize library page with API calls
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllMovies();
+            loadFeaturedMovie();
+            loadRecommendedMovies();
+            setupEventListeners();
+        });
+
+        // Load all movies from API
+        function loadAllMovies() {
+            const apiKey = window.OMDB_API_KEY || '';
+            
+            // Fetch popular movies - using multiple queries to get comprehensive data
+            const queries = ['action', 'drama', 'comedy', 'thriller', 'adventure', 'animation', 'sci-fi', 'horror'];
+            let allMovies = [];
+            let completedRequests = 0;
+
+            queries.forEach(query => {
+                fetch(`https://www.omdbapi.com/?s=${query}&type=movie&apikey=${apiKey}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.Search) {
+                            allMovies = allMovies.concat(data.Search);
+                        }
+                        completedRequests++;
+
+                        if (completedRequests === queries.length) {
+                            // Remove duplicates
+                            allMoviesData = Array.from(new Map(allMovies.map(m => [m.imdbID, m])).values());
+                            displayAllMovies(allMoviesData);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching movies:', error);
+                        completedRequests++;
+                    });
+            });
+        }
+
+        // Display movies in grid
+        function displayAllMovies(movies) {
+            const container = document.getElementById('libraryCards');
+            if (!container) return;
+
+            let filteredMovies = movies;
+
+            // Apply genre filter
+            if (currentGenreFilter) {
+                filteredMovies = filteredMovies.filter(m => {
+                    const genre = m.Title.toLowerCase() || '';
+                    return genre.includes(currentGenreFilter.toLowerCase());
+                });
+            }
+
+            // Apply rating filter
+            if (currentRatingFilter > 0) {
+                filteredMovies = filteredMovies.filter(m => {
+                    const rating = parseFloat(m.imdbRating) || 0;
+                    return rating >= currentRatingFilter;
+                });
+            }
+
+            // Apply sorting
+            filteredMovies.sort((a, b) => {
+                switch (currentSortMethod) {
+                    case 'az':
+                        return a.Title.localeCompare(b.Title);
+                    case 'year':
+                        return parseInt(b.Year) - parseInt(a.Year);
+                    case 'latest':
+                    default:
+                        return parseInt(b.Year) - parseInt(a.Year);
+                }
+            });
+
+            // Clear container
+            container.innerHTML = '';
+
+            // Generate movie cards
+            filteredMovies.slice(0, 50).forEach(movie => {
+                const movieCard = document.createElement('div');
+                movieCard.className = 'movie-card';
+                movieCard.innerHTML = `
+                    <div class="movie-image">
+                        <img src="${movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/220x330?text=No+Image'}" 
+                             alt="${movie.Title}" loading="lazy">
+                    </div>
+                    <div class="movie-info">
+                        <h3 class="movie-title">${movie.Title}</h3>
+                        <p class="movie-meta">${movie.Year} • ${movie.Type}</p>
+                        <div class="movie-actions">
+                            <button class="btn-watch" type="button" data-imdb-id="${movie.imdbID}">Watch</button>
+                            <button class="btn-add-list" type="button" aria-label="Add to list">
+                                <i class="fa fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(movieCard);
+            });
+        }
+
+        // Load featured movie
+        function loadFeaturedMovie() {
+            const apiKey = window.OMDB_API_KEY || '';
+            const featuredTitles = ['Oppenheimer', 'The Shawshank Redemption', 'Inception', 'Pulp Fiction', 'Parasite'];
+            const randomTitle = featuredTitles[Math.floor(Math.random() * featuredTitles.length)];
+
+            fetch(`https://www.omdbapi.com/?t=${randomTitle}&apikey=${apiKey}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.imdbID) {
+                        updateFeaturedPlayer(data);
+                    }
+                })
+                .catch(error => console.error('Error loading featured:', error));
+        }
+
+        // Update featured player
+        function updateFeaturedPlayer(movie) {
+            document.getElementById('featuredTitle').textContent = movie.Title;
+            document.getElementById('featuredWatching').textContent = `Rating: ${movie.imdbRating}/10`;
+            
+            const featuredPlayer = document.getElementById('featuredPlayer');
+            if (featuredPlayer) {
+                featuredPlayer.classList.remove('is-closed');
+                featuredPlayer.style.backgroundImage = `url('${movie.Poster}')`;
+            }
+        }
+
+        // Load recommended movies
+        function loadRecommendedMovies() {
+            const apiKey = window.OMDB_API_KEY || '';
+            const recommendedTitles = ['Dune', 'Avatar', 'The Dark Knight', 'Interstellar', 'Joker'];
+            let recommendedMovies = [];
+            let completed = 0;
+
+            recommendedTitles.forEach(title => {
+                fetch(`https://www.omdbapi.com/?t=${title}&apikey=${apiKey}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.imdbID) {
+                            recommendedMovies.push(data);
+                        }
+                        completed++;
+
+                        if (completed === recommendedTitles.length) {
+                            displayRecommendedMovies(recommendedMovies);
+                        }
+                    })
+                    .catch(error => console.error('Error loading recommended:', error));
+            });
+        }
+
+        // Display recommended movies
+        function displayRecommendedMovies(movies) {
+            const container = document.getElementById('recommendedCards');
+            if (!container) return;
+
+            container.innerHTML = '';
+
+            movies.forEach(movie => {
+                const card = document.createElement('div');
+                card.className = 'poster-card';
+                card.innerHTML = `
+                    <img class="poster-image" src="${movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/180x270?text=No+Image'}" 
+                         alt="${movie.Title}" loading="lazy">
+                    <div class="poster-info">
+                        <h3 class="poster-title">${movie.Title}</h3>
+                        <div class="poster-meta-row">
+                            <span class="poster-year">${movie.Year}</span>
+                            <div class="poster-actions">
+                                <span class="score">${movie.imdbRating || 'N/A'}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Update rating filter display
+            const ratingFilter = document.getElementById('libraryRatingFilter');
+            if (ratingFilter) {
+                ratingFilter.addEventListener('input', function() {
+                    currentRatingFilter = parseFloat(this.value);
+                    document.getElementById('libraryRatingValue').textContent = currentRatingFilter.toFixed(1);
+                    displayAllMovies(allMoviesData);
+                });
+            }
+
+            // Handle genre filter clicks
+            document.querySelectorAll('.filter-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-card').forEach(c => c.style.opacity = '0.6');
+                    this.style.opacity = '1';
+                    currentGenreFilter = this.getAttribute('data-genre');
+                    displayAllMovies(allMoviesData);
+                });
+            });
+
+            document.querySelectorAll('.chip').forEach(chip => {
+                chip.addEventListener('click', function() {
+                    document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                    currentGenreFilter = this.getAttribute('data-genre');
+                    displayAllMovies(allMoviesData);
+                });
+            });
+
+            // Handle sort buttons
+            document.querySelectorAll('.mini-pill').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.mini-pill').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentSortMethod = this.getAttribute('data-sort');
+                    displayAllMovies(allMoviesData);
+                });
+            });
+
+            // Handle search
+            const searchBtn = document.getElementById('librarySearchBtn');
+            const searchInput = document.getElementById('librarySearchInput');
+            
+            if (searchBtn) {
+                searchBtn.addEventListener('click', function() {
+                    const query = searchInput.value.trim();
+                    if (query) {
+                        searchMovies(query);
+                    }
+                });
+            }
+
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        const query = this.value.trim();
+                        if (query) {
+                            searchMovies(query);
+                        }
+                    }
+                });
+            }
+
+            // Handle tab buttons
+            document.querySelectorAll('[data-tab]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.topline-link').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        }
+
+        // Search movies
+        function searchMovies(query) {
+            const apiKey = window.OMDB_API_KEY || '';
+            
+            fetch(`https://www.omdbapi.com/?s=${query}&type=movie&apikey=${apiKey}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.Search) {
+                        allMoviesData = data.Search;
+                        displayAllMovies(allMoviesData);
+                    } else {
+                        document.getElementById('libraryCards').innerHTML = '<div class="movie-empty-state"><h3>No movies found</h3><p>Try searching with a different title</p></div>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error searching:', error);
+                    document.getElementById('libraryCards').innerHTML = '<div class="movie-empty-state"><h3>Search error</h3><p>Please try again later</p></div>';
+                });
+        }
+    </script>
+
+</body>
+</html>
