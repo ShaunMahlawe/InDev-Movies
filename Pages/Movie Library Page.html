@@ -133,6 +133,7 @@
                     <li><a href="../Pages/HomePage.html">Home</a></li>
                     <li><a href="../Pages/Movie Library Page.html">Library</a></li>
                     <li><a href="../Pages/Movie Page.html">Movies</a></li>
+                    <li><a href="../Pages/Movie Detail.html?title=Oppenheimer">Movie Details</a></li>
                     <li><a href="../Pages/watchlist.html">My List</a></li>
                 </ul>
 
@@ -140,6 +141,7 @@
                     <li><a class="hide-on-mobile nav-main-link" href="../Pages/HomePage.html">Home</a></li>
                     <li><a class="hide-on-mobile nav-main-link active" href="../Pages/Movie Library Page.html">Library</a></li>
                     <li><a class="hide-on-mobile nav-main-link" href="../Pages/Movie Page.html">Movies</a></li>
+                    <li><a class="hide-on-mobile nav-main-link" href="../Pages/Movie Detail.html?title=Oppenheimer">Movie Details</a></li>
                     <li><a class="hide-on-mobile nav-main-link" href="../Pages/watchlist.html">My List</a></li>
                 </ul>
             </nav>
@@ -390,6 +392,71 @@
         let currentSortMethod = 'latest';
         let currentRatingFilter = 0;
 
+        function getMovieDetailUrl(movie) {
+            const detailUrl = new URL('./Movie Detail.html', window.location.href);
+            const imdbId = String(movie.imdbID || '').trim();
+            const tmdbId = String(movie.tmdbID || movie.id || '').trim();
+
+            if (/^tt\d+$/.test(imdbId)) {
+                detailUrl.searchParams.set('id', imdbId);
+            } else {
+                if (tmdbId) {
+                    detailUrl.searchParams.set('tmdbId', tmdbId);
+                }
+            }
+
+            if (movie.Title || movie.title) {
+                detailUrl.searchParams.set('title', movie.Title || movie.title);
+            }
+
+            if (movie.Type || movie.type || movie.mediaType) {
+                detailUrl.searchParams.set('type', movie.Type || movie.type || movie.mediaType);
+            }
+
+            return detailUrl.toString();
+        }
+
+        function saveMovieToWatchlist(movie) {
+            const stored = JSON.parse(localStorage.getItem('watchlist') || '[]');
+            const imdbId = String(movie.imdbID || '').trim();
+            const tmdbId = String(movie.tmdbID || movie.id || '').trim();
+            const watchlistKey = /^tt\d+$/.test(imdbId) ? imdbId : (tmdbId ? `tmdb-${tmdbId}` : '');
+
+            if (!watchlistKey || stored.some((entry) => entry.imdbID === watchlistKey)) {
+                return false;
+            }
+
+            stored.push({
+                imdbID: watchlistKey,
+                tmdbID: tmdbId,
+                Title: movie.Title || movie.title || 'Untitled',
+                Year: movie.Year || movie.year || '',
+                Type: movie.Type || movie.type || movie.mediaType || 'movie',
+                Poster: movie.Poster || movie.primaryImage || '',
+                imdbRating: movie.imdbRating || movie.averageRating || '',
+                dateAdded: new Date().toISOString()
+            });
+
+            localStorage.setItem('watchlist', JSON.stringify(stored));
+            return true;
+        }
+
+        function attachCardRedirect(card, movie) {
+            const redirect = () => {
+                window.location.href = getMovieDetailUrl(movie);
+            };
+
+            card.setAttribute('role', 'link');
+            card.setAttribute('tabindex', '0');
+            card.addEventListener('click', redirect);
+            card.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    redirect();
+                }
+            });
+        }
+
         // Initialize library page with API calls
         document.addEventListener('DOMContentLoaded', function() {
             loadAllMovies();
@@ -488,6 +555,27 @@
                         </div>
                     </div>
                 `;
+
+                attachCardRedirect(movieCard, movie);
+
+                const watchButton = movieCard.querySelector('.btn-watch');
+                const addListButton = movieCard.querySelector('.btn-add-list');
+
+                if (watchButton) {
+                    watchButton.addEventListener('click', (event) => {
+                        event.stopPropagation();
+                        window.location.href = getMovieDetailUrl(movie);
+                    });
+                }
+
+                if (addListButton) {
+                    addListButton.addEventListener('click', (event) => {
+                        event.stopPropagation();
+                        const saved = saveMovieToWatchlist(movie);
+                        addListButton.innerHTML = saved ? '<i class="fa fa-check"></i>' : '<i class="fa fa-heart"></i>';
+                    });
+                }
+
                 container.appendChild(movieCard);
             });
         }
@@ -567,6 +655,8 @@
                         </div>
                     </div>
                 `;
+
+                attachCardRedirect(card, movie);
                 container.appendChild(card);
             });
         }

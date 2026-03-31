@@ -94,6 +94,92 @@
             || "#";
     }
 
+    function getMovieIdentifier(movie) {
+        return movie.imdbID || movie.id || "";
+    }
+
+    function getMovieDetailUrl(movie) {
+        const detailUrl = new URL("./Movie Detail.html", window.location.href);
+        const imdbId = String(movie.imdbID || "").trim();
+        const tmdbId = String(movie.tmdbId || movie.id || "").trim();
+
+        if (/^tt\d+$/.test(imdbId)) {
+            detailUrl.searchParams.set("id", imdbId);
+        } else {
+            if (tmdbId) {
+                detailUrl.searchParams.set("tmdbId", tmdbId);
+            }
+            detailUrl.searchParams.set("title", getTitle(movie));
+        }
+
+        if (movie.mediaType || movie.type || movie.titleType) {
+            detailUrl.searchParams.set("type", movie.mediaType || movie.type || movie.titleType);
+        }
+
+        return detailUrl.toString();
+    }
+
+    function navigateToMovieDetail(movie) {
+        window.location.href = getMovieDetailUrl(movie);
+    }
+
+    function attachDetailCardInteractions(card) {
+        if (!card || card.dataset.detailBound === "true" || !card.dataset.detailUrl) {
+            return;
+        }
+
+        card.dataset.detailBound = "true";
+        card.setAttribute("role", "link");
+        card.setAttribute("tabindex", "0");
+        card.addEventListener("click", () => {
+            window.location.href = card.dataset.detailUrl;
+        });
+        card.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                window.location.href = card.dataset.detailUrl;
+            }
+        });
+    }
+
+    function saveMovieToWatchlist(movie) {
+        const imdbId = String(movie.imdbID || "").trim();
+        const tmdbId = String(movie.tmdbId || movie.id || "").trim();
+        const watchlistKey = /^tt\d+$/.test(imdbId) ? imdbId : (tmdbId ? `tmdb-${tmdbId}` : "");
+
+        if (!watchlistKey) {
+            return false;
+        }
+
+        const watchlist = JSON.parse(localStorage.getItem("watchlist") || "[]");
+        if (watchlist.some((entry) => entry.imdbID === watchlistKey)) {
+            return false;
+        }
+
+        watchlist.push({
+            imdbID: watchlistKey,
+            tmdbID: tmdbId,
+            Title: getTitle(movie),
+            Year: movie.startYear || movie.year || "",
+            Type: movie.mediaType === "tv" ? "series" : (movie.type || movie.titleType || "movie"),
+            Poster: getPoster(movie),
+            imdbRating: formatRating(movie),
+            dateAdded: new Date().toISOString()
+        });
+
+        localStorage.setItem("watchlist", JSON.stringify(watchlist));
+        return true;
+    }
+
+    function bindCardToMovieDetail(card, movie) {
+        if (!card) {
+            return;
+        }
+
+        card.dataset.detailUrl = getMovieDetailUrl(movie);
+        attachDetailCardInteractions(card);
+    }
+
     function normalizeGenre(value) {
         return String(value || "").trim().toLowerCase();
     }
@@ -1346,11 +1432,23 @@
                 </div>
             `;
 
+            bindCardToMovieDetail(card, movie);
+
             const watchButton = card.querySelector(".btn-watch");
             if (watchButton) {
-                watchButton.addEventListener("click", async () => {
+                watchButton.addEventListener("click", async (event) => {
+                    event.stopPropagation();
                     const withTrailer = await ensureTrailerOnDemand(movie);
                     openFeaturedPlayer(withTrailer, card);
+                });
+            }
+
+            const addListButton = card.querySelector(".btn-add-list");
+            if (addListButton) {
+                addListButton.addEventListener("click", (event) => {
+                    event.stopPropagation();
+                    const saved = saveMovieToWatchlist(movie);
+                    addListButton.textContent = saved ? "SAVED" : "IN LIST";
                 });
             }
 
@@ -1397,6 +1495,8 @@
                     </div>
                 `;
             }
+
+            bindCardToMovieDetail(card, movie);
 
             container.appendChild(card);
         });
@@ -1477,6 +1577,10 @@
         });
         trailingCloneNodes.forEach((clone) => {
             trendRow.appendChild(clone);
+        });
+
+        trendRow.querySelectorAll('.poster-card[data-detail-url]').forEach((card) => {
+            attachDetailCardInteractions(card);
         });
 
         const cards = Array.from(trendRow.children);
@@ -1622,11 +1726,23 @@
                 </div>
             `;
 
+            bindCardToMovieDetail(card, movie);
+
             const watchButton = card.querySelector(".btn-watch");
             if (watchButton) {
-                watchButton.addEventListener("click", async () => {
+                watchButton.addEventListener("click", async (event) => {
+                    event.stopPropagation();
                     const withTrailer = await ensureTrailerOnDemand(movie);
                     openFeaturedPlayer(withTrailer, card);
+                });
+            }
+
+            const addListButton = card.querySelector(".btn-add-list");
+            if (addListButton) {
+                addListButton.addEventListener("click", (event) => {
+                    event.stopPropagation();
+                    const saved = saveMovieToWatchlist(movie);
+                    addListButton.textContent = saved ? "SAVED" : "IN LIST";
                 });
             }
 
