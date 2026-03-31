@@ -1,14 +1,14 @@
 (function () {
     const API_URL = "https://imdb236.p.rapidapi.com/api/imdb/top250-movies";
-    const FALLBACK_POSTER = "../omassets/Logo.png";
+        const FALLBACK_POSTER = "../assets/Logo.png";
     const TMDB_TRENDING_URL = "https://api.themoviedb.org/3/trending/movie/week";
     const TMDB_TV_TRENDING_URL = "https://api.themoviedb.org/3/trending/tv/week";
     const TMDB_TV_TOP_RATED_URL = "https://api.themoviedb.org/3/tv/top_rated";
     const TMDB_MOVIE_SEARCH_URL = "https://api.themoviedb.org/3/search/movie";
     const TMDB_TV_SEARCH_URL = "https://api.themoviedb.org/3/search/tv";
-    const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500";
+        const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500"; // Base URL for TMDB images
     const TMDB_SITE_BASE = "https://www.themoviedb.org/movie";
-    const TMDB_BEARER_TOKEN = "";
+    const TMDB_BEARER_TOKEN = "4021acdffcbfdcde90599f49573267cc";
     const TREND_MOVIE_LIMIT = 23;
     const HOME_MOVIE_LIMIT = 21;
     const TMDB_FALLBACK_PAGE_COUNT = 2;
