@@ -304,11 +304,13 @@
         <section class="content-block movies-block">
             <div class="library-container">
                 <div class="section-topline">
-                    <h2 class="movies-title" id="moviesSectionTitle"><i class="fa fa-film" aria-hidden="true"></i> All Movies</h2>
+                    <h2 class="movies-title" id="moviesSectionTitle"><i class="fa fa-film" aria-hidden="true"></i> Library</h2>
                     <div class="topline-links">
-                        <button class="topline-link active" type="button" data-tab="all-movies">All</button>
+                        <button class="topline-link active" type="button" data-tab="trending">Trending Now</button>
                         <button class="topline-link" type="button" data-tab="movies">Movies</button>
                         <button class="topline-link" type="button" data-tab="series">Series</button>
+                        <button class="topline-link" type="button" data-tab="originals">Originals</button>
+                        <button class="topline-link" type="button" data-tab="new">New Releases</button>
                     </div>
                 </div>
 
@@ -391,6 +393,7 @@
         let currentGenreFilter = '';
         let currentSortMethod = 'latest';
         let currentRatingFilter = 0;
+        let currentTab = 'trending';
 
         function getMovieDetailUrl(movie) {
             const detailUrl = new URL('./Movie Detail.html', window.location.href);
@@ -459,11 +462,87 @@
 
         // Initialize library page with API calls
         document.addEventListener('DOMContentLoaded', function() {
-            loadAllMovies();
+            loadTabContent('trending');
             loadFeaturedMovie();
             loadRecommendedMovies();
             setupEventListeners();
         });
+
+        function loadTabContent(tab) {
+            currentTab = tab;
+            switch(tab) {
+                case 'trending':
+                    loadTrendingNow();
+                    break;
+                case 'movies':
+                    loadAllMovies();
+                    break;
+                case 'series':
+                    loadAllSeries();
+                    break;
+                case 'originals':
+                    loadOriginals();
+                    break;
+                case 'new':
+                    loadNewReleases();
+                    break;
+                default:
+                    loadAllMovies();
+            }
+        }
+
+        function loadTrendingNow() {
+            const apiKey = window.OMDB_API_KEY || '';
+            fetch(`https://api.themoviedb.org/3/trending/all/week?api_key=${apiKey}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.results) {
+                        allMoviesData = data.results;
+                        displayAllMovies(allMoviesData);
+                    }
+                })
+                .catch(error => console.error('Error fetching trending:', error));
+        }
+
+        function loadAllSeries() {
+            const apiKey = window.OMDB_API_KEY || '';
+            fetch(`https://api.themoviedb.org/3/trending/tv/week?api_key=${apiKey}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.results) {
+                        allMoviesData = data.results;
+                        displayAllMovies(allMoviesData);
+                    }
+                })
+                .catch(error => console.error('Error fetching series:', error));
+        }
+
+        function loadOriginals() {
+            // For demo, treat 'originals' as Netflix originals (or similar)
+            const apiKey = window.OMDB_API_KEY || '';
+            fetch(`https://api.themoviedb.org/3/discover/tv?with_networks=213&api_key=${apiKey}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.results) {
+                        allMoviesData = data.results;
+                        displayAllMovies(allMoviesData);
+                    }
+                })
+                .catch(error => console.error('Error fetching originals:', error));
+        }
+
+        function loadNewReleases() {
+            const apiKey = window.OMDB_API_KEY || '';
+            fetch(`https://api.themoviedb.org/3/movie/now_playing?api_key=${apiKey}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.results) {
+                        allMoviesData = data.results;
+                        displayAllMovies(allMoviesData);
+                    }
+                })
+                .catch(error => console.error('Error fetching new releases:', error));
+        }
 
         // Load all movies from API
         function loadAllMovies() {
@@ -663,6 +742,14 @@
 
         // Setup event listeners
         function setupEventListeners() {
+                        // Handle tab buttons for category switching
+                        document.querySelectorAll('[data-tab]').forEach(btn => {
+                            btn.addEventListener('click', function() {
+                                document.querySelectorAll('.topline-link').forEach(b => b.classList.remove('active'));
+                                this.classList.add('active');
+                                loadTabContent(this.getAttribute('data-tab'));
+                            });
+                        });
             // Update rating filter display
             const ratingFilter = document.getElementById('libraryRatingFilter');
             if (ratingFilter) {
