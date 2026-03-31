@@ -19,360 +19,429 @@
     <link rel="stylesheet" href="../css/main.css">
 
     <style>
-        .library-header {
-            padding-top: 100px;
-            background: linear-gradient(135deg, rgba(255, 22, 58, 0.15) 0%, rgba(0, 0, 0, 0.5) 100%);
-            padding: 100px 34px 40px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        body {
+            background: #111;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
         }
-
-        .library-header-content {
-            max-width: 1400px;
-            margin: 0 auto;
+        .carousel {
+            margin-bottom: 40px;
         }
-
-        .library-header h1 {
-            font-size: 3rem;
-            font-weight: 800;
-            color: #ffffff;
-            margin-bottom: 8px;
-            letter-spacing: -0.02em;
+        .carousel-inner {
+            border-radius: 0 0 32px 32px;
+            overflow: hidden;
         }
-
-        .library-header p {
-            font-size: 1.1rem;
-            color: rgba(245, 248, 255, 0.8);
-            margin: 0;
+        .hero-header {
+            background: #181818;
+            border-bottom: 1px solid #232323;
         }
-
-        .library-stats {
+        .navbar {
             display: flex;
-            gap: 40px;
-            margin-top: 24px;
-            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 48px 0 48px;
         }
-
-        .stat-item {
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+        }
+        .carousel-fade .carousel-item {
+            transition: opacity 0.8s ease-in-out;
+        }
+        .carousel-item {
+            min-height: 440px;
+            display: flex;
+            align-items: flex-end;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        .carousel-caption {
+            background: rgba(10,10,10,0.7);
+            border-radius: 24px;
+            padding: 32px 40px;
+            margin-bottom: 48px;
+            max-width: 520px;
+            z-index: 2;
+        }
+        .carousel-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+        .carousel-rating {
+            font-size: 1.2rem;
+            color: #ffd700;
+            margin-bottom: 8px;
+        }
+        .carousel-desc {
+            font-size: 1.05rem;
+            color: #e0e0e0;
+            margin-bottom: 18px;
+        }
+        .carousel-btn {
+            background: #1976d2;
+            color: #fff;
+            border: none;
+            border-radius: 24px;
+            padding: 10px 32px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-right: 12px;
+            transition: background 0.2s;
+        }
+        .carousel-btn:hover {
+            background: #125ea2;
+        }
+        .carousel-indicators.custom-indicators [data-bs-target] {
+            background-color: #fff;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin: 0 4px;
+        }
+        .carousel-indicators .active {
+            background-color: #1976d2;
+        }
+        .hero-carousel-control {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.4);
+            border: none;
+            color: #fff;
+            font-size: 2.2rem;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            z-index: 3;
+        }
+        .hero-carousel-control.prev { left: 24px; }
+        .hero-carousel-control.next { right: 24px; }
+        .content-block {
+            margin: 0 auto 48px auto;
+            max-width: 1400px;
+            padding: 0 32px;
+        }
+        .section-topline {
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            margin-bottom: 18px;
+        }
+        .chip-row {
+            margin-bottom: 18px;
+        }
+        .chip {
+            background: #232323;
+            color: #fff;
+            border: none;
+            border-radius: 16px;
+            padding: 6px 18px;
+            margin-right: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .chip.active, .chip:hover {
+            background: #1976d2;
+        }
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 28px;
+            margin-top: 24px;
+        }
+        .movie-card {
+            background: #181818;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+            transition: transform 0.18s;
+            cursor: pointer;
+        }
+        .movie-card:hover {
+            transform: translateY(-6px) scale(1.03);
+        }
+        .movie-image img {
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+        }
+        .movie-info {
+            padding: 18px 16px 12px 16px;
+        }
+        .movie-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .movie-meta {
+            color: #bdbdbd;
+            font-size: 0.98rem;
+            margin-bottom: 10px;
+        }
+        .movie-actions {
+            display: flex;
             gap: 10px;
         }
-
-        .stat-number {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--primary-red);
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            color: rgba(245, 248, 255, 0.7);
-        }
-
-        .library-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 34px;
-        }
-
-        .library-filters {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin: 32px 0;
-        }
-
-        .filter-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-
-        .filter-card:hover {
-            background: rgba(255, 22, 58, 0.15);
-            border-color: rgba(255, 22, 58, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .filter-card i {
-            font-size: 2rem;
-            color: var(--primary-red);
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        .filter-card h3 {
+        .btn-watch, .btn-add-list {
+            background: #1976d2;
+            color: #fff;
+            border: none;
+            border-radius: 16px;
+            padding: 6px 18px;
             font-size: 1rem;
-            color: #ffffff;
-            margin: 0;
+            cursor: pointer;
+            transition: background 0.2s;
         }
-
-        .filter-card p {
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            margin: 4px 0 0;
+        .btn-watch:hover, .btn-add-list:hover {
+            background: #125ea2;
+        }
+        .poster-row {
+            display: flex;
+            gap: 18px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+        .poster-card {
+            background: #181818;
+            border-radius: 14px;
+            overflow: hidden;
+            min-width: 180px;
+            max-width: 180px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+            cursor: pointer;
+        }
+        .poster-image {
+            width: 100%;
+            height: 270px;
+            object-fit: cover;
+        }
+        .poster-info {
+            padding: 12px 10px 8px 10px;
+        }
+        .poster-title {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .poster-meta-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .score {
+            background: #1976d2;
+            color: #fff;
+            border-radius: 8px;
+            padding: 2px 10px;
+            font-size: 0.98rem;
+            font-weight: 600;
+        }
+        .movie-empty-state {
+            text-align: center;
+            color: #bdbdbd;
+            margin: 48px 0;
         }
     </style>
-
-</head>
-<body>
-    <header class="hero-header">
-        <div class="navbar">
-            <a href="../Pages/HomePage.html" class="logo">LOGO</a>
-            <nav>
-                <ul class="sidebar">
-                    <li onclick="hideSidebar()">
-                        <a href="#" aria-label="Close menu">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#e3e3e3"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
-                        </a>
-                    </li>
-                    <li><a href="../Pages/HomePage.html">Home</a></li>
-                    <li><a href="../Pages/Movie Library Page.html">Library</a></li>
-                    <li><a href="../Pages/Movie Page.html">Movies</a></li>
-                    <li><a href="../Pages/Movie Detail.html?title=Oppenheimer">Movie Details</a></li>
-                    <li><a href="../Pages/watchlist.html">My List</a></li>
-                </ul>
-
-                <ul class="nav-main">
-                    <li><a class="hide-on-mobile nav-main-link" href="../Pages/HomePage.html">Home</a></li>
-                    <li><a class="hide-on-mobile nav-main-link active" href="../Pages/Movie Library Page.html">Library</a></li>
-                    <li><a class="hide-on-mobile nav-main-link" href="../Pages/Movie Page.html">Movies</a></li>
-                    <li><a class="hide-on-mobile nav-main-link" href="../Pages/Movie Detail.html?title=Oppenheimer">Movie Details</a></li>
-                    <li><a class="hide-on-mobile nav-main-link" href="../Pages/watchlist.html">My List</a></li>
-                </ul>
-            </nav>
-        </div>
-
-        <div class="nav-right">
-            <ul class="nav-icons hide-on-mobile">
-                <li class="profile-menu">
-                    <a href="#" class="profile-badge" aria-label="Profile menu">
-                        <i class="fa fa-user" aria-hidden="true"></i>
-                    </a>
-                    <ul class="profile-dropdown" aria-label="Profile menu">
-                        <li><a href="#"><i class="fa fa-cog" aria-hidden="true"></i><span>Settings</span></a></li>
-                        <li><a href="#"><i class="fa fa-bell" aria-hidden="true"></i><span>Notifications</span></a></li>
-                        <li><a href="#"><i class="fa fa-sign-out" aria-hidden="true"></i><span>Logout</span></a></li>
-                    </ul>
-                </li>
-            </ul>
-            <ul class="mobile-menu-toggle">
-                <li onclick="showSidebar()">
-                    <a href="#" aria-label="Open menu">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#e3e3e3"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg>
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <!-- Sidebar and profile menu logic moved to main.js -->
-    </header>
-
-    <!-- Library Header Banner -->
-    <div class="library-header">
-        <div class="library-header-content">
-            <h1><i class="fa fa-film" aria-hidden="true"></i> Movie Library</h1>
-            <p>Browse, search, and explore our complete collection of movies and series</p>
-            <div class="library-stats">
-                <div class="stat-item">
-                    <div class="stat-number" id="totalMovies">2,500+</div>
-                    <div class="stat-label">Movies</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">1,200+</div>
-                    <div class="stat-label">Series</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">4K</div>
-                    <div class="stat-label">Quality Available</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <main class="home-shell">
-        <!-- Featured Section -->
-        <section class="featured-player is-closed" id="featuredPlayer">
-            <div class="featured-media" id="featuredMedia"></div>
-            <div class="featured-overlay">
-                <div class="featured-top">
-                    <div class="featured-heading">
-                        <h3 id="featuredTitle">Featured Movie</h3>
-                        <p class="featured-watching"><i class="fa fa-eye" aria-hidden="true"></i> <span id="featuredWatching">Now Streaming</span></p>
-                    </div>
-                    <div class="featured-icon-actions" aria-hidden="true">
-                        <button type="button" aria-label="Like"><i class="fa fa-heart"></i></button>
-                        <button type="button" aria-label="Add"><i class="fa fa-plus"></i></button>
-                    </div>
-                </div>
-
-                <div class="featured-controls" aria-hidden="true">
-                    <div class="featured-controls-left">
-                        <button type="button" id="featuredPlayPauseBtn" aria-label="Play or pause"><i class="fa fa-pause" id="featuredPlayPauseIcon"></i></button>
-                        <button type="button" id="featuredRewindBtn" aria-label="Rewind 10 seconds"><i class="fa fa-undo"></i></button>
-                        <span id="featuredCurrentTime">0:00</span>
-                    </div>
-                    <div class="featured-progress-track" id="featuredProgressTrack" role="slider" aria-label="Playback position" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
-                        <div class="featured-progress-fill" id="featuredProgressFill"></div>
-                        <div class="featured-progress-thumb" id="featuredProgressThumb"></div>
-                    </div>
-                    <div class="featured-controls-right">
-                        <span id="featuredTotalTime">0:00</span>
-                        <button type="button" id="featuredCcBtn" aria-label="Closed captions">CC</button>
-                        <button type="button" id="featuredVolumeBtn" aria-label="Mute or unmute"><i class="fa fa-volume-up" id="featuredVolumeIcon"></i></button>
-                        <input type="range" id="featuredVolumeRange" class="featured-volume-range" min="0" max="100" step="1" value="100" aria-label="Volume">
-                        <button type="button" id="featuredExpandBtn" aria-label="Fullscreen"><i class="fa fa-expand"></i></button>
-                    </div>
-                </div>
-
-                <div class="featured-live-captions" id="featuredLiveCaptions" hidden>Live captions</div>
-            </div>
-        </section>
-
-        <!-- Browse Categories -->
-        <section class="content-block">
-            <div class="library-container">
-                <div class="section-topline" style="margin-top: 40px; margin-bottom: 20px;">
-                    <h2 style="margin: 0; color: #ffffff; font-size: 1.5rem; letter-spacing: 0.4px;">Browse By Category</h2>
-                </div>
-
-                <div class="library-filters">
-                    <div class="filter-card" data-genre="Action">
-                        <i class="fa fa-bomb"></i>
-                        <h3>Action</h3>
-                        <p>High-octane adventures</p>
-                    </div>
-                    <div class="filter-card" data-genre="Drama">
-                        <i class="fa fa-heart"></i>
-                        <h3>Drama</h3>
-                        <p>Compelling stories</p>
-                    </div>
-                    <div class="filter-card" data-genre="Comedy">
-                        <i class="fa fa-smile-o"></i>
-                        <h3>Comedy</h3>
-                        <p>Laugh out loud</p>
-                    </div>
-                    <div class="filter-card" data-genre="Thriller">
-                        <i class="fa fa-exclamation-circle"></i>
-                        <h3>Thriller</h3>
-                        <p>Edge of your seat</p>
-                    </div>
-                    <div class="filter-card" data-genre="Horror">
-                        <i class="fa fa-ghost"></i>
-                        <h3>Horror</h3>
-                        <p>Spine-tingling scares</p>
-                    </div>
-                    <div class="filter-card" data-genre="Animation">
-                        <i class="fa fa-paint-brush"></i>
-                        <h3>Animation</h3>
-                        <p>Family-friendly fun</p>
-                    </div>
-                    <div class="filter-card" data-genre="Documentary">
-                        <i class="fa fa-book"></i>
-                        <h3>Documentary</h3>
-                        <p>Real stories</p>
-                    </div>
-                    <div class="filter-card" data-genre="Adventure">
-                        <i class="fa fa-compass"></i>
-                        <h3>Adventure</h3>
-                        <p>Epic journeys</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- All Movies Section -->
-        <section class="content-block movies-block">
-            <div class="library-container">
-                <div class="section-topline">
-                    <h2 class="movies-title" id="moviesSectionTitle"><i class="fa fa-film" aria-hidden="true"></i> Library</h2>
-                    <div class="topline-links">
-                        <button class="topline-link active" type="button" data-tab="trending">Trending Now</button>
-                        <button class="topline-link" type="button" data-tab="movies">Movies</button>
-                        <button class="topline-link" type="button" data-tab="series">Series</button>
-                        <button class="topline-link" type="button" data-tab="originals">Originals</button>
-                        <button class="topline-link" type="button" data-tab="new">New Releases</button>
-                    </div>
-                </div>
-
-                <div class="chip-row">
-                    <button class="chip" type="button" data-genre="Action">Action</button>
-                    <button class="chip" type="button" data-genre="Adventure">Adventure</button>
-                    <button class="chip" type="button" data-genre="Animation">Animation</button>
-                    <button class="chip" type="button" data-genre="Biography">Biography</button>
-                    <button class="chip" type="button" data-genre="Crime">Crime</button>
-                    <button class="chip" type="button" data-genre="Comedy">Comedy</button>
-                    <button class="chip" type="button" data-genre="Documentary">Documentary</button>
-                    <button class="chip" type="button" data-genre="Drama">Drama</button>
-                </div>
-
-                <div class="movies-toolbar">
-                    <div class="sort-group">
-                        <span>Sort by:</span>
-                        <button class="mini-pill active" type="button" data-sort="latest">Latest</button>
-                        <button class="mini-pill" type="button" data-sort="year">Year</button>
-                        <button class="mini-pill" type="button" data-sort="az">A-Z</button>
-                        <div class="rating-group">
-                            <span class="rating-star">★</span>
-                            <input type="range" min="0" max="10" step="0.1" value="0" aria-label="rating filter" id="libraryRatingFilter">
-                            <span id="libraryRatingValue">0.0</span>
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <meta name="keywords" content="HTML,CSS, Template, Bootstrap">
+                    <meta name="author" content="Shaun Mahlawe">
+                    <title>Movie Library</title>
+                    <!--Bootstrap, Javascript, Google Fonts, CSS-->
+                    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=close" />
+                    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+                    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+                    <link rel="stylesheet" href="../css/main.css">
+                </head>
+                <body>
+                    <header class="hero-header">
+                        <div class="navbar">
+                            <a href="../Pages/HomePage.html" class="logo">LOGO</a>
+                            <nav>
+                                <ul class="sidebar">
+                                    <li onclick="hideSidebar()">
+                                        <a href="#" aria-label="Close menu">
+                                            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#e3e3e3"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg>
+                                        </a>
+                                    </li>
+                                    <li><a href="../Pages/HomePage.html">Home</a></li>
+                                    <li><a href="../Pages/Movie Library Page.html">Library</a></li>
+                                    <li><a href="../Pages/Movie Page.html">Movies</a></li>
+                                    <li><a href="../Pages/Movie Detail.html?title=Oppenheimer">Movie Details</a></li>
+                                    <li><a href="../Pages/watchlist.html">My List</a></li>
+                                </ul>
+                                <ul class="nav-main">
+                                    <li><a class="hide-on-mobile nav-main-link" href="../Pages/HomePage.html">Home</a></li>
+                                    <li><a class="hide-on-mobile nav-main-link active" href="../Pages/Movie Library Page.html">Library</a></li>
+                                    <li><a class="hide-on-mobile nav-main-link" href="../Pages/Movie Page.html">Movies</a></li>
+                                    <li><a class="hide-on-mobile nav-main-link" href="../Pages/Movie Detail.html?title=Oppenheimer">Movie Details</a></li>
+                                    <li><a class="hide-on-mobile nav-main-link" href="../Pages/watchlist.html">My List</a></li>
+                                </ul>
+                            </nav>
                         </div>
+                        <div class="nav-right">
+                            <ul class="nav-icons hide-on-mobile">
+                                <li class="profile-menu">
+                                    <a href="#" class="profile-badge" aria-label="Profile menu">
+                                        <i class="fa fa-user" aria-hidden="true"></i>
+                                    </a>
+                                    <ul class="profile-dropdown" aria-label="Profile menu">
+                                        <li><a href="#"><i class="fa fa-cog" aria-hidden="true"></i><span>Settings</span></a></li>
+                                        <li><a href="#"><i class="fa fa-bell" aria-hidden="true"></i><span>Notifications</span></a></li>
+                                        <li><a href="#"><i class="fa fa-sign-out" aria-hidden="true"></i><span>Logout</span></a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                            <ul class="mobile-menu-toggle">
+                                <li onclick="showSidebar()">
+                                    <a href="#" aria-label="Open menu">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#e3e3e3"><path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <script>
+                            function showSidebar() {
+                                const sidebar = document.querySelector('.sidebar');
+                                sidebar.style.display = 'flex';
+                            }
+                            function hideSidebar() {
+                                const sidebar = document.querySelector('.sidebar');
+                                sidebar.style.display = 'none';
+                            }
+                        </script>
+                    </header>
+                    <div id="libraryHeroCarousel" class="carousel carousel-fade carousel-slide" data-bs-ride="carousel">
+                        <div class="carousel-indicators custom-indicators"></div>
+                        <div class="carousel-inner"></div>
+                        <button class="hero-carousel-control prev" type="button" data-bs-target="#libraryHeroCarousel" data-bs-slide="prev" aria-label="Previous banner">
+                            <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        </button>
+                        <button class="hero-carousel-control next" type="button" data-bs-target="#libraryHeroCarousel" data-bs-slide="next" aria-label="Next banner">
+                            <i class="fa fa-angle-right" aria-hidden="true"></i>
+                        </button>
                     </div>
-                    <div class="search-group" role="search" aria-label="Movie search">
-                        <i class="fa fa-search" aria-hidden="true"></i>
-                        <input type="search" id="librarySearchInput" placeholder="Search movies or series" aria-label="Search movies or series">
-                        <button class="search-btn" type="button" id="librarySearchBtn">Search</button>
-                    </div>
-                </div>
+                    <main class="home-shell">
+                        <section class="content-block trends-block">
+                            <div class="section-topline">
+                                <h2 class="trends-title"><i class="fa fa-line-chart" aria-hidden="true"></i> Trends Now</h2>
+                                <div class="topline-links">
+                                    <button class="topline-link active" type="button" data-trend="popular"><i class="fa fa-fire" aria-hidden="true"></i> Popular</button>
+                                    <button class="topline-link" type="button" data-trend="premieres"><i class="fa fa-star" aria-hidden="true"></i> Premieres</button>
+                                    <button class="topline-link" type="button" data-trend="recently"><i class="fa fa-plus" aria-hidden="true"></i> Recently Added</button>
+                                </div>
+                            </div>
+                            <div class="chip-row">
+                                <button class="chip" type="button" data-genre="Action">Action</button>
+                                <button class="chip" type="button" data-genre="Adventure">Adventure</button>
+                                <button class="chip" type="button" data-genre="Animation">Animation</button>
+                                <button class="chip" type="button" data-genre="Biography">Biography</button>
+                                <button class="chip" type="button" data-genre="Crime">Crime</button>
+                                <button class="chip" type="button" data-genre="Comedy">Comedy</button>
+                                <button class="chip" type="button" data-genre="Documentary">Documentary</button>
+                                <button class="chip" type="button" data-genre="Drama">Drama</button>
+                            </div>
+                            <div class="trend-carousel-shell">
+                                <button id="trendPrev" class="trend-nav-btn" type="button" aria-label="Scroll trends left">
+                                    <i class="fa fa-angle-left" aria-hidden="true"></i>
+                                </button>
+                                <div id="trendCards" class="poster-row trend-poster-row" aria-live="polite"></div>
+                                <button id="trendNext" class="trend-nav-btn" type="button" aria-label="Scroll trends right">
+                                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </section>
+                        <section class="content-block movies-block">
+                            <div class="section-topline movies-head">
+                                <h2 class="movies-title" id="moviesSectionTitle"><i class="fa fa-film" aria-hidden="true"></i> Library</h2>
+                                <div class="topline-links">
+                                    <button class="topline-link active" type="button" data-tab="movies">Movies</button>
+                                    <button class="topline-link" type="button" data-tab="series">Series</button>
+                                    <button class="topline-link" type="button" data-tab="originals">Original Series</button>
+                                </div>
+                            </div>
+                            <div class="chip-row">
+                                <button class="chip" type="button" data-genre="Action">Action</button>
+                                <button class="chip" type="button" data-genre="Adventure">Adventure</button>
+                                <button class="chip" type="button" data-genre="Animation">Animation</button>
+                                <button class="chip" type="button" data-genre="Biography">Biography</button>
+                                <button class="chip" type="button" data-genre="Crime">Crime</button>
+                                <button class="chip" type="button" data-genre="Comedy">Comedy</button>
+                                <button class="chip" type="button" data-genre="Documentary">Documentary</button>
+                                <button class="chip" type="button" data-genre="Drama">Drama</button>
+                            </div>
+                            <div class="movies-toolbar">
+                                <div class="sort-group">
+                                    <span>Sort by:</span>
+                                    <button class="mini-pill active" type="button" data-sort="latest">Latest</button>
+                                    <button class="mini-pill" type="button" data-sort="year">Year</button>
+                                    <button class="mini-pill" type="button" data-sort="az">A-Z</button>
+                                    <div class="rating-group">
+                                        <span class="rating-star">★</span>
+                                        <input type="range" min="0" max="10" step="0.1" value="5" aria-label="rating filter" id="movieRatingFilter">
+                                        <span id="movieRatingValue">5.0</span>
+                                    </div>
+                                </div>
+                                <div class="search-group" role="search" aria-label="Movie search">
+                                    <i class="fa fa-search" aria-hidden="true"></i>
+                                    <input type="search" id="movieSearchInput" placeholder="Search movies or series" aria-label="Search movies or series">
+                                    <button class="search-btn" type="button" id="movieSearchBtn">Search</button>
+                                </div>
+                            </div>
+                            <section class="movie-grid" id="movie-card">
+                                <div id="libraryCards" class="movie-grid" aria-live="polite"></div>
+                            </section>
+                        </section>
+                        <section class="content-block bottom-row-block">
+                            <div id="recommendedCards" class="poster-row" aria-live="polite"></div>
+                        </section>
+                    </main>
+                    <script src="../js/main.js"></script>
+                    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+                    <script>
+                    // --- Dynamic Hero Carousel for Library Page ---
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const apiKey = window.OMDB_API_KEY || '';
+                        fetch(`https://api.themoviedb.org/3/trending/movie/week?api_key=${apiKey}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                const carouselInner = document.querySelector('#libraryHeroCarousel .carousel-inner');
+                                const indicators = document.querySelector('#libraryHeroCarousel .carousel-indicators');
+                                if (!carouselInner || !indicators) return;
+                                carouselInner.innerHTML = '';
+                                indicators.innerHTML = '';
+                                (data.results || []).slice(0, 5).forEach((movie, idx) => {
+                                    const active = idx === 0 ? 'active' : '';
+                                    const bg = movie.backdrop_path ? `https://image.tmdb.org/t/p/original${movie.backdrop_path}` : '../Asset/img/placeholder.jpg';
+                                    const poster = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '../Asset/img/placeholder.jpg';
+                                    const rating = movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A';
+                                    const desc = movie.overview || '';
+                                    const title = movie.title || movie.name || 'Untitled';
+                                    carouselInner.innerHTML += `
+                                        <div class="carousel-item ${active}" style="background-image: url('${bg}');">
+                                            <div class="carousel-caption">
+                                                <div class="carousel-title">${title}</div>
+                                                <div class="carousel-rating">★ ${rating}</div>
+                                                <div class="carousel-desc">${desc}</div>
+                                                <button class="carousel-btn" onclick="window.location.href='../Pages/Movie Detail.html?tmdbId=${movie.id}'">Play</button>
+                                            </div>
+                                        </div>
+                                    `;
+                                    indicators.innerHTML += `<button type="button" data-bs-target="#libraryHeroCarousel" data-bs-slide-to="${idx}" class="${active}" aria-label="Slide ${idx+1}"></button>`;
+                                });
+                            });
+                    });
+                    </script>
+                </body>
+                </html>
 
-                <section class="movie-grid" id="library-card">
-                    <div id="libraryCards" class="movie-grid" aria-live="polite"></div>
-                </section>
-            </div>
-        </section>
-
-        <!-- Recommended Section -->
-        <section class="content-block">
-            <div class="library-container">
-                <div class="section-topline" style="margin-bottom: 20px;">
-                    <h2 class="movies-title"><i class="fa fa-star" aria-hidden="true"></i> Recommended For You</h2>
-                </div>
-
-                <div id="recommendedCards" class="poster-row" aria-live="polite"></div>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="container">
-            <div id="footer" class="footer-content">
-                <div class="footer-copyright">
-                    <p>&copy; 2026 InDev Movies. All rights reserved.</p>
-                </div>
-                <div class="socials-group">
-                    <ul class="scg-list">
-                        <li class="item"><a href="#" class="sc-social-button dc-btn" aria-label="Discord"><i class="fa fa-discord"></i></a></li>
-                        <li class="item"><a href="#" class="sc-social-button tl-btn" aria-label="Twitter"><i class="fa fa-twitter"></i></a></li>
-                        <li class="item"><a href="#" class="sc-social-button rd-btn" aria-label="Reddit"><i class="fa fa-reddit"></i></a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="../js/jquery.js"></script>
-    <script src="../js/carousel.js"></script>
-    <script src="../js/navbar.js?v=2"></script>
-    <script src="../js/api-config.js?v=1"></script>
-    <script src="../js/imdb-top250.js?v=api-fallback-24"></script>
-    <script src="../js/main.js"></script>
-
-    <!-- All main JavaScript moved to js/main.js -->
-
-</body>
-</html>
