@@ -116,7 +116,7 @@
 
 </head>
 
-<body>
+<body data-auth-mode="protected">
     <header class="hero-header">
         <div class="navbar">
             <a href="../Pages/HomePage.html" class="logo">LOGO</a>
@@ -151,9 +151,9 @@
                         <i class="fa fa-user" aria-hidden="true"></i>
                     </a>
                     <ul class="profile-dropdown" aria-label="Profile menu">
-                        <li><a href="#"><i class="fa fa-cog" aria-hidden="true"></i><span>Settings</span></a></li>
+                        <li><a href="../Pages/profile.html"><i class="fa fa-cog" aria-hidden="true"></i><span>Profile</span></a></li>
                         <li><a href="#"><i class="fa fa-bell" aria-hidden="true"></i><span>Notifications</span></a></li>
-                        <li><a href="#"><i class="fa fa-sign-out" aria-hidden="true"></i><span>Logout</span></a></li>
+                        <li><a href="#" data-auth-action="logout"><i class="fa fa-sign-out" aria-hidden="true"></i><span>Logout</span></a></li>
                     </ul>
                 </li>
             </ul>
@@ -274,6 +274,8 @@
 
     <script src="../js/api-config.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="../js/navbar.js"></script>
+    <script type="module" src="../js/auth-guard.js"></script>
     <script src="../js/main.js"></script>
 
 </body>
