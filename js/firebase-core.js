@@ -4,12 +4,13 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/12.4.0/firebase
 
 // Replace with your Firebase project settings after creating InDev Movies project.
 const firebaseConfig = {
-    apiKey: "AIzaSyCJI4stDucwLS8OeD3QmwW2p-24eLQ7YVs",
-    authDomain: "week13dv.firebaseapp.com",
-    projectId: "week13dv",
-    storageBucket: "week13dv.firebasestorage.app",
-    messagingSenderId: "1020561560621",
-    appId: "1:1020561560621:web:766d2fdc4325717d1f54a4"
+    apiKey: "AIzaSyBV_QLXNUs9Rt3NdAuars5K8p6lvsPt--0",
+    authDomain: "dv100firebaseclass.firebaseapp.com",
+    projectId: "dv100firebaseclass",
+    storageBucket: "dv100firebaseclass.firebasestorage.app",
+    messagingSenderId: "758270673361",
+    appId: "1:758270673361:web:dfb0071f2417bfb1f1a0f0",
+    measurementId: "G-362N0K9LYB"
 };
 
 const app = initializeApp(firebaseConfig);

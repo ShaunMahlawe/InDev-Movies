@@ -9,7 +9,7 @@
     "init": "firebase init"
   },
   "dependencies": {
-    "firebase": "^12.4.0"
+    "firebase": "^12.11.0"
   },
   "devDependencies": {
     "firebase-tools": "^13.31.2"
