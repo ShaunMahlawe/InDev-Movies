@@ -19,7 +19,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
@@ -27,24 +27,24 @@
 
 </head>
 
-<body onload="showName()">
+<body onload="showName()" data-auth-mode="guest">
 <div class="login-page">
   <div class="form">
 
 
     <form id="signupForm" class="register-form">
       <h1>Sign Up</h1>
-      <input id="create-username" type="text" placeholder="username"/>
-      <input id="signUpEmail" type="text" placeholder="email address"/>
-      <input id="signUpPass" type="text" placeholder="password"/>
+      <input id="create-username" type="text" placeholder="username" autocomplete="username" required/>
+      <input id="signUpEmail" type="email" placeholder="email address" autocomplete="email" required/>
+      <input id="signUpPass" type="password" placeholder="password" autocomplete="new-password" minlength="8" required/>
       <button name="create-button" type="submit" id="create-button">create</button>
       <p class="message">Already registered? <a href="#">Sign In</a></p>
     </form>
     <form id="loginForm" class="login-form">
       <h1>Log In</h1>
-      <input id="login-username" type="text" placeholder="username"/>
-      <input id="signInEmail" type="text" placeholder="email" name="login-email"/>
-      <input id="signInPass" type="text" placeholder="password" name="login-password"/>
+      <input id="login-username" type="text" placeholder="username" autocomplete="username"/>
+      <input id="signInEmail" type="email" placeholder="email" name="login-email" autocomplete="email" required/>
+      <input id="signInPass" type="password" placeholder="password" name="login-password" autocomplete="current-password" required/>
 
 <!-- <div class="form-check">
   
@@ -73,6 +73,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
     <script src="js/KS script.js"></script>
+    <script type="module" src="js/auth-guard.js"></script>
     <script type="module" src="js/firebase.js"></script>
 </body>
 
