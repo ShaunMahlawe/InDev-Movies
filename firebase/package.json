@@ -1,5 +1,17 @@
 {
+  "name": "indev-movies-firebase",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "login": "firebase login",
+    "create:project": "firebase projects:create indev-movies --display-name \"InDev Movies\"",
+    "use:project": "firebase use indev-movies",
+    "init": "firebase init"
+  },
   "dependencies": {
     "firebase": "^12.4.0"
+  },
+  "devDependencies": {
+    "firebase-tools": "^13.31.2"
   }
 }
