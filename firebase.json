@@ -5,11 +5,14 @@
   },
   "hosting": {
     "site": "indevmovies",
-    "public": "public",
+    "public": ".",
     "ignore": [
       "firebase.json",
       "**/.*",
-      "**/node_modules/**"
+      "**/node_modules/**",
+      "firebase/**",
+      ".git/**",
+      ".venv/**"
     ]
   }
 }
