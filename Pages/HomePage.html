@@ -33,7 +33,7 @@
                     </li>
                     <li><a href="../Pages/HomePage.html">Home</a></li>
                     <li><a href="../Pages/Movie Library Page.html">Library</a></li>
-                    <li><a href="../Pages/Movie Page.html">Movies</a></li>
+                    <li><a href="../Pages/Movie Library Page.html">Movies</a></li>
                     <li><a href="../Pages/Movie Detail.html?title=Oppenheimer">Movie Details</a></li>
                     <li><a href="../Pages/watchlist.html">My List</a></li>
                 </ul>
@@ -41,7 +41,7 @@
                 <ul class="nav-main">
                     <li><a class="hide-on-mobile nav-main-link active" href="../Pages/HomePage.html">Home</a></li>
                     <li><a class="hide-on-mobile nav-main-link" href="../Pages/Movie Library Page.html">Library</a></li>
-                    <li><a class="hide-on-mobile nav-main-link" href="../Pages/Movie Page.html">Movies</a></li>
+                    <li><a class="hide-on-mobile nav-main-link" href="../Pages/Movie Library Page.html">Movies</a></li>
                     <li><a class="hide-on-mobile nav-main-link" href="../Pages/Movie Detail.html?title=Oppenheimer">Movie Details</a></li>
                     <li><a class="hide-on-mobile nav-main-link" href="../Pages/watchlist.html">My List</a></li>
                 </ul>
@@ -130,9 +130,9 @@
         <section class="about-us-block">
             <div class="about-us-inner">
                 <div class="about-posters">
-                    <img class="about-poster about-poster-back" src="../omassets/parasite-2019 poster.jpg" alt="Movie poster" loading="lazy">
-                    <img class="about-poster about-poster-mid" src="../omassets/oppenheimer.jpg" alt="Movie poster" loading="lazy">
-                    <img class="about-poster about-poster-front" src="../omassets/Sinners-2025-Film-Poster.webp" alt="Movie poster" loading="lazy">
+                    <img class="about-poster about-poster-back" src="https://image.tmdb.org/t/p/w780/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg" alt="Parasite movie poster" loading="lazy">
+                    <img class="about-poster about-poster-mid" src="https://image.tmdb.org/t/p/w780/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg" alt="Oppenheimer movie poster" loading="lazy">
+                    <img class="about-poster about-poster-front" src="https://image.tmdb.org/t/p/w780/qJ2tW6WMUDux911r6m7haRef0WH.jpg" alt="The Dark Knight movie poster" loading="lazy">
                 </div>
                 <div class="about-content">
                     <span class="about-label">ABOUT US</span>
@@ -295,7 +295,9 @@
             <div id="recommendedCards" class="poster-row" aria-live="polite"></div>
         </section>
     </main>
-    <script src="../js/main.js"></script>
+    <script src="../js/api-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="../js/imdb-top250.js"></script>
 
 </body>
 </html>

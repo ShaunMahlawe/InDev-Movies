@@ -1281,6 +1281,9 @@ video {
     justify-content: space-between;
     gap: 14px;
     margin-bottom: 16px;
+    width: min(100%, 1400px);
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .sort-group,
@@ -1405,6 +1408,15 @@ video {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 18px;
+}
+
+#movieCards,
+#newReleasesCards,
+#libraryCards,
+#watchlistCards {
+    width: min(100%, 1400px);
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .movie-grid > .featured-player {

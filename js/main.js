@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
 if (document.body.classList.contains('detail-page')) {
 	// Only run on Movie Detail.html
 	const DEFAULT_DETAIL_TITLE = 'Oppenheimer';
-	const FALLBACK_POSTER = '../omassets/Logo.png';
+	const FALLBACK_POSTER = 'https://via.placeholder.com/500x750?text=Poster';
 	const TMDB_IMAGE_BASE = 'https://image.tmdb.org/t/p/w780';
 	const TMDB_LOGO_BASE = 'https://image.tmdb.org/t/p/w185';
 
@@ -47,12 +47,24 @@ if (document.body.classList.contains('detail-page')) {
 	}
 
 	function getTmdbHeaders() {
-		const token = window.TMDB_BEARER_TOKEN || '';
+		const token = String(window.TMDB_BEARER_TOKEN || '').trim();
 		if (!token) return null;
 		return {
 			Authorization: `Bearer ${token}`,
 			'Content-Type': 'application/json'
 		};
+	}
+
+	function buildTmdbApiUrl(baseUrl) {
+		const key = String(window.TMDB_API_KEY || '').trim();
+		if (!key) return baseUrl;
+		const separator = baseUrl.includes('?') ? '&' : '?';
+		return `${baseUrl}${separator}api_key=${encodeURIComponent(key)}`;
+	}
+
+	function getTmdbRequestOptions() {
+		const headers = getTmdbHeaders();
+		return headers ? { method: 'GET', headers } : { method: 'GET' };
 	}
 
 	function escapeHtml(value) {
@@ -156,6 +168,271 @@ if (document.body.classList.contains('detail-page')) {
 		}
 		return '';
 	}
+
+	function saveToWatchlist(movie) {
+		const current = JSON.parse(localStorage.getItem('watchlist') || '[]');
+		const imdbId = isImdbId(movie.imdbID) ? movie.imdbID : '';
+		const tmdbId = String(movie.tmdbID || '').trim();
+		const watchlistKey = imdbId || (tmdbId ? `tmdb-${tmdbId}` : '');
+
+		if (!watchlistKey) return;
+
+		if (!current.find(entry => entry.imdbID === watchlistKey)) {
+			current.push({
+				imdbID: watchlistKey,
+				tmdbID: tmdbId,
+				Title: movie.Title,
+				Year: movie.Year,
+				Type: movie.Type,
+				Poster: movie.Poster,
+				imdbRating: movie.imdbRating,
+				dateAdded: new Date().toISOString()
+			});
+			localStorage.setItem('watchlist', JSON.stringify(current));
+		}
+	}
+
+	async function searchTmdbByTitle(title, mediaTypeHint) {
+		if (!title) return null;
+
+		const preferredType = normalizeMediaType(mediaTypeHint);
+		const endpoints = preferredType === 'tv' ? ['tv', 'movie'] : ['movie', 'tv'];
+		const options = getTmdbRequestOptions();
+
+		for (const endpoint of endpoints) {
+			const response = await fetch(
+				buildTmdbApiUrl(`https://api.themoviedb.org/3/search/${endpoint}?query=${encodeURIComponent(title)}`),
+				options
+			);
+
+			if (!response.ok) continue;
+
+			const payload = await response.json();
+			const match = Array.isArray(payload.results) ? payload.results[0] : null;
+			if (match && match.id) return { id: match.id, type: endpoint };
+		}
+
+		return null;
+	}
+
+	function getTrailerUrlFromTmdbVideos(videosPayload, fallbackImdbId) {
+		const videos = videosPayload && Array.isArray(videosPayload.results) ? videosPayload.results : [];
+		const preferred = videos.find(video => {
+			const site = String(video.site || '').toLowerCase();
+			const type = String(video.type || '').toLowerCase();
+			return site === 'youtube' && (type === 'trailer' || type === 'teaser') && video.key;
+		}) || videos.find(video => String(video.site || '').toLowerCase() === 'youtube' && video.key);
+
+		if (preferred && preferred.key) return `https://www.youtube.com/watch?v=${preferred.key}`;
+		return fallbackImdbId ? `https://www.imdb.com/title/${fallbackImdbId}/` : '#';
+	}
+
+	async function fetchTmdbBundle(options) {
+		let resolvedId = options && options.tmdbId ? String(options.tmdbId) : '';
+		let resolvedType = normalizeMediaType(options && options.mediaTypeHint);
+		const requestOptions = getTmdbRequestOptions();
+
+		if (!resolvedId && options && options.imdbId && isImdbId(options.imdbId)) {
+			const findResponse = await fetch(
+				buildTmdbApiUrl(`https://api.themoviedb.org/3/find/${encodeURIComponent(options.imdbId)}?external_source=imdb_id`),
+				requestOptions
+			);
+
+			if (findResponse.ok) {
+				const findData = await findResponse.json();
+				const movieResult = Array.isArray(findData.movie_results) ? findData.movie_results[0] : null;
+				const tvResult = Array.isArray(findData.tv_results) ? findData.tv_results[0] : null;
+				if (movieResult && movieResult.id) {
+					resolvedId = String(movieResult.id);
+					resolvedType = 'movie';
+				} else if (tvResult && tvResult.id) {
+					resolvedId = String(tvResult.id);
+					resolvedType = 'tv';
+				}
+			}
+		}
+
+		if (!resolvedId && options && options.title) {
+			const tmdbMatch = await searchTmdbByTitle(options.title, resolvedType);
+			if (tmdbMatch) {
+				resolvedId = String(tmdbMatch.id);
+				resolvedType = tmdbMatch.type;
+			}
+		}
+
+		if (!resolvedId) {
+			return { detail: null, images: null, providers: null, videos: null, credits: null, externalIds: null, resolvedId: null, resolvedType };
+		}
+
+		const [detailResponse, imagesResponse, providersResponse, videosResponse, creditsResponse, externalIdsResponse] = await Promise.all([
+			fetch(buildTmdbApiUrl(`https://api.themoviedb.org/3/${resolvedType}/${resolvedId}`), requestOptions),
+			fetch(buildTmdbApiUrl(`https://api.themoviedb.org/3/${resolvedType}/${resolvedId}/images`), requestOptions),
+			fetch(buildTmdbApiUrl(`https://api.themoviedb.org/3/${resolvedType}/${resolvedId}/watch/providers`), requestOptions),
+			fetch(buildTmdbApiUrl(`https://api.themoviedb.org/3/${resolvedType}/${resolvedId}/videos`), requestOptions),
+			fetch(buildTmdbApiUrl(`https://api.themoviedb.org/3/${resolvedType}/${resolvedId}/credits`), requestOptions),
+			fetch(buildTmdbApiUrl(`https://api.themoviedb.org/3/${resolvedType}/${resolvedId}/external_ids`), requestOptions)
+		]);
+
+		return {
+			detail: detailResponse.ok ? await detailResponse.json() : null,
+			images: imagesResponse.ok ? await imagesResponse.json() : null,
+			providers: providersResponse.ok ? await providersResponse.json() : null,
+			videos: videosResponse.ok ? await videosResponse.json() : null,
+			credits: creditsResponse.ok ? await creditsResponse.json() : null,
+			externalIds: externalIdsResponse.ok ? await externalIdsResponse.json() : null,
+			resolvedId,
+			resolvedType
+		};
+	}
+
+	function normalizeMovieFromTmdb(tmdbBundle, requestedTitle) {
+		const detail = tmdbBundle.detail;
+		if (!detail) return null;
+
+		const releaseDate = detail.release_date || detail.first_air_date || '';
+		const releaseYear = releaseDate ? releaseDate.slice(0, 4) : '';
+		const spokenLanguages = Array.isArray(detail.spoken_languages)
+			? detail.spoken_languages.map(item => item.english_name || item.name).filter(Boolean).join(', ')
+			: '';
+		const countries = Array.isArray(detail.production_countries)
+			? detail.production_countries.map(item => item.name).filter(Boolean).join(', ')
+			: '';
+		const genres = Array.isArray(detail.genres)
+			? detail.genres.map(item => item.name).filter(Boolean).join(', ')
+			: '';
+		const cast = tmdbBundle.credits && Array.isArray(tmdbBundle.credits.cast)
+			? tmdbBundle.credits.cast.slice(0, 6).map(person => person.name).join(', ')
+			: '';
+		const directors = tmdbBundle.credits && Array.isArray(tmdbBundle.credits.crew)
+			? tmdbBundle.credits.crew.filter(person => person.job === 'Director' || person.job === 'Series Director').map(person => person.name)
+			: [];
+		const creators = Array.isArray(detail.created_by) ? detail.created_by.map(person => person.name) : [];
+		const runtime = detail.runtime ? `${detail.runtime} min` : 'N/A';
+		const posterPath = detail.poster_path ? `${TMDB_IMAGE_BASE}${detail.poster_path}` : FALLBACK_POSTER;
+
+		return {
+			imdbID: tmdbBundle.externalIds && tmdbBundle.externalIds.imdb_id ? tmdbBundle.externalIds.imdb_id : `tmdb-${tmdbBundle.resolvedId}`,
+			tmdbID: String(tmdbBundle.resolvedId || ''),
+			Title: detail.title || detail.name || requestedTitle || 'Untitled',
+			Year: releaseYear,
+			Type: tmdbBundle.resolvedType === 'tv' ? 'series' : 'movie',
+			totalSeasons: detail.number_of_seasons || '',
+			Runtime: runtime,
+			Language: spokenLanguages || 'N/A',
+			Country: countries || 'N/A',
+			Genre: genres || 'N/A',
+			Plot: detail.overview || 'No synopsis is available for this title.',
+			imdbRating: Number(detail.vote_average || 0).toFixed(1),
+			Actors: cast || 'Unavailable',
+			Director: directors.length > 0 ? directors.join(', ') : (creators.length > 0 ? creators.join(', ') : 'Unavailable'),
+			Poster: posterPath
+		};
+	}
+
+	function renderMovie(movie, tmdbBundle) {
+		const wrap = document.getElementById('detailWrap');
+		const loading = document.getElementById('detailLoading');
+		movie.tmdbID = movie.tmdbID || String(tmdbBundle.resolvedId || '');
+
+		const posterUrl = normalizeImage(movie.Poster);
+		const tmdbBackdropPath = tmdbBundle.images && Array.isArray(tmdbBundle.images.backdrops) && tmdbBundle.images.backdrops[0]
+			? `${TMDB_IMAGE_BASE}${tmdbBundle.images.backdrops[0].file_path}`
+			: '';
+		const tmdbScenePath = tmdbBundle.images && Array.isArray(tmdbBundle.images.backdrops) && tmdbBundle.images.backdrops[2]
+			? `${TMDB_IMAGE_BASE}${tmdbBundle.images.backdrops[2].file_path}`
+			: tmdbBackdropPath;
+		const ratingValue = Number(movie.imdbRating);
+		const rating = Number.isFinite(ratingValue) ? ratingValue.toFixed(1) : 'N/A';
+		const progress = Number.isFinite(ratingValue) ? Math.max(0, Math.min(100, ratingValue * 10)) : 0;
+		const genres = splitList(movie.Genre, 4);
+		const cast = splitList(movie.Actors, 3).join('<br>') || 'Unavailable';
+		const director = splitList(movie.Director, 2).join('<br>') || 'Unavailable';
+		const trailerUrl = getTrailerUrlFromTmdbVideos(tmdbBundle.videos, movie.imdbID);
+
+		document.title = `${movie.Title} | Movie Detail`;
+		document.getElementById('detailPoster').src = posterUrl;
+		document.getElementById('detailPoster').alt = `${movie.Title} poster`;
+		document.getElementById('detailTitle').textContent = movie.Title;
+		document.getElementById('detailMeta').innerHTML = makeMetaParts(movie).map(part => `<span>${escapeHtml(part)}</span>`).join('<span>|</span>');
+		document.getElementById('detailLanguage').textContent = splitList(movie.Language, 1)[0] || 'Language N/A';
+		document.getElementById('detailCountry').textContent = countryCodeFromMovie(movie);
+		document.getElementById('detailRatingValue').textContent = rating;
+		document.getElementById('detailRatingBadge').style.setProperty('--rating-progress', progress);
+		document.getElementById('detailOverview').textContent = movie.Plot && movie.Plot !== 'N/A' ? movie.Plot : 'No synopsis is available for this title.';
+		document.getElementById('detailDirector').innerHTML = director;
+		document.getElementById('detailCast').innerHTML = cast;
+		document.getElementById('detailQuote').textContent = getQuote(movie, tmdbBundle.detail);
+
+		const watchLink = document.getElementById('detailWatchLink');
+		watchLink.href = trailerUrl;
+
+		const addListBtn = document.getElementById('detailAddListBtn');
+		addListBtn.textContent = 'Add To My List';
+		addListBtn.onclick = function () {
+			saveToWatchlist(movie);
+			addListBtn.textContent = 'Saved';
+		};
+
+		const genresContainer = document.getElementById('detailGenres');
+		genresContainer.innerHTML = '';
+		genres.forEach(genre => {
+			const chip = document.createElement('span');
+			chip.className = 'genre-pill';
+			chip.textContent = genre;
+			genresContainer.appendChild(chip);
+		});
+
+		const gallery = document.getElementById('detailGallery');
+		gallery.innerHTML = '';
+		buildGalleryImages(movie, tmdbBundle.images).forEach((imageUrl, index) => {
+			const card = document.createElement('div');
+			card.className = 'detail-gallery-card';
+			card.innerHTML = `<img src="${imageUrl}" alt="${escapeHtml(movie.Title)} scene ${index + 1}" loading="lazy">`;
+			gallery.appendChild(card);
+		});
+
+		renderProviders(tmdbBundle.providers);
+		setBackdropImages(tmdbBackdropPath || posterUrl, tmdbScenePath || posterUrl);
+
+		loading.hidden = true;
+		wrap.hidden = false;
+	}
+
+	async function initDetailPage() {
+		const errorNode = document.getElementById('detailError');
+		const params = getQueryParams();
+
+		try {
+			const fallbackTitle = params.title || DEFAULT_DETAIL_TITLE;
+			const tmdbBundle = await fetchTmdbBundle({
+				imdbId: params.imdbId,
+				tmdbId: params.tmdbId,
+				title: fallbackTitle,
+				mediaTypeHint: params.type
+			});
+
+			const movie = normalizeMovieFromTmdb(tmdbBundle, fallbackTitle);
+			if (!movie) throw new Error('Movie lookup failed');
+
+			renderMovie(movie, tmdbBundle);
+
+			const resolvedDetailUrl = createDetailUrl({
+				imdbId: isImdbId(movie.imdbID) ? movie.imdbID : '',
+				tmdbId: tmdbBundle.resolvedId,
+				title: movie.Title,
+				type: movie.Type
+			});
+
+			document.querySelectorAll('a[href="../Pages/Movie Detail.html?title=Oppenheimer"], a[href="../Pages/Movie Detail.html"]').forEach(link => {
+				link.href = resolvedDetailUrl;
+			});
+		} catch (_error) {
+			document.getElementById('detailLoading').hidden = true;
+			errorNode.hidden = false;
+		}
+	}
+
+	initDetailPage();
 }
 
 // --- Watchlist Page Logic ---
@@ -189,9 +466,156 @@ if (document.getElementById('watchlistCards')) {
 			});
 		}
 		init() {
+			this.loadTrailerCarousel();
 			this.loadWatchlist();
 			this.setupEventListeners();
 			this.updateStats();
+		}
+		buildYouTubeEmbedUrl(videoKey) {
+			if (!videoKey) return '';
+			return `https://www.youtube.com/embed/${videoKey}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoKey}&rel=0&modestbranding=1&cc_load_policy=0&cc_lang_pref=en&iv_load_policy=3&fs=0&disablekb=1`;
+		}
+		async resolveTmdbId(movie) {
+			const explicitTmdbId = String(movie.tmdbID || '').trim();
+			if (explicitTmdbId && /^\d+$/.test(explicitTmdbId)) return explicitTmdbId;
+
+			const fromPrefixedImdb = String(movie.imdbID || '').trim().match(/^tmdb-(\d+)$/);
+			if (fromPrefixedImdb) return fromPrefixedImdb[1];
+
+			const imdbId = String(movie.imdbID || '').trim();
+			if (!/^tt\d+$/.test(imdbId)) return '';
+
+			const options = getTmdbRequestConfig();
+			const response = await fetch(
+				buildTmdbUrl(`https://api.themoviedb.org/3/find/${encodeURIComponent(imdbId)}?external_source=imdb_id`),
+				{ method: 'GET', headers: options.headers || undefined }
+			);
+			if (!response.ok) return '';
+
+			const payload = await response.json();
+			const movieMatch = Array.isArray(payload.movie_results) ? payload.movie_results[0] : null;
+			const tvMatch = Array.isArray(payload.tv_results) ? payload.tv_results[0] : null;
+			return String((movieMatch && movieMatch.id) || (tvMatch && tvMatch.id) || '');
+		}
+		async buildTrailerSlide(movie) {
+			const tmdbId = await this.resolveTmdbId(movie);
+			if (!tmdbId) return null;
+
+			const mediaType = (String(movie.Type || '').toLowerCase() === 'series' || String(movie.Type || '').toLowerCase() === 'tv') ? 'tv' : 'movie';
+			const options = getTmdbRequestConfig();
+			const [detailResponse, videoResponse] = await Promise.all([
+				fetch(buildTmdbUrl(`https://api.themoviedb.org/3/${mediaType}/${tmdbId}`), { method: 'GET', headers: options.headers || undefined }),
+				fetch(buildTmdbUrl(`https://api.themoviedb.org/3/${mediaType}/${tmdbId}/videos`), { method: 'GET', headers: options.headers || undefined })
+			]);
+
+			if (!videoResponse.ok) return null;
+
+			const detail = detailResponse.ok ? await detailResponse.json() : null;
+			const videoPayload = await videoResponse.json();
+			const videos = Array.isArray(videoPayload.results) ? videoPayload.results : [];
+			const trailer = videos.find(video => {
+				const site = String(video.site || '').toLowerCase();
+				const type = String(video.type || '').toLowerCase();
+				return site === 'youtube' && (type === 'trailer' || type === 'teaser') && video.key;
+			}) || videos.find(video => String(video.site || '').toLowerCase() === 'youtube' && video.key);
+
+			if (!trailer || !trailer.key) return null;
+
+			const fallbackBackdrop = movie.Poster && movie.Poster !== 'N/A'
+				? movie.Poster
+				: 'https://via.placeholder.com/1600x900?text=Trailer';
+
+			return {
+				movie,
+				title: (detail && (detail.title || detail.name)) || movie.Title || 'Untitled',
+				overview: (detail && detail.overview) || 'Trailer from your watchlist.',
+				rating: (detail && Number(detail.vote_average)) || Number(movie.imdbRating || 0),
+				backdrop: detail && detail.backdrop_path ? `https://image.tmdb.org/t/p/original${detail.backdrop_path}` : fallbackBackdrop,
+				embedUrl: this.buildYouTubeEmbedUrl(trailer.key)
+			};
+		}
+		async loadTrailerCarousel() {
+			const carousel = document.getElementById('watchlistTrailerCarousel');
+			const inner = document.getElementById('watchlistTrailerInner');
+			const indicators = document.getElementById('watchlistTrailerIndicators');
+			if (!carousel || !inner || !indicators) return;
+
+			if (!Array.isArray(this.watchlist) || this.watchlist.length === 0) {
+				carousel.hidden = true;
+				return;
+			}
+
+			const candidates = this.watchlist.slice(0, 12);
+			const slides = [];
+			for (const item of candidates) {
+				try {
+					const slide = await this.buildTrailerSlide(item);
+					if (slide) slides.push(slide);
+					if (slides.length >= 5) break;
+				} catch (_error) {
+					// Skip invalid trailer candidates.
+				}
+			}
+
+			if (slides.length === 0) {
+				carousel.hidden = true;
+				return;
+			}
+
+			inner.innerHTML = '';
+			indicators.innerHTML = '';
+			slides.forEach((slide, index) => {
+				const isActive = index === 0 ? 'active' : '';
+				const ratingText = Number.isFinite(slide.rating) && slide.rating > 0 ? slide.rating.toFixed(1) : 'N/A';
+				const escapedTitle = String(slide.title || '').replace(/"/g, '&quot;');
+				const truncated = String(slide.overview || '').slice(0, 190);
+
+				const indicator = document.createElement('button');
+				indicator.type = 'button';
+				indicator.setAttribute('data-bs-target', '#watchlistTrailerCarousel');
+				indicator.setAttribute('data-bs-slide-to', String(index));
+				indicator.setAttribute('aria-label', `Slide ${index + 1}`);
+				if (index === 0) {
+					indicator.classList.add('active');
+					indicator.setAttribute('aria-current', 'true');
+				}
+				indicators.appendChild(indicator);
+
+				const item = document.createElement('div');
+				item.className = `carousel-item ${isActive}`;
+				item.innerHTML = `
+					<div class="trailer-container" style="background-image:url('${slide.backdrop}'); background-size: cover; background-position: center;">
+						<iframe class="trailer trailer-frame" src="${slide.embedUrl}" title="${escapedTitle} trailer" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+						<div class="info">
+							<div class="rating">${ratingText} Watchlist Trailer</div>
+							<h1 class="title">${slide.title}</h1>
+							<p class="description">${truncated}</p>
+							<div class="actions">
+								<button class="btn watch" type="button" data-detail-url="${this.getMovieDetailUrl(slide.movie)}">DETAILS</button>
+							</div>
+						</div>
+					</div>
+				`;
+				inner.appendChild(item);
+			});
+
+			inner.querySelectorAll('.btn.watch').forEach((btn) => {
+				btn.addEventListener('click', (event) => {
+					const url = event.currentTarget.getAttribute('data-detail-url');
+					if (url) window.location.href = url;
+				});
+			});
+
+			carousel.hidden = false;
+			if (window.bootstrap && window.bootstrap.Carousel) {
+				window.bootstrap.Carousel.getOrCreateInstance(carousel, {
+					interval: 7000,
+					ride: false,
+					pause: 'hover',
+					wrap: true,
+					touch: true
+				}).cycle();
+			}
 		}
 		loadWatchlist() {
 			const container = document.getElementById('watchlistCards');
@@ -393,6 +817,15 @@ let currentGenreFilter = '';
 let currentSortMethod = 'latest';
 let currentRatingFilter = 0;
 let currentTab = 'trending';
+let rapidCatalogCache = null;
+let featuredMovieKey = '';
+
+const RAPID_TOP250_URL = 'https://imdb236.p.rapidapi.com/api/imdb/top250-movies';
+const RAPID_HEADERS = {
+	'Content-Type': 'application/json',
+	'x-rapidapi-host': 'imdb236.p.rapidapi.com',
+	'x-rapidapi-key': 'ecdd572f6fmsh055b23482742d2cp1af123jsn9b1d66941f6f'
+};
 
 function getMovieDetailUrl(movie) {
 	const detailUrl = new URL('./Movie Detail.html', window.location.href);
@@ -459,6 +892,120 @@ function attachCardRedirect(card, movie) {
 	});
 }
 
+function getTmdbRequestConfig() {
+	const bearer = String(window.TMDB_BEARER_TOKEN || '').trim();
+	if (bearer) {
+		return {
+			headers: {
+				Authorization: `Bearer ${bearer}`,
+				'Content-Type': 'application/json'
+			},
+			query: ''
+		};
+	}
+
+	const apiKey = String(window.TMDB_API_KEY || '').trim();
+	return {
+		headers: null,
+		query: apiKey ? `api_key=${encodeURIComponent(apiKey)}` : ''
+	};
+}
+
+function buildTmdbUrl(baseUrl) {
+	const tmdbConfig = getTmdbRequestConfig();
+	if (!tmdbConfig.query) {
+		return baseUrl;
+	}
+	return `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}${tmdbConfig.query}`;
+}
+
+function normalizeRapidMovie(movie) {
+	const imdbId = String(movie.id || movie.imdbID || '').trim();
+	const titleType = String(movie.titleType || movie.type || '').toLowerCase();
+	const isSeries = titleType.includes('tv') || titleType.includes('series');
+	const year = String(movie.startYear || movie.year || '').slice(0, 4);
+	const rating = Number(movie.averageRating || movie.rating);
+
+	return {
+		imdbID: imdbId,
+		Title: movie.primaryTitle || movie.title || 'Untitled',
+		Year: year || 'N/A',
+		Type: isSeries ? 'series' : 'movie',
+		Poster: movie.primaryImage || movie.image || 'N/A',
+		imdbRating: Number.isFinite(rating) ? rating.toFixed(1) : 'N/A',
+		dateAdded: movie.releaseDate || ''
+	};
+}
+
+function normalizeTmdbMovie(movie, forcedType) {
+	const mediaType = forcedType || movie.media_type || (movie.first_air_date ? 'tv' : 'movie');
+	const isSeries = mediaType === 'tv';
+	const releaseDate = movie.release_date || movie.first_air_date || '';
+	const rating = Number(movie.vote_average || 0);
+
+	return {
+		imdbID: `tmdb-${movie.id}`,
+		tmdbID: String(movie.id || ''),
+		Title: movie.title || movie.name || 'Untitled',
+		Year: releaseDate ? releaseDate.slice(0, 4) : 'N/A',
+		Type: isSeries ? 'series' : 'movie',
+		Poster: movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'N/A',
+		imdbRating: Number.isFinite(rating) ? rating.toFixed(1) : 'N/A'
+	};
+}
+
+async function fetchRapidCatalog() {
+	const response = await fetch(RAPID_TOP250_URL, {
+		method: 'GET',
+		headers: RAPID_HEADERS
+	});
+
+	if (!response.ok) {
+		throw new Error(`RapidAPI request failed (${response.status})`);
+	}
+
+	const payload = await response.json();
+	if (!Array.isArray(payload)) {
+		return [];
+	}
+
+	return payload.map(normalizeRapidMovie).filter(movie => movie.Title && movie.Title !== 'Untitled');
+}
+
+async function fetchTmdbFallbackCatalog() {
+	const tmdbConfig = getTmdbRequestConfig();
+	const requestOptions = { headers: tmdbConfig.headers || undefined };
+	const [movieResponse, tvResponse] = await Promise.all([
+		fetch(buildTmdbUrl('https://api.themoviedb.org/3/trending/movie/week?page=1'), requestOptions),
+		fetch(buildTmdbUrl('https://api.themoviedb.org/3/trending/tv/week?page=1'), requestOptions)
+	]);
+
+	const moviePayload = movieResponse.ok ? await movieResponse.json() : { results: [] };
+	const tvPayload = tvResponse.ok ? await tvResponse.json() : { results: [] };
+	const movies = Array.isArray(moviePayload.results) ? moviePayload.results.map(item => normalizeTmdbMovie(item, 'movie')) : [];
+	const series = Array.isArray(tvPayload.results) ? tvPayload.results.map(item => normalizeTmdbMovie(item, 'tv')) : [];
+
+	return [...movies, ...series];
+}
+
+async function getCatalogMovies() {
+	if (Array.isArray(rapidCatalogCache) && rapidCatalogCache.length > 0) {
+		return rapidCatalogCache;
+	}
+
+	try {
+		rapidCatalogCache = await fetchRapidCatalog();
+		if (rapidCatalogCache.length > 0) {
+			return rapidCatalogCache;
+		}
+	} catch (_error) {
+		// Fall through to TMDB fallback.
+	}
+
+	rapidCatalogCache = await fetchTmdbFallbackCatalog();
+	return rapidCatalogCache;
+}
+
 // Initialize library page with API calls
 document.addEventListener('DOMContentLoaded', function() {
 	loadTabContent('trending');
@@ -491,12 +1038,14 @@ function loadTabContent(tab) {
 }
 
 function loadTrendingNow() {
-	const apiKey = window.OMDB_API_KEY || '';
-	fetch(`https://api.themoviedb.org/3/trending/all/week?api_key=${apiKey}`)
+	const tmdbConfig = getTmdbRequestConfig();
+	fetch(buildTmdbUrl('https://api.themoviedb.org/3/trending/all/week'), {
+		headers: tmdbConfig.headers || undefined
+	})
 		.then(response => response.json())
 		.then(data => {
 			if (data.results) {
-				allMoviesData = data.results;
+				allMoviesData = data.results.map(item => normalizeTmdbMovie(item));
 				displayAllMovies(allMoviesData);
 			}
 		})
@@ -504,12 +1053,14 @@ function loadTrendingNow() {
 }
 
 function loadAllSeries() {
-	const apiKey = window.OMDB_API_KEY || '';
-	fetch(`https://api.themoviedb.org/3/trending/tv/week?api_key=${apiKey}`)
+	const tmdbConfig = getTmdbRequestConfig();
+	fetch(buildTmdbUrl('https://api.themoviedb.org/3/trending/tv/week'), {
+		headers: tmdbConfig.headers || undefined
+	})
 		.then(response => response.json())
 		.then(data => {
 			if (data.results) {
-				allMoviesData = data.results;
+				allMoviesData = data.results.map(item => normalizeTmdbMovie(item, 'tv'));
 				displayAllMovies(allMoviesData);
 			}
 		})
@@ -518,12 +1069,14 @@ function loadAllSeries() {
 
 function loadOriginals() {
 	// For demo, treat 'originals' as Netflix originals (or similar)
-	const apiKey = window.OMDB_API_KEY || '';
-	fetch(`https://api.themoviedb.org/3/discover/tv?with_networks=213&api_key=${apiKey}`)
+	const tmdbConfig = getTmdbRequestConfig();
+	fetch(buildTmdbUrl('https://api.themoviedb.org/3/discover/tv?with_networks=213'), {
+		headers: tmdbConfig.headers || undefined
+	})
 		.then(response => response.json())
 		.then(data => {
 			if (data.results) {
-				allMoviesData = data.results;
+				allMoviesData = data.results.map(item => normalizeTmdbMovie(item, 'tv'));
 				displayAllMovies(allMoviesData);
 			}
 		})
@@ -531,12 +1084,14 @@ function loadOriginals() {
 }
 
 function loadNewReleases() {
-	const apiKey = window.OMDB_API_KEY || '';
-	fetch(`https://api.themoviedb.org/3/movie/now_playing?api_key=${apiKey}`)
+	const tmdbConfig = getTmdbRequestConfig();
+	fetch(buildTmdbUrl('https://api.themoviedb.org/3/movie/now_playing'), {
+		headers: tmdbConfig.headers || undefined
+	})
 		.then(response => response.json())
 		.then(data => {
 			if (data.results) {
-				allMoviesData = data.results;
+				allMoviesData = data.results.map(item => normalizeTmdbMovie(item, 'movie'));
 				displayAllMovies(allMoviesData);
 			}
 		})
@@ -545,32 +1100,15 @@ function loadNewReleases() {
 
 // Load all movies from API
 function loadAllMovies() {
-	const apiKey = window.OMDB_API_KEY || '';
-	// Fetch popular movies - using multiple queries to get comprehensive data
-	const queries = ['action', 'drama', 'comedy', 'thriller', 'adventure', 'animation', 'sci-fi', 'horror'];
-	let allMovies = [];
-	let completedRequests = 0;
-
-	queries.forEach(query => {
-		fetch(`https://www.omdbapi.com/?s=${query}&type=movie&apikey=${apiKey}`)
-			.then(response => response.json())
-			.then(data => {
-				if (data.Search) {
-					allMovies = allMovies.concat(data.Search);
-				}
-				completedRequests++;
-
-				if (completedRequests === queries.length) {
-					// Remove duplicates
-					allMoviesData = Array.from(new Map(allMovies.map(m => [m.imdbID, m])).values());
-					displayAllMovies(allMoviesData);
-				}
-			})
-			.catch(error => {
-				console.error('Error fetching movies:', error);
-				completedRequests++;
-			});
-	});
+	getCatalogMovies()
+		.then((movies) => {
+			allMoviesData = movies.filter(movie => movie.Type === 'movie');
+			displayAllMovies(allMoviesData);
+		})
+		.catch(error => {
+			console.error('Error fetching movies:', error);
+			document.getElementById('libraryCards').innerHTML = '<div class="movie-empty-state"><h3>Movie load error</h3><p>Please try again later</p></div>';
+		});
 }
 
 // Display movies in grid
@@ -659,15 +1197,14 @@ function displayAllMovies(movies) {
 
 // Load featured movie
 function loadFeaturedMovie() {
-	const apiKey = window.OMDB_API_KEY || '';
-	const featuredTitles = ['Oppenheimer', 'The Shawshank Redemption', 'Inception', 'Pulp Fiction', 'Parasite'];
-	const randomTitle = featuredTitles[Math.floor(Math.random() * featuredTitles.length)];
-
-	fetch(`https://www.omdbapi.com/?t=${randomTitle}&apikey=${apiKey}`)
-		.then(response => response.json())
-		.then(data => {
-			if (data.imdbID) {
-				updateFeaturedPlayer(data);
+	getCatalogMovies()
+		.then((movies) => {
+			if (!movies.length) return;
+			const ranked = [...movies].sort((a, b) => (parseFloat(b.imdbRating) || 0) - (parseFloat(a.imdbRating) || 0));
+			const pick = ranked[Math.floor(Math.random() * Math.min(10, ranked.length))];
+			if (pick) {
+				featuredMovieKey = String(pick.imdbID || pick.tmdbID || '');
+				updateFeaturedPlayer(pick);
 			}
 		})
 		.catch(error => console.error('Error loading featured:', error));
@@ -681,32 +1218,22 @@ function updateFeaturedPlayer(movie) {
 	const featuredPlayer = document.getElementById('featuredPlayer');
 	if (featuredPlayer) {
 		featuredPlayer.classList.remove('is-closed');
-		featuredPlayer.style.backgroundImage = `url('${movie.Poster}')`;
+		const poster = movie.Poster && movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/500x280?text=Featured';
+		featuredPlayer.style.backgroundImage = `url('${poster}')`;
 	}
 }
 
 // Load recommended movies
 function loadRecommendedMovies() {
-	const apiKey = window.OMDB_API_KEY || '';
-	const recommendedTitles = ['Dune', 'Avatar', 'The Dark Knight', 'Interstellar', 'Joker'];
-	let recommendedMovies = [];
-	let completed = 0;
-
-	recommendedTitles.forEach(title => {
-		fetch(`https://www.omdbapi.com/?t=${title}&apikey=${apiKey}`)
-			.then(response => response.json())
-			.then(data => {
-				if (data.imdbID) {
-					recommendedMovies.push(data);
-				}
-				completed++;
-
-				if (completed === recommendedTitles.length) {
-					displayRecommendedMovies(recommendedMovies);
-				}
-			})
-			.catch(error => console.error('Error loading recommended:', error));
-	});
+	getCatalogMovies()
+		.then((movies) => {
+			const filtered = movies.filter(movie => String(movie.imdbID || movie.tmdbID || '') !== featuredMovieKey);
+			const recommended = [...filtered]
+				.sort((a, b) => (parseFloat(b.imdbRating) || 0) - (parseFloat(a.imdbRating) || 0))
+				.slice(0, 8);
+			displayRecommendedMovies(recommended);
+		})
+		.catch(error => console.error('Error loading recommended:', error));
 }
 
 // Display recommended movies
@@ -822,12 +1349,11 @@ function setupEventListeners() {
 
 // Search movies
 function searchMovies(query) {
-	const apiKey = window.OMDB_API_KEY || '';
-	fetch(`https://www.omdbapi.com/?s=${query}&type=movie&apikey=${apiKey}`)
-		.then(response => response.json())
-		.then(data => {
-			if (data.Search) {
-				allMoviesData = data.Search;
+	getCatalogMovies()
+		.then((movies) => {
+			const normalizedQuery = String(query || '').toLowerCase().trim();
+			allMoviesData = movies.filter(movie => String(movie.Title || '').toLowerCase().includes(normalizedQuery));
+			if (allMoviesData.length > 0) {
 				displayAllMovies(allMoviesData);
 			} else {
 				document.getElementById('libraryCards').innerHTML = '<div class="movie-empty-state"><h3>No movies found</h3><p>Try searching with a different title</p></div>';

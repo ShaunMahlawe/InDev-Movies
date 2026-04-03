@@ -105,11 +105,15 @@
 
         if (/^tt\d+$/.test(imdbId)) {
             detailUrl.searchParams.set("id", imdbId);
-        } else {
-            if (tmdbId) {
-                detailUrl.searchParams.set("tmdbId", tmdbId);
-            }
-            detailUrl.searchParams.set("title", getTitle(movie));
+        }
+
+        if (tmdbId) {
+            detailUrl.searchParams.set("tmdbId", tmdbId);
+        }
+
+        const title = getTitle(movie);
+        if (title) {
+            detailUrl.searchParams.set("title", title);
         }
 
         if (movie.mediaType || movie.type || movie.titleType) {

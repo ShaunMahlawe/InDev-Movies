@@ -6,7 +6,7 @@ $(document).ready(function() {
   
 	$('#login-button').on('click', function() {
 		var loginUsernameEntry = $("#login-username").val();
-		var loginPasswordEntry = $("#login-password").val();
+    var loginPasswordEntry = $("#signInPass").val();
 		if (loginUsernameEntry == account[0] && loginPasswordEntry == account[1]) {
 			console.log("Current Username " + account[0]);
 			console.log("Current Password " + account[1]);
@@ -20,14 +20,14 @@ $(document).ready(function() {
   
 	$('#create-button').on('click', function() {
 		var createUsernameEntry = $("#create-username").val();
-		var createPasswordEntry = $("#create-password").val();
-		var createEmailEntry = $("#create-email").val();
+		var createPasswordEntry = $("#signUpPass").val();
+		var createEmailEntry = $("#signUpEmail").val();
     var createUsernameValid = false;
     var createPasswordValid = false;
     var createEmailValid = false;
     var createUsernameObject = $("#create-username");
-    var createPasswordObject = $("#create-password");
-    var createEmailObject = $("#create-email");
+    var createPasswordObject = $("#signUpPass");
+    var createEmailObject = $("#signUpEmail");
     var validate = /^\s*[a-zA-Z0-9,\s]+\s*$/;
     var validateEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
    
@@ -70,7 +70,7 @@ $(document).ready(function() {
       $(this).removeClass("error");
     });
     
-		account = [createUsername, createPassword];
+    account = [createUsername, createPassword];
 		console.log("Account Username " + account[0]);
 		console.log("Account Password " + account[1]);
     
@@ -95,25 +95,34 @@ const container = document.querySelector('.container');
 const registerBtn = document.querySelector('.register-btn');
 const loginBtn = document.querySelector('.login-btn');
 
-registerBtn.addEventListener('click', () => {
+if (container && registerBtn) {
+  registerBtn.addEventListener('click', () => {
     container.classList.add('active');
-})
+  });
+}
 
-loginBtn.addEventListener('click', () => {
+if (container && loginBtn) {
+  loginBtn.addEventListener('click', () => {
     container.classList.remove('active');
-})
+  });
+}
 
 
 let username;
 
-document.getElementById('loginForm').addEventListener ("submit", e  =>{
-e.preventDefault();
-username = document.getElementById("signInEmail").value;
-localStorage.setItem("userName",username );
-
-});
+const loginForm = document.getElementById('loginForm');
+if (loginForm) {
+  loginForm.addEventListener("submit", e  =>{
+    e.preventDefault();
+    username = document.getElementById("signInEmail").value;
+    localStorage.setItem("userName", username);
+  });
+}
 
 function showName(){
-    let savedName = localStorage.getItem("userNme");
-    document.getElementById('displayname').innerHTML = "Welcome" + savedName
+  const savedName = localStorage.getItem("userName");
+  const displayName = document.getElementById('displayName');
+  if (displayName && savedName) {
+    displayName.textContent = "Welcome " + savedName;
+  }
 }
