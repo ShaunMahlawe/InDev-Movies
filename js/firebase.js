@@ -5,10 +5,11 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 import {
     doc,
+    getDoc,
     setDoc,
     serverTimestamp
-} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
-import { auth, db } from "./firebase-core.js";
+} from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore-lite.js";
+import { auth, db } from "./firebase-core.js?v=20260404-2";
 
 const signupForm = document.getElementById("signupForm");
 const loginForm = document.getElementById("loginForm");
@@ -50,20 +51,27 @@ async function upsertUserProfile(user, username) {
     if (!user || !user.uid) return;
 
     const profileRef = doc(db, "users", user.uid);
-    const baseData = {
-        uid: user.uid,
-        email: user.email || "",
-        displayName: username || user.displayName || "",
-        updatedAt: serverTimestamp(),
-        lastLoginAt: serverTimestamp(),
-        role: "user",
-        isActive: true
-    };
+    try {
+        const existingProfileSnap = await getDoc(profileRef);
+        const existingProfile = existingProfileSnap.exists() ? existingProfileSnap.data() : null;
+        const profileData = {
+            uid: user.uid,
+            email: user.email || "",
+            displayName: username || user.displayName || existingProfile?.displayName || "",
+            updatedAt: serverTimestamp(),
+            lastLoginAt: serverTimestamp(),
+            role: existingProfile?.role || "user",
+            isActive: existingProfile?.isActive !== false
+        };
 
-    await setDoc(profileRef, {
-        ...baseData,
-        createdAt: serverTimestamp()
-    }, { merge: true });
+        if (!existingProfileSnap.exists()) {
+            profileData.createdAt = serverTimestamp();
+        }
+
+        await setDoc(profileRef, profileData, { merge: true });
+    } catch (error) {
+        console.warn("Profile sync skipped:", error);
+    }
 }
 
 if (signupForm) {

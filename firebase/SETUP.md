@@ -55,7 +55,9 @@ Open Firebase Console for your selected project and enable:
 In Firebase Console:
 1. Project settings -> General -> Your apps -> Web app
 2. Copy the config values
-3. Replace `firebaseConfig` inside `js/firebase.js`
+3. Add the values to `js/app-config.local.js` under `window.INDEV_CONFIG.firebase`
+
+Use `js/app-config.example.js` as the tracked template. `js/app-config.local.js` is ignored by git.
 
 ## 6) Add Firestore security rules (recommended baseline)
 Use rules like below:

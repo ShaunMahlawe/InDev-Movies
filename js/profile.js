@@ -1,6 +1,6 @@
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
-import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
-import { auth, db } from "./firebase-core.js";
+import { doc, getDoc } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore-lite.js";
+import { auth, db } from "./firebase-core.js?v=20260404-2";
 
 const nameEl = document.getElementById("profileDisplayName");
 const emailEl = document.getElementById("profileEmail");

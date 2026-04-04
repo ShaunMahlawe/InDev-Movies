@@ -1,5 +1,4 @@
 (function () {
-    const API_URL = "https://imdb236.p.rapidapi.com/api/imdb/top250-movies";
         const FALLBACK_POSTER = "../assets/Logo.png";
     const TMDB_TRENDING_URL = "https://api.themoviedb.org/3/trending/movie/week";
     const TMDB_TV_TRENDING_URL = "https://api.themoviedb.org/3/trending/tv/week";
@@ -8,9 +7,6 @@
     const TMDB_TV_SEARCH_URL = "https://api.themoviedb.org/3/search/tv";
         const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500"; // Base URL for TMDB images
     const TMDB_SITE_BASE = "https://www.themoviedb.org/movie";
-    const TMDB_BEARER_TOKEN = "4021acdffcbfdcde90599f49573267cc";
-    const RAPIDAPI_QUOTA_CACHE_KEY = "imdbRapidApiQuotaCooldownUntil";
-    const RAPIDAPI_QUOTA_TTL_MS = 12 * 60 * 60 * 1000;
     const TREND_MOVIE_LIMIT = 23;
     const HOME_MOVIE_LIMIT = 21;
     const TMDB_FALLBACK_PAGE_COUNT = 2;
@@ -40,12 +36,6 @@
         10766: "Drama",
         10768: "War"
     };
-    const API_HEADERS = {
-        "Content-Type": "application/json",
-        "x-rapidapi-host": "imdb236.p.rapidapi.com",
-        "x-rapidapi-key": "ecdd572f6fmsh055b23482742d2cp1af123jsn9b1d66941f6f"
-    };
-
     function normalizeAbsoluteUrl(value) {
         if (!value || typeof value !== "string") {
             return "";
@@ -67,64 +57,6 @@
 
         const parsed = Number(value.slice(0, 4));
         return Number.isFinite(parsed) ? parsed : "";
-    }
-
-    function isQuotaError(status, text) {
-        if (status === 429) {
-            return true;
-        }
-
-        const normalized = String(text || "").toLowerCase();
-        return normalized.includes("exceeded the monthly quota")
-            || normalized.includes("quota")
-            || normalized.includes("too many requests");
-    }
-
-    function getRapidApiQuotaCooldownUntil() {
-        try {
-            const rawValue = window.localStorage.getItem(RAPIDAPI_QUOTA_CACHE_KEY);
-            const parsedValue = Number(rawValue);
-            return Number.isFinite(parsedValue) ? parsedValue : 0;
-        } catch (_error) {
-            return 0;
-        }
-    }
-
-    function hasActiveRapidApiQuotaCooldown() {
-        const cooldownUntil = getRapidApiQuotaCooldownUntil();
-        if (!cooldownUntil) {
-            return false;
-        }
-
-        if (Date.now() >= cooldownUntil) {
-            try {
-                window.localStorage.removeItem(RAPIDAPI_QUOTA_CACHE_KEY);
-            } catch (_error) {
-                // Ignore storage cleanup failures.
-            }
-            return false;
-        }
-
-        return true;
-    }
-
-    function markRapidApiQuotaCooldown() {
-        try {
-            window.localStorage.setItem(
-                RAPIDAPI_QUOTA_CACHE_KEY,
-                String(Date.now() + RAPIDAPI_QUOTA_TTL_MS)
-            );
-        } catch (_error) {
-            // Ignore storage write failures and continue with runtime fallback.
-        }
-    }
-
-    function clearRapidApiQuotaCooldown() {
-        try {
-            window.localStorage.removeItem(RAPIDAPI_QUOTA_CACHE_KEY);
-        } catch (_error) {
-            // Ignore storage cleanup failures.
-        }
     }
 
     function getTitle(movie) {
@@ -518,15 +450,77 @@
                 return "";
             }
 
-            return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoId}&rel=0&modestbranding=1&cc_load_policy=0&cc_lang_pref=en&iv_load_policy=3&fs=0&disablekb=1`;
+            return `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1&cc_load_policy=0&cc_lang_pref=en&iv_load_policy=3&fs=1&disablekb=1&enablejsapi=1`;
         } catch (_error) {
             return "";
         }
     }
 
+    function syncCarouselTrailerFrames(carousel) {
+        if (!carousel) {
+            return;
+        }
+
+        const shouldPlay = navigator.onLine && document.visibilityState === "visible";
+
+        const slides = Array.from(carousel.querySelectorAll(".carousel-item"));
+        slides.forEach((slide) => {
+            const frame = slide.querySelector("iframe.trailer-frame");
+            if (!frame) {
+                return;
+            }
+
+            const storedSrc = frame.getAttribute("data-src") || frame.getAttribute("src") || "";
+            if (storedSrc && !frame.getAttribute("data-src")) {
+                frame.setAttribute("data-src", storedSrc);
+            }
+
+            const activeSrc = frame.getAttribute("data-src") || "";
+            const isActive = slide.classList.contains("active");
+
+            if (shouldPlay && isActive) {
+                if (activeSrc && frame.getAttribute("src") !== activeSrc) {
+                    frame.setAttribute("src", activeSrc);
+                }
+                return;
+            }
+
+            if (frame.getAttribute("src")) {
+                frame.setAttribute("src", "");
+            }
+        });
+    }
+
+    function bindCarouselPlaybackGuards(carousel) {
+        if (!carousel || carousel.dataset.trailerEnvBound === "true") {
+            return;
+        }
+
+        carousel.dataset.trailerEnvBound = "true";
+        const applyState = () => {
+            syncCarouselTrailerFrames(carousel);
+
+            if (!(window.bootstrap && window.bootstrap.Carousel)) {
+                return;
+            }
+
+            const instance = window.bootstrap.Carousel.getOrCreateInstance(carousel);
+            if (navigator.onLine && document.visibilityState === "visible") {
+                instance.cycle();
+                return;
+            }
+
+            instance.pause();
+        };
+
+        window.addEventListener("online", applyState);
+        window.addEventListener("offline", applyState);
+        document.addEventListener("visibilitychange", applyState);
+    }
+
     function getTmdbAuthHeaders() {
         const runtimeToken = window.TMDB_BEARER_TOKEN || "";
-        const token = runtimeToken || TMDB_BEARER_TOKEN;
+        const token = runtimeToken;
         if (!token) {
             return null;
         }
@@ -556,28 +550,10 @@
         return countries.includes(countryCode);
     }
 
-    async function fetchTop250FromRapidApi() {
-        const response = await fetch(API_URL, {
-            method: "GET",
-            headers: API_HEADERS
-        });
-
-        if (!response.ok) {
-            const responseText = await response.text();
-            const error = new Error(`IMDb API request failed (${response.status})`);
-            error.status = response.status;
-            error.responseText = responseText;
-            throw error;
-        }
-
-        const data = await response.json();
-        return Array.isArray(data) ? data : [];
-    }
-
     async function fetchTopMoviesFromTmdb() {
         const headers = getTmdbAuthHeaders();
         if (!headers) {
-            console.warn("TMDB fallback skipped: set window.TMDB_BEARER_TOKEN or TMDB_BEARER_TOKEN in js/imdb-top250.js");
+            console.warn("TMDB config missing: define window.INDEV_CONFIG.tmdb in js/app-config.local.js");
             return [];
         }
 
@@ -657,32 +633,12 @@
     }
 
     async function fetchTop250() {
-        if (hasActiveRapidApiQuotaCooldown()) {
-            const cachedFallbackMovies = await fetchTopMoviesFromTmdb();
-            if (cachedFallbackMovies.length > 0) {
-                return cachedFallbackMovies;
-            }
+        const movies = await fetchTopMoviesFromTmdb();
+        if (movies.length > 0) {
+            return movies;
         }
 
-        try {
-            const movies = await fetchTop250FromRapidApi();
-            clearRapidApiQuotaCooldown();
-            return enrichTrailersForEntries(movies, "movie");
-        } catch (error) {
-            const shouldFallback = isQuotaError(error.status, error.responseText);
-            if (!shouldFallback) {
-                throw error;
-            }
-
-            markRapidApiQuotaCooldown();
-            console.warn("IMDb RapidAPI quota exceeded. Switching to TMDB fallback.");
-            const fallbackMovies = await fetchTopMoviesFromTmdb();
-            if (fallbackMovies.length > 0) {
-                return fallbackMovies;
-            }
-
-            throw error;
-        }
+        throw new Error("TMDB catalog request returned no movies.");
     }
 
     const featuredPlaybackState = {
@@ -2185,7 +2141,8 @@
                 <div class="trailer-container">
                     <iframe
                         class="trailer trailer-frame"
-                        src="${embedUrl}"
+                        src="${index === 0 ? embedUrl : ""}"
+                        data-src="${embedUrl}"
                         title="${getTitle(movie)} trailer"
                         loading="lazy"
                         allow="autoplay; encrypted-media; picture-in-picture"
@@ -2214,7 +2171,25 @@
                 wrap: true,
                 touch: true
             });
-            instance.cycle();
+
+            if (carousel.dataset.trailerLifecycleBound !== "true") {
+                carousel.dataset.trailerLifecycleBound = "true";
+                carousel.addEventListener("slide.bs.carousel", () => {
+                    syncCarouselTrailerFrames(carousel);
+                });
+                carousel.addEventListener("slid.bs.carousel", () => {
+                    syncCarouselTrailerFrames(carousel);
+                });
+            }
+
+            syncCarouselTrailerFrames(carousel);
+            bindCarouselPlaybackGuards(carousel);
+
+            if (navigator.onLine && document.visibilityState === "visible") {
+                instance.cycle();
+            } else {
+                instance.pause();
+            }
         }
     }
 

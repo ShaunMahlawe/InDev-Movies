@@ -8,7 +8,7 @@
     <meta name="keywords" content="profile, account, movies">
     <meta name="author" content="Shaun Mahlawe">
     <title>Redirecting</title>
-    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/main.css?v=20260404-7">
     <style>
         body {
             min-height: 100vh;
@@ -44,7 +44,8 @@
         <p>Redirecting you back to the app.</p>
     </div>
 
-    <script type="module" src="../js/auth-guard.js"></script>
+    <script src="../js/app-config.local.js"></script>
+    <script type="module" src="../js/auth-guard.js?v=20260404-2"></script>
     <script>
         window.location.replace("../Pages/HomePage.html");
     </script>

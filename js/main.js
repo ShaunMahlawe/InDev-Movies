@@ -473,7 +473,61 @@ if (document.getElementById('watchlistCards')) {
 		}
 		buildYouTubeEmbedUrl(videoKey) {
 			if (!videoKey) return '';
-			return `https://www.youtube.com/embed/${videoKey}?autoplay=1&mute=1&controls=0&loop=1&playlist=${videoKey}&rel=0&modestbranding=1&cc_load_policy=0&cc_lang_pref=en&iv_load_policy=3&fs=0&disablekb=1`;
+			return `https://www.youtube-nocookie.com/embed/${videoKey}?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1&cc_load_policy=0&cc_lang_pref=en&iv_load_policy=3&fs=1&disablekb=1&enablejsapi=1`;
+		}
+		canAutoplayTrailers() {
+			return navigator.onLine && document.visibilityState === 'visible';
+		}
+		syncTrailerFrames(carousel) {
+			if (!carousel) return;
+			const shouldPlay = this.canAutoplayTrailers();
+
+			const slides = Array.from(carousel.querySelectorAll('.carousel-item'));
+			slides.forEach((slide) => {
+				const frame = slide.querySelector('iframe.trailer-frame');
+				if (!frame) return;
+
+				const storedSrc = frame.getAttribute('data-src') || frame.getAttribute('src') || '';
+				if (storedSrc && !frame.getAttribute('data-src')) {
+					frame.setAttribute('data-src', storedSrc);
+				}
+
+				const activeSrc = frame.getAttribute('data-src') || '';
+				const isActive = slide.classList.contains('active');
+
+				if (shouldPlay && isActive) {
+					if (activeSrc && frame.getAttribute('src') !== activeSrc) {
+						frame.setAttribute('src', activeSrc);
+					}
+					return;
+				}
+
+				if (frame.getAttribute('src')) {
+					frame.setAttribute('src', '');
+				}
+			});
+		}
+		applyTrailerPlaybackState(carousel) {
+			if (!carousel || !(window.bootstrap && window.bootstrap.Carousel)) return;
+
+			this.syncTrailerFrames(carousel);
+			const instance = window.bootstrap.Carousel.getOrCreateInstance(carousel);
+
+			if (this.canAutoplayTrailers()) {
+				instance.cycle();
+				return;
+			}
+
+			instance.pause();
+		}
+		bindTrailerEnvironmentEvents(carousel) {
+			if (!carousel || carousel.dataset.trailerEnvBound === 'true') return;
+
+			carousel.dataset.trailerEnvBound = 'true';
+			const applyState = () => this.applyTrailerPlaybackState(carousel);
+			window.addEventListener('online', applyState);
+			window.addEventListener('offline', applyState);
+			document.addEventListener('visibilitychange', applyState);
 		}
 		async resolveTmdbId(movie) {
 			const explicitTmdbId = String(movie.tmdbID || '').trim();
@@ -585,7 +639,7 @@ if (document.getElementById('watchlistCards')) {
 				item.className = `carousel-item ${isActive}`;
 				item.innerHTML = `
 					<div class="trailer-container" style="background-image:url('${slide.backdrop}'); background-size: cover; background-position: center;">
-						<iframe class="trailer trailer-frame" src="${slide.embedUrl}" title="${escapedTitle} trailer" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+						<iframe class="trailer trailer-frame" src="${index === 0 ? slide.embedUrl : ''}" data-src="${slide.embedUrl}" title="${escapedTitle} trailer" loading="lazy" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
 						<div class="info">
 							<div class="rating">${ratingText} Watchlist Trailer</div>
 							<h1 class="title">${slide.title}</h1>
@@ -608,13 +662,26 @@ if (document.getElementById('watchlistCards')) {
 
 			carousel.hidden = false;
 			if (window.bootstrap && window.bootstrap.Carousel) {
+				if (carousel.dataset.trailerLifecycleBound !== 'true') {
+					carousel.dataset.trailerLifecycleBound = 'true';
+					carousel.addEventListener('slide.bs.carousel', () => {
+						this.syncTrailerFrames(carousel);
+					});
+					carousel.addEventListener('slid.bs.carousel', () => {
+						this.syncTrailerFrames(carousel);
+					});
+				}
+
 				window.bootstrap.Carousel.getOrCreateInstance(carousel, {
 					interval: 7000,
 					ride: false,
 					pause: 'hover',
 					wrap: true,
 					touch: true
-				}).cycle();
+				});
+
+				this.bindTrailerEnvironmentEvents(carousel);
+				this.applyTrailerPlaybackState(carousel);
 			}
 		}
 		loadWatchlist() {
@@ -817,15 +884,8 @@ let currentGenreFilter = '';
 let currentSortMethod = 'latest';
 let currentRatingFilter = 0;
 let currentTab = 'trending';
-let rapidCatalogCache = null;
+let catalogCache = null;
 let featuredMovieKey = '';
-
-const RAPID_TOP250_URL = 'https://imdb236.p.rapidapi.com/api/imdb/top250-movies';
-const RAPID_HEADERS = {
-	'Content-Type': 'application/json',
-	'x-rapidapi-host': 'imdb236.p.rapidapi.com',
-	'x-rapidapi-key': 'ecdd572f6fmsh055b23482742d2cp1af123jsn9b1d66941f6f'
-};
 
 function getMovieDetailUrl(movie) {
 	const detailUrl = new URL('./Movie Detail.html', window.location.href);
@@ -919,24 +979,6 @@ function buildTmdbUrl(baseUrl) {
 	return `${baseUrl}${baseUrl.includes('?') ? '&' : '?'}${tmdbConfig.query}`;
 }
 
-function normalizeRapidMovie(movie) {
-	const imdbId = String(movie.id || movie.imdbID || '').trim();
-	const titleType = String(movie.titleType || movie.type || '').toLowerCase();
-	const isSeries = titleType.includes('tv') || titleType.includes('series');
-	const year = String(movie.startYear || movie.year || '').slice(0, 4);
-	const rating = Number(movie.averageRating || movie.rating);
-
-	return {
-		imdbID: imdbId,
-		Title: movie.primaryTitle || movie.title || 'Untitled',
-		Year: year || 'N/A',
-		Type: isSeries ? 'series' : 'movie',
-		Poster: movie.primaryImage || movie.image || 'N/A',
-		imdbRating: Number.isFinite(rating) ? rating.toFixed(1) : 'N/A',
-		dateAdded: movie.releaseDate || ''
-	};
-}
-
 function normalizeTmdbMovie(movie, forcedType) {
 	const mediaType = forcedType || movie.media_type || (movie.first_air_date ? 'tv' : 'movie');
 	const isSeries = mediaType === 'tv';
@@ -950,30 +992,17 @@ function normalizeTmdbMovie(movie, forcedType) {
 		Year: releaseDate ? releaseDate.slice(0, 4) : 'N/A',
 		Type: isSeries ? 'series' : 'movie',
 		Poster: movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : 'N/A',
-		imdbRating: Number.isFinite(rating) ? rating.toFixed(1) : 'N/A'
+		imdbRating: Number.isFinite(rating) ? rating.toFixed(1) : 'N/A',
+		plot: movie.overview || '',
+		dateAdded: releaseDate
 	};
-}
-
-async function fetchRapidCatalog() {
-	const response = await fetch(RAPID_TOP250_URL, {
-		method: 'GET',
-		headers: RAPID_HEADERS
-	});
-
-	if (!response.ok) {
-		throw new Error(`RapidAPI request failed (${response.status})`);
-	}
-
-	const payload = await response.json();
-	if (!Array.isArray(payload)) {
-		return [];
-	}
-
-	return payload.map(normalizeRapidMovie).filter(movie => movie.Title && movie.Title !== 'Untitled');
 }
 
 async function fetchTmdbFallbackCatalog() {
 	const tmdbConfig = getTmdbRequestConfig();
+	if (!tmdbConfig.headers && !tmdbConfig.query) {
+		throw new Error('TMDB config missing. Define window.INDEV_CONFIG.tmdb in js/app-config.local.js.');
+	}
 	const requestOptions = { headers: tmdbConfig.headers || undefined };
 	const [movieResponse, tvResponse] = await Promise.all([
 		fetch(buildTmdbUrl('https://api.themoviedb.org/3/trending/movie/week?page=1'), requestOptions),
@@ -989,25 +1018,26 @@ async function fetchTmdbFallbackCatalog() {
 }
 
 async function getCatalogMovies() {
-	if (Array.isArray(rapidCatalogCache) && rapidCatalogCache.length > 0) {
-		return rapidCatalogCache;
+	if (Array.isArray(catalogCache) && catalogCache.length > 0) {
+		return catalogCache;
 	}
 
-	try {
-		rapidCatalogCache = await fetchRapidCatalog();
-		if (rapidCatalogCache.length > 0) {
-			return rapidCatalogCache;
-		}
-	} catch (_error) {
-		// Fall through to TMDB fallback.
-	}
-
-	rapidCatalogCache = await fetchTmdbFallbackCatalog();
-	return rapidCatalogCache;
+	catalogCache = await fetchTmdbFallbackCatalog();
+	return catalogCache;
 }
 
 // Initialize library page with API calls
 document.addEventListener('DOMContentLoaded', function() {
+	const hasLegacyCatalogUi = Boolean(
+		document.getElementById('featuredPlayer')
+		&& document.getElementById('featuredTitle')
+		&& document.getElementById('recommendedCards')
+	);
+
+	if (!hasLegacyCatalogUi) {
+		return;
+	}
+
 	loadTabContent('trending');
 	loadFeaturedMovie();
 	loadRecommendedMovies();
@@ -1212,8 +1242,14 @@ function loadFeaturedMovie() {
 
 // Update featured player
 function updateFeaturedPlayer(movie) {
-	document.getElementById('featuredTitle').textContent = movie.Title;
-	document.getElementById('featuredWatching').textContent = `Rating: ${movie.imdbRating}/10`;
+	const featuredTitle = document.getElementById('featuredTitle');
+	const featuredWatching = document.getElementById('featuredWatching');
+	if (!featuredTitle || !featuredWatching) {
+		return;
+	}
+
+	featuredTitle.textContent = movie.Title;
+	featuredWatching.textContent = `Rating: ${movie.imdbRating}/10`;
     
 	const featuredPlayer = document.getElementById('featuredPlayer');
 	if (featuredPlayer) {
