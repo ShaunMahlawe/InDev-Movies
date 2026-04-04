@@ -1,13 +1,11 @@
 import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
-    onAuthStateChanged,
     updateProfile
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 import {
     doc,
     setDoc,
-    updateDoc,
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
 import { auth, db } from "./firebase-core.js";
@@ -23,12 +21,12 @@ const signInPass = document.getElementById("signInPass");
 function getPostLoginRedirect() {
     const params = new URLSearchParams(window.location.search);
     const redirect = params.get("redirect");
-    if (!redirect) return "./Pages/profile.html";
+    if (!redirect) return "./Pages/HomePage.html";
 
     // Accept only in-app relative redirects.
     const isRelativePath = redirect.startsWith("/") || redirect.startsWith("./") || redirect.startsWith("../");
     if (!isRelativePath || redirect.includes("//")) {
-        return "./Pages/profile.html";
+        return "./Pages/HomePage.html";
     }
 
     return redirect;
@@ -117,15 +115,3 @@ if (loginForm) {
         }
     });
 }
-
-onAuthStateChanged(auth, async (user) => {
-    if (!user) return;
-    try {
-        await updateDoc(doc(db, "users", user.uid), {
-            lastSeenAt: serverTimestamp(),
-            updatedAt: serverTimestamp()
-        });
-    } catch (_error) {
-        // Keep UX uninterrupted when profile update fails silently.
-    }
-});

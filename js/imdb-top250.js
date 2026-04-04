@@ -9,6 +9,8 @@
         const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/w500"; // Base URL for TMDB images
     const TMDB_SITE_BASE = "https://www.themoviedb.org/movie";
     const TMDB_BEARER_TOKEN = "4021acdffcbfdcde90599f49573267cc";
+    const RAPIDAPI_QUOTA_CACHE_KEY = "imdbRapidApiQuotaCooldownUntil";
+    const RAPIDAPI_QUOTA_TTL_MS = 12 * 60 * 60 * 1000;
     const TREND_MOVIE_LIMIT = 23;
     const HOME_MOVIE_LIMIT = 21;
     const TMDB_FALLBACK_PAGE_COUNT = 2;
@@ -76,6 +78,53 @@
         return normalized.includes("exceeded the monthly quota")
             || normalized.includes("quota")
             || normalized.includes("too many requests");
+    }
+
+    function getRapidApiQuotaCooldownUntil() {
+        try {
+            const rawValue = window.localStorage.getItem(RAPIDAPI_QUOTA_CACHE_KEY);
+            const parsedValue = Number(rawValue);
+            return Number.isFinite(parsedValue) ? parsedValue : 0;
+        } catch (_error) {
+            return 0;
+        }
+    }
+
+    function hasActiveRapidApiQuotaCooldown() {
+        const cooldownUntil = getRapidApiQuotaCooldownUntil();
+        if (!cooldownUntil) {
+            return false;
+        }
+
+        if (Date.now() >= cooldownUntil) {
+            try {
+                window.localStorage.removeItem(RAPIDAPI_QUOTA_CACHE_KEY);
+            } catch (_error) {
+                // Ignore storage cleanup failures.
+            }
+            return false;
+        }
+
+        return true;
+    }
+
+    function markRapidApiQuotaCooldown() {
+        try {
+            window.localStorage.setItem(
+                RAPIDAPI_QUOTA_CACHE_KEY,
+                String(Date.now() + RAPIDAPI_QUOTA_TTL_MS)
+            );
+        } catch (_error) {
+            // Ignore storage write failures and continue with runtime fallback.
+        }
+    }
+
+    function clearRapidApiQuotaCooldown() {
+        try {
+            window.localStorage.removeItem(RAPIDAPI_QUOTA_CACHE_KEY);
+        } catch (_error) {
+            // Ignore storage cleanup failures.
+        }
     }
 
     function getTitle(movie) {
@@ -608,8 +657,16 @@
     }
 
     async function fetchTop250() {
+        if (hasActiveRapidApiQuotaCooldown()) {
+            const cachedFallbackMovies = await fetchTopMoviesFromTmdb();
+            if (cachedFallbackMovies.length > 0) {
+                return cachedFallbackMovies;
+            }
+        }
+
         try {
             const movies = await fetchTop250FromRapidApi();
+            clearRapidApiQuotaCooldown();
             return enrichTrailersForEntries(movies, "movie");
         } catch (error) {
             const shouldFallback = isQuotaError(error.status, error.responseText);
@@ -617,6 +674,7 @@
                 throw error;
             }
 
+            markRapidApiQuotaCooldown();
             console.warn("IMDb RapidAPI quota exceeded. Switching to TMDB fallback.");
             const fallbackMovies = await fetchTopMoviesFromTmdb();
             if (fallbackMovies.length > 0) {

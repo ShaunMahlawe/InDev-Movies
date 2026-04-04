@@ -48,12 +48,33 @@
                 <li class="profile-menu">
                     <a href="#" class="profile-badge" aria-label="Profile menu">
                         <i class="fa fa-user" aria-hidden="true"></i>
+                        <span class="profile-badge__name" data-user-name>User</span>
                     </a>
-                    <ul class="profile-dropdown" aria-label="Profile menu">
-                        <li><a href="../Pages/profile.html"><i class="fa fa-cog" aria-hidden="true"></i><span>Profile</span></a></li>
-                        <li><a href="#"><i class="fa fa-bell" aria-hidden="true"></i><span>Notifications</span></a></li>
-                        <li><a href="#" data-auth-action="logout"><i class="fa fa-sign-out" aria-hidden="true"></i><span>Logout</span></a></li>
-                    </ul>
+                    <div class="profile-dropdown" aria-label="Profile panel">
+                        <div class="profile-dropdown__panel">
+                            <div class="profile-dropdown__header">
+                                <span class="profile-dropdown__avatar" aria-hidden="true"><i class="fa fa-user"></i></span>
+                                <div class="profile-dropdown__identity">
+                                    <strong data-user-name>User</strong>
+                                    <span data-user-email>user@example.com</span>
+                                </div>
+                            </div>
+                            <div class="profile-dropdown__meta">
+                                <div class="profile-dropdown__meta-item">
+                                    <span class="profile-dropdown__label">Role</span>
+                                    <span class="profile-dropdown__value" data-profile-role>user</span>
+                                </div>
+                                <div class="profile-dropdown__meta-item">
+                                    <span class="profile-dropdown__label">Last Seen</span>
+                                    <span class="profile-dropdown__value" data-profile-last-seen>-</span>
+                                </div>
+                            </div>
+                            <div class="profile-dropdown__actions">
+                                <a href="../Pages/watchlist.html"><i class="fa fa-bookmark" aria-hidden="true"></i><span>My List</span></a>
+                                <a href="#" data-auth-action="logout"><i class="fa fa-sign-out" aria-hidden="true"></i><span>Logout</span></a>
+                            </div>
+                        </div>
+                    </div>
                 </li>
             </ul>
             <ul class="mobile-menu-toggle">
