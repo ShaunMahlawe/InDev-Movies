@@ -22,6 +22,8 @@ const signUpPass = document.getElementById("signUpPass");
 const signUpUsername = document.getElementById("create-username");
 const signInEmail = document.getElementById("signInEmail");
 const signInPass = document.getElementById("signInPass");
+const PRIMARY_WEBAPP_ORIGIN = "https://indevmovies.web.app";
+const GOOGLE_REDIRECT_STARTED_KEY = "indev_google_redirect_started";
 
 function getPostLoginRedirect() {
     const params = new URLSearchParams(window.location.search);
@@ -37,6 +39,62 @@ function getPostLoginRedirect() {
     return redirect;
 }
 
+function normalizeRelativeRedirect(path) {
+    if (!path) return "/Pages/HomePage.html";
+    if (path.startsWith("./")) return `/${path.slice(2)}`;
+    if (path.startsWith("../")) return "/Pages/HomePage.html";
+    if (path.startsWith("/")) return path;
+    return `/${path}`;
+}
+
+function getPostLoginTarget() {
+    const params = new URLSearchParams(window.location.search);
+    const redirectPath = normalizeRelativeRedirect(getPostLoginRedirect());
+
+    const explicitReturnPath = params.get("returnTo");
+    if (explicitReturnPath && explicitReturnPath.startsWith("/")) {
+        return `${PRIMARY_WEBAPP_ORIGIN}${explicitReturnPath}`;
+    }
+
+    if (window.location.hostname === "indevmovies.firebaseapp.com") {
+        return `${PRIMARY_WEBAPP_ORIGIN}${redirectPath}`;
+    }
+    return getPostLoginRedirect();
+}
+
+function getCrossHostGoogleStartTarget() {
+    const redirectPath = normalizeRelativeRedirect(getPostLoginRedirect());
+    return `https://indevmovies.firebaseapp.com/?startGoogle=1&returnTo=${encodeURIComponent(redirectPath)}`;
+}
+
+async function maybeStartCrossHostGoogleRedirect() {
+    const params = new URLSearchParams(window.location.search);
+    const shouldStart = window.location.hostname === "indevmovies.firebaseapp.com" && params.get("startGoogle") === "1";
+    if (!shouldStart) return;
+
+    if (sessionStorage.getItem(GOOGLE_REDIRECT_STARTED_KEY) === "1") return;
+    sessionStorage.setItem(GOOGLE_REDIRECT_STARTED_KEY, "1");
+
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: "select_account" });
+    await signInWithRedirect(auth, provider);
+}
+
+function getUnauthorizedDomainFallbackTarget() {
+    const alreadyRetried = new URLSearchParams(window.location.search).get("authFallbackTried") === "1";
+    if (alreadyRetried) return null;
+
+    if (window.location.hostname === "indevmovies.web.app") {
+        return "https://indevmovies.firebaseapp.com/?authFallbackTried=1";
+    }
+
+    if (window.location.hostname === "indevmovies.firebaseapp.com") {
+        return "https://indevmovies.web.app/?authFallbackTried=1";
+    }
+
+    return null;
+}
+
 function humanizeAuthError(error) {
     const code = String(error?.code || "");
     const map = {
@@ -49,6 +107,7 @@ function humanizeAuthError(error) {
         "auth/too-many-requests": "Too many attempts. Please try again later.",
         "auth/operation-not-allowed": "Google sign-in is not enabled. Please contact support.",
         "auth/unauthorized-domain": "This domain is not authorised for Google sign-in. Add it in the Firebase console.",
+        "auth/internal-error": "Google sign-in hit a temporary error. Retrying with redirect...",
         "auth/popup-blocked": "Popup was blocked by the browser. Redirecting you to sign in...",
         "auth/cancelled-popup-request": null,
         "auth/popup-closed-by-user": null
@@ -108,7 +167,7 @@ if (signupForm) {
             await upsertUserProfile(credential.user, username);
             localStorage.setItem("userName", username);
             alert("Account created successfully.");
-            window.location.href = getPostLoginRedirect();
+            window.location.href = getPostLoginTarget();
         } catch (error) {
             alert(humanizeAuthError(error));
         }
@@ -117,19 +176,29 @@ if (signupForm) {
 
 /* ── Complete any in-progress redirect sign-in on page load ── */
 getRedirectResult(auth).then(async (credential) => {
-    if (!credential) return;
+    if (!credential) {
+        await maybeStartCrossHostGoogleRedirect();
+        return;
+    }
+    sessionStorage.removeItem(GOOGLE_REDIRECT_STARTED_KEY);
     const user = credential.user;
     const username = user.displayName || user.email || "User";
     await upsertUserProfile(user, username);
     localStorage.setItem("userName", username);
-    window.location.href = getPostLoginRedirect();
+    window.location.href = getPostLoginTarget();
 }).catch((error) => {
+    sessionStorage.removeItem(GOOGLE_REDIRECT_STARTED_KEY);
     const msg = humanizeAuthError(error);
     if (msg) alert(msg);
 });
 
 /* ── Google OAuth: popup first, redirect fallback ── */
 async function handleGoogleAuth() {
+    if (window.location.hostname === "indevmovies.web.app") {
+        window.location.href = getCrossHostGoogleStartTarget();
+        return;
+    }
+
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: "select_account" });
 
@@ -146,12 +215,20 @@ async function handleGoogleAuth() {
         const username = user.displayName || user.email || "User";
         await upsertUserProfile(user, username);
         localStorage.setItem("userName", username);
-        window.location.href = getPostLoginRedirect();
+        window.location.href = getPostLoginTarget();
     } catch (error) {
         const code = error?.code || "";
 
-        if (code === "auth/popup-blocked") {
-            // Popup was blocked — silently fall back to redirect
+        if (code === "auth/unauthorized-domain") {
+            const fallbackTarget = getUnauthorizedDomainFallbackTarget();
+            if (fallbackTarget) {
+                window.location.href = fallbackTarget;
+                return;
+            }
+        }
+
+        if (code === "auth/popup-blocked" || code === "auth/internal-error") {
+            // Popup can fail in some browsers/environments; redirect flow is more reliable.
             await signInWithRedirect(auth, provider);
             return; // page will reload; re-enable buttons is unnecessary
         }
@@ -181,7 +258,7 @@ if (loginForm) {
             const name = credential.user.displayName || credential.user.email || "User";
             localStorage.setItem("userName", name);
             alert("Login successful.");
-            window.location.href = getPostLoginRedirect();
+            window.location.href = getPostLoginTarget();
         } catch (error) {
             alert(humanizeAuthError(error));
         }
