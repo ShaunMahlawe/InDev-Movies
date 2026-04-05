@@ -237,6 +237,13 @@
   }
 
   /* ─── Boot ─── */
+  /* Check localStorage to determine default form for returning vs. new users */
+  if (localStorage.getItem('hasVisitedBefore') === 'true') {
+    showLogin();
+  } else {
+    showSignup();
+  }
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', fetchTrending);
   } else {

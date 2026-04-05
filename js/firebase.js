@@ -168,6 +168,7 @@ if (signupForm) {
             await updateProfile(credential.user, { displayName: username });
             await upsertUserProfile(credential.user, username);
             localStorage.setItem("userName", username);
+            localStorage.setItem("hasVisitedBefore", "true");
             alert("Account created successfully.");
             window.location.href = getPostLoginTarget();
         } catch (error) {
@@ -187,6 +188,7 @@ getRedirectResult(auth).then(async (credential) => {
     const username = user.displayName || user.email || "User";
     await upsertUserProfile(user, username);
     localStorage.setItem("userName", username);
+    localStorage.setItem("hasVisitedBefore", "true");
     window.location.href = getPostLoginTarget();
 }).catch((error) => {
     sessionStorage.removeItem(GOOGLE_REDIRECT_STARTED_KEY);
@@ -217,6 +219,7 @@ async function handleGoogleAuth() {
         const username = user.displayName || user.email || "User";
         await upsertUserProfile(user, username);
         localStorage.setItem("userName", username);
+        localStorage.setItem("hasVisitedBefore", "true");
         window.location.href = getPostLoginTarget();
     } catch (error) {
         const code = error?.code || "";
