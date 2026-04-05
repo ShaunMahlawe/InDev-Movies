@@ -1,7 +1,11 @@
 import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
-    updateProfile
+    updateProfile,
+    GoogleAuthProvider,
+    signInWithPopup,
+    signInWithRedirect,
+    getRedirectResult
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 import {
     doc,
@@ -42,9 +46,16 @@ function humanizeAuthError(error) {
         "auth/invalid-credential": "Incorrect email or password.",
         "auth/user-not-found": "No account found for this email.",
         "auth/wrong-password": "Incorrect email or password.",
-        "auth/too-many-requests": "Too many attempts. Please try again later."
+        "auth/too-many-requests": "Too many attempts. Please try again later.",
+        "auth/operation-not-allowed": "Google sign-in is not enabled. Please contact support.",
+        "auth/unauthorized-domain": "This domain is not authorised for Google sign-in. Add it in the Firebase console.",
+        "auth/popup-blocked": "Popup was blocked by the browser. Redirecting you to sign in...",
+        "auth/cancelled-popup-request": null,
+        "auth/popup-closed-by-user": null
     };
-    return map[code] || (error?.message || "Authentication failed.");
+    const msg = map[code];
+    if (msg === null) return null; // silently ignored
+    return msg || (error?.message || "Authentication failed.");
 }
 
 async function upsertUserProfile(user, username) {
@@ -103,6 +114,59 @@ if (signupForm) {
         }
     });
 }
+
+/* ── Complete any in-progress redirect sign-in on page load ── */
+getRedirectResult(auth).then(async (credential) => {
+    if (!credential) return;
+    const user = credential.user;
+    const username = user.displayName || user.email || "User";
+    await upsertUserProfile(user, username);
+    localStorage.setItem("userName", username);
+    window.location.href = getPostLoginRedirect();
+}).catch((error) => {
+    const msg = humanizeAuthError(error);
+    if (msg) alert(msg);
+});
+
+/* ── Google OAuth: popup first, redirect fallback ── */
+async function handleGoogleAuth() {
+    const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: "select_account" });
+
+    // Disable the buttons during the flow
+    const btns = [
+        document.getElementById("googleSignInBtn"),
+        document.getElementById("googleSignUpBtn")
+    ].filter(Boolean);
+    btns.forEach((b) => { b.disabled = true; b.style.opacity = "0.6"; });
+
+    try {
+        const credential = await signInWithPopup(auth, provider);
+        const user = credential.user;
+        const username = user.displayName || user.email || "User";
+        await upsertUserProfile(user, username);
+        localStorage.setItem("userName", username);
+        window.location.href = getPostLoginRedirect();
+    } catch (error) {
+        const code = error?.code || "";
+
+        if (code === "auth/popup-blocked") {
+            // Popup was blocked — silently fall back to redirect
+            await signInWithRedirect(auth, provider);
+            return; // page will reload; re-enable buttons is unnecessary
+        }
+
+        btns.forEach((b) => { b.disabled = false; b.style.opacity = ""; });
+
+        const msg = humanizeAuthError(error);
+        if (msg) alert(msg);
+    }
+}
+
+const googleSignInBtn  = document.getElementById("googleSignInBtn");
+const googleSignUpBtn  = document.getElementById("googleSignUpBtn");
+if (googleSignInBtn)  googleSignInBtn.addEventListener("click", handleGoogleAuth);
+if (googleSignUpBtn)  googleSignUpBtn.addEventListener("click", handleGoogleAuth);
 
 if (loginForm) {
     loginForm.addEventListener("submit", async (event) => {

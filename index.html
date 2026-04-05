@@ -1,79 +1,178 @@
-<!DOCTYPE html><!--This is a comment-->
+<!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="InDev Movies">
+  <title>InDev Movies — Sign In</title>
 
-    <meta charset="UTF-8"><!--Types of letters and symbols-->
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"> <!--browser compatibility-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"><!--initial size-->
-    <meta name="keywords" content="HTML,CSS, Template, Bootstrap"><!-- keywords nb!-->
-    <meta name="author" content="Khenso">
-
-    <title>Sign up </title>
-
-    <!--Bootstrap, Javascript, Google Fonts, CSS-->
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-
-<link rel="icon" type="image/svg+xml" href="Asset/img/menu_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg">
-
-<link rel="stylesheet" href="css/main.css?v=20260404-7">  
-
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="icon" type="image/svg+xml" href="Asset/img/menu_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg">
+  <link rel="stylesheet" href="css/main.css?v=20260405-1">
 </head>
 
-<body data-auth-mode="guest">
-<div class="login-page">
-  <div class="form">
+<body class="auth-split-page" data-auth-mode="guest">
 
+  <!-- ══════════════════════════════════════════════════
+       LEFT PANEL — Trending movie carousel
+  ══════════════════════════════════════════════════ -->
+  <section class="auth-carousel" id="authCarousel" aria-label="Trending movies showcase">
 
-    <form id="signupForm" class="register-form">
-      <h1>Sign Up</h1>
-      <input id="create-username" type="text" placeholder="username" autocomplete="username" required/>
-      <input id="signUpEmail" type="email" placeholder="email address" autocomplete="email" required/>
-      <input id="signUpPass" type="password" placeholder="password" autocomplete="new-password" minlength="8" required/>
-      <button name="create-button" type="submit" id="create-button">create</button>
-      <p class="message">Already registered? <a href="#">Sign In</a></p>
-    </form>
-    <form id="loginForm" class="login-form">
-      <h1>Log In</h1>
-      <input id="signInEmail" type="email" placeholder="email" name="login-email" autocomplete="email" required/>
-      <input id="signInPass" type="password" placeholder="password" name="login-password" autocomplete="current-password" required/>
+    <!-- Backdrop crossfade layers -->
+    <div class="carousel-bg" id="carouselBackdrop"></div>
+    <div class="carousel-bg carousel-bg--next" id="carouselBackdropNext"></div>
+    <!-- Gradient vignette -->
+    <div class="carousel-gradient"></div>
 
-<!-- <div class="form-check">
-  
-  <input class="form-check-input" type="checkbox" value="" id="checkDefault">
-  <label class="form-check-label" for="checkDefault">
-    Remember me
-  </label>
-</div> -->
+    <!-- Top bar: brand + tab buttons -->
+    <header class="carousel-topbar">
+      <span class="carousel-brand">InDev <strong>Movies</strong></span>
+      <div class="carousel-topbar-actions">
+        <button class="ctab-btn" id="ctabSignUp" type="button">Sign Up</button>
+        <button class="ctab-btn ctab-btn--active" id="ctabLogIn" type="button">Log In</button>
+      </div>
+    </header>
 
-       <!-- <p>Remember me</p> -->
-       <!-- <p> Forgot password</p> -->
-      <button name="login-button" type="submit" id="login-button">login</button>
+    <!-- Centre: floating movie poster card -->
+    <div class="carousel-stage">
+      <div class="carousel-card">
+        <img class="carousel-poster" id="carouselPoster" src="" alt="Trending movie poster" loading="lazy">
+        <div class="carousel-card-shine"></div>
+      </div>
+    </div>
 
-     <!-- <p> Or Sign with </p> -->
+    <!-- Bottom: movie info + nav -->
+    <footer class="carousel-footer">
+      <div class="carousel-meta">
+        <div class="carousel-meta-text">
+          <span class="carousel-title" id="carouselTitle">Loading...</span>
+          <span class="carousel-sub"   id="carouselSub"></span>
+        </div>
+        <nav class="carousel-nav" aria-label="Carousel navigation">
+          <button class="carousel-nav-btn" id="carouselPrev" type="button" aria-label="Previous movie">&#8592;</button>
+          <button class="carousel-nav-btn" id="carouselNext" type="button" aria-label="Next movie">&#8594;</button>
+        </nav>
+      </div>
+      <div class="carousel-dots" id="carouselDots" role="tablist" aria-label="Slide indicators"></div>
+    </footer>
 
-     <!-- add images of Google -->
+  </section>
 
-      <p class="message">Don't have an account? <a href="#">Sign Up</a></p>
-    </form>
-  </div>
-</div>
+  <!-- ══════════════════════════════════════════════════
+       RIGHT PANEL — Auth forms
+  ══════════════════════════════════════════════════ -->
+  <main class="auth-panel">
+    <div class="auth-panel-inner">
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+      <!-- Brand -->
+      <div class="auth-brand" aria-label="InDev Movies">
+        <svg class="auth-brand-icon" width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+          <rect width="28" height="28" rx="7" fill="#ff163a"/>
+          <path d="M7 8h14M7 14h10M7 20h12" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+        </svg>
+        <span class="auth-brand-name">InDev Movies</span>
+      </div>
 
-    <script src="js/KS script.js"></script>
-    <script src="js/app-config.local.js"></script>
-    <script type="module" src="js/auth-guard.js?v=20260404-2"></script>
-    <script type="module" src="js/firebase.js?v=20260404-2"></script>
+      <!-- Heading (set by JS on toggle) -->
+      <h1 class="auth-heading"    id="authHeading">Hi, Movie Lover</h1>
+      <p  class="auth-subheading" id="authSubheading">Welcome back — sign in to continue</p>
+
+      <!-- ── LOGIN FORM ── -->
+      <form id="loginForm" class="auth-form" novalidate>
+
+        <div class="auth-field-group">
+          <label class="auth-label" for="signInEmail">Email</label>
+          <input class="auth-input" id="signInEmail" type="email"
+                 placeholder="you@example.com" autocomplete="email" required>
+        </div>
+
+        <div class="auth-field-group">
+          <div class="auth-label-row">
+            <label class="auth-label" for="signInPass">Password</label>
+            <a class="auth-forgot" href="#" tabindex="-1">Forgot password?</a>
+          </div>
+          <input class="auth-input" id="signInPass" type="password"
+                 placeholder="••••••••" autocomplete="current-password" required>
+        </div>
+
+        <div class="auth-divider"><span>or</span></div>
+
+        <button class="auth-btn auth-btn--google" id="googleSignInBtn" type="button">
+          <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
+            <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.6 2.5 30.1 0 24 0 14.8 0 6.9 5.4 3.1 13.2l7.8 6C12.8 13 18 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.9 7.2l7.6 5.9c4.5-4.1 7.1-10.2 7.1-17.1z"/>
+            <path fill="#FBBC05" d="M10.9 28.8A14.5 14.5 0 0 1 9.5 24c0-1.7.3-3.3.8-4.8l-7.8-6A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.5 10.8l8.4-6z"/>
+            <path fill="#34A853" d="M24 48c6.1 0 11.2-2 14.9-5.5l-7.6-5.9c-2 1.4-4.6 2.2-7.3 2.2-6 0-11.1-4-12.9-9.5l-8.4 6C6.9 42.6 14.8 48 24 48z"/>
+          </svg>
+          Sign in with Google
+        </button>
+
+        <button class="auth-btn auth-btn--primary" id="login-button" type="submit">Login</button>
+
+        <p class="auth-switch-text">Don't have an account? <a href="#" id="switchToSignup">Sign up</a></p>
+
+      </form>
+
+      <!-- ── SIGN UP FORM ── -->
+      <form id="signupForm" class="auth-form auth-form--hidden" novalidate>
+
+        <div class="auth-field-group">
+          <label class="auth-label" for="create-username">Username</label>
+          <input class="auth-input" id="create-username" type="text"
+                 placeholder="moviefan123" autocomplete="username" required>
+        </div>
+
+        <div class="auth-field-group">
+          <label class="auth-label" for="signUpEmail">Email</label>
+          <input class="auth-input" id="signUpEmail" type="email"
+                 placeholder="you@example.com" autocomplete="email" required>
+        </div>
+
+        <div class="auth-field-group">
+          <label class="auth-label" for="signUpPass">Password</label>
+          <input class="auth-input" id="signUpPass" type="password"
+                 placeholder="Min. 8 characters" autocomplete="new-password" minlength="8" required>
+        </div>
+
+        <div class="auth-divider"><span>or</span></div>
+
+        <button class="auth-btn auth-btn--google" id="googleSignUpBtn" type="button">
+          <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
+            <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.6 2.5 30.1 0 24 0 14.8 0 6.9 5.4 3.1 13.2l7.8 6C12.8 13 18 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.9 7.2l7.6 5.9c4.5-4.1 7.1-10.2 7.1-17.1z"/>
+            <path fill="#FBBC05" d="M10.9 28.8A14.5 14.5 0 0 1 9.5 24c0-1.7.3-3.3.8-4.8l-7.8-6A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.5 10.8l8.4-6z"/>
+            <path fill="#34A853" d="M24 48c6.1 0 11.2-2 14.9-5.5l-7.6-5.9c-2 1.4-4.6 2.2-7.3 2.2-6 0-11.1-4-12.9-9.5l-8.4 6C6.9 42.6 14.8 48 24 48z"/>
+          </svg>
+          Sign up with Google
+        </button>
+
+        <button class="auth-btn auth-btn--primary" id="create-button" type="submit">Create Account</button>
+
+        <p class="auth-switch-text">Already have an account? <a href="#" id="switchToLogin">Sign in</a></p>
+
+      </form>
+
+      <!-- Social links -->
+      <div class="auth-socials">
+        <a class="auth-social-link" href="#" aria-label="Facebook"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+        <a class="auth-social-link" href="#" aria-label="Twitter"><i class="fa fa-twitter"  aria-hidden="true"></i></a>
+        <a class="auth-social-link" href="#" aria-label="LinkedIn"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+        <a class="auth-social-link" href="#" aria-label="Instagram"><i class="fa fa-instagram" aria-hidden="true"></i></a>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Scripts — order matters: config first, then carousel, then firebase module -->
+  <script src="js/app-config.local.js"></script>
+  <script src="js/api-config.js"></script>
+  <script src="js/auth-carousel.js"></script>
+  <script type="module" src="js/auth-guard.js?v=20260405-1"></script>
+  <script type="module" src="js/firebase.js?v=20260405-1"></script>
+
 </body>
-
 </html>

@@ -3156,3 +3156,547 @@ body {
         grid-template-columns: repeat(auto-fit, minmax(198px, 1fr));
     }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   AUTH SPLIT PAGE  (index.html)
+   Body class: .auth-split-page
+   ═══════════════════════════════════════════════════════════════ */
+
+.auth-split-page {
+    height: 100vh;
+    display: flex;
+    overflow: hidden;
+    font-family: 'Poppins', Arial, sans-serif;
+}
+
+/* Suppress the old form styles on this page */
+.auth-split-page .login-page,
+.auth-split-page .form {
+    display: none !important;
+}
+
+/* ── LEFT PANEL: Carousel ── */
+
+.auth-carousel {
+    position: relative;
+    flex: 0 0 55%;
+    max-width: 55%;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+}
+
+/* Backdrop crossfade layers */
+.carousel-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transition: opacity 0.7s ease;
+    z-index: 0;
+}
+
+.carousel-bg--next {
+    z-index: 1;
+    opacity: 0;
+}
+
+.carousel-bg--next.visible {
+    opacity: 1;
+}
+
+/* Gradient vignette */
+.carousel-gradient {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.50) 0%,
+        rgba(0, 0, 0, 0.08) 30%,
+        rgba(0, 0, 0, 0.08) 55%,
+        rgba(0, 0, 0, 0.78) 100%
+    );
+    z-index: 2;
+}
+
+/* Top bar */
+.carousel-topbar {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 28px 32px;
+}
+
+.carousel-brand {
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.carousel-brand strong {
+    font-weight: 700;
+}
+
+.carousel-topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ctab-btn {
+    background: transparent;
+    border: 1.5px solid rgba(255, 255, 255, 0.45);
+    color: #fff;
+    border-radius: 100px;
+    padding: 7px 20px;
+    font-size: 13px;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.ctab-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.75);
+}
+
+.ctab-btn--active {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(6px);
+    font-weight: 600;
+}
+
+/* Centre stage: poster card */
+.carousel-stage {
+    position: relative;
+    z-index: 10;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 32px;
+}
+
+.carousel-card {
+    position: relative;
+    width: clamp(160px, 24vw, 240px);
+    aspect-ratio: 2 / 3;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow:
+        0 40px 90px rgba(0, 0, 0, 0.70),
+        0 0 0 1px rgba(255, 255, 255, 0.10);
+    background: #111;
+}
+
+.carousel-poster {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: opacity 0.4s ease;
+}
+
+/* Subtle shimmer animation on the card */
+.carousel-card-shine {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        110deg,
+        transparent 35%,
+        rgba(255, 255, 255, 0.07) 50%,
+        transparent 65%
+    );
+    background-size: 200% 100%;
+    animation: authCardShine 3.5s linear infinite;
+}
+
+@keyframes authCardShine {
+    0%   { background-position: 200% center; }
+    100% { background-position: -200% center; }
+}
+
+/* Footer: movie info + nav */
+.carousel-footer {
+    position: relative;
+    z-index: 10;
+    padding: 18px 32px 28px;
+}
+
+.carousel-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.carousel-meta-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.carousel-title {
+    font-size: clamp(14px, 1.8vw, 17px);
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.95);
+    transition: opacity 0.35s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: clamp(180px, 28vw, 320px);
+}
+
+.carousel-sub {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.60);
+    transition: opacity 0.40s ease;
+}
+
+/* Prev / Next buttons */
+.carousel-nav {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.carousel-nav-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.10);
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, border-color 0.2s;
+    backdrop-filter: blur(4px);
+    padding: 0;
+}
+
+.carousel-nav-btn:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.70);
+}
+
+/* Dot indicators */
+.carousel-dots {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.carousel-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.35);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: background 0.25s, width 0.25s, border-radius 0.25s;
+}
+
+.carousel-dot.active {
+    width: 20px;
+    border-radius: 3px;
+    background: #fff;
+}
+
+/* ── RIGHT PANEL: Auth ── */
+
+.auth-panel {
+    flex: 1;
+    height: 100vh;
+    overflow-y: auto;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-panel-inner {
+    width: 100%;
+    max-width: 400px;
+    padding: 44px 36px;
+}
+
+/* Brand row */
+.auth-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 36px;
+}
+
+.auth-brand-icon {
+    flex-shrink: 0;
+    border-radius: 7px;
+}
+
+.auth-brand-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111;
+    letter-spacing: -0.02em;
+}
+
+/* Heading */
+.auth-heading {
+    font-size: clamp(26px, 3.2vw, 34px);
+    font-weight: 800;
+    color: #111;
+    margin: 0 0 6px;
+    line-height: 1.15;
+}
+
+.auth-subheading {
+    font-size: 14px;
+    color: #888;
+    margin: 0 0 28px;
+}
+
+/* Form */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.auth-form--hidden {
+    display: none !important;
+}
+
+.auth-field-group {
+    margin-bottom: 16px;
+}
+
+.auth-label-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.auth-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 5px;
+    letter-spacing: 0.02em;
+}
+
+.auth-label-row .auth-label {
+    margin-bottom: 0;
+}
+
+.auth-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    color: #111;
+    background: #fafafa;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    box-sizing: border-box;
+}
+
+.auth-input:focus {
+    border-color: var(--primary-red, #ff163a);
+    box-shadow: 0 0 0 3px rgba(255, 22, 58, 0.10);
+    background: #fff;
+}
+
+.auth-input::placeholder {
+    color: #bbb;
+}
+
+.auth-forgot {
+    font-size: 11.5px;
+    color: var(--primary-red, #ff163a);
+    text-decoration: none;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.auth-forgot:hover {
+    text-decoration: underline;
+}
+
+/* Divider */
+.auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #ccc;
+    font-size: 12px;
+    margin: 14px 0;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e5e7eb;
+}
+
+/* Buttons */
+.auth-btn {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: background 0.2s, opacity 0.15s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.auth-btn:active {
+    transform: scale(0.98);
+}
+
+.auth-btn--google {
+    background: #fff;
+    border: 1.5px solid #e5e7eb;
+    color: #333;
+}
+
+.auth-btn--google:hover {
+    background: #f5f5f5;
+    border-color: #d0d0d0;
+}
+
+.auth-btn--primary {
+    background: var(--primary-red, #ff163a);
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+.auth-btn--primary:hover {
+    background: var(--primary-red-dark, #cb0f2e);
+}
+
+/* Switch text */
+.auth-switch-text {
+    text-align: center;
+    font-size: 13px;
+    color: #888;
+    margin: 4px 0 20px;
+}
+
+.auth-switch-text a {
+    color: var(--primary-red, #ff163a);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.auth-switch-text a:hover {
+    text-decoration: underline;
+}
+
+/* Social links */
+.auth-socials {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 8px;
+}
+
+.auth-social-link {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1.5px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    font-size: 15px;
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.auth-social-link:hover {
+    border-color: var(--primary-red, #ff163a);
+    color: var(--primary-red, #ff163a);
+    background: rgba(255, 22, 58, 0.05);
+}
+
+/* ── Responsive: tablet (900px) → stack vertically ── */
+@media (max-width: 900px) {
+    .auth-split-page {
+        flex-direction: column;
+        height: auto;
+        min-height: 100vh;
+        overflow-y: auto;
+    }
+
+    .auth-carousel {
+        flex: none;
+        max-width: 100%;
+        width: 100%;
+        height: 48vh;
+        min-height: 300px;
+    }
+
+    .auth-panel {
+        flex: none;
+        height: auto;
+        min-height: unset;
+    }
+
+    .carousel-topbar {
+        padding: 20px 24px;
+    }
+
+    .carousel-stage {
+        padding: 6px 24px;
+    }
+
+    .carousel-footer {
+        padding: 14px 24px 22px;
+    }
+}
+
+/* ── Responsive: small phones (480px) ── */
+@media (max-width: 480px) {
+    .auth-panel-inner {
+        padding: 32px 20px;
+    }
+
+    .carousel-topbar {
+        padding: 16px 16px;
+    }
+
+    .carousel-footer {
+        padding: 12px 16px 18px;
+    }
+
+    .carousel-card {
+        width: clamp(120px, 38vw, 180px);
+    }
+}
