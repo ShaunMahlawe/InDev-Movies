@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="icon" type="image/svg+xml" href="Asset/img/menu_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg">
-  <link rel="stylesheet" href="css/main.css?v=20260405-1">
+  <link rel="stylesheet" href="css/main.css?v=20260405-2">
 </head>
 
 <body class="auth-split-page" data-auth-mode="guest">
@@ -95,8 +95,11 @@
             <label class="auth-label" for="signInPass">Password</label>
             <a class="auth-forgot" href="#" tabindex="-1">Forgot password?</a>
           </div>
-          <input class="auth-input" id="signInPass" type="password"
-                 placeholder="••••••••" autocomplete="current-password" required>
+          <div class="auth-password-wrap">
+            <input class="auth-input auth-input--password" id="signInPass" type="password"
+                   placeholder="••••••••" autocomplete="current-password" required>
+            <button class="auth-password-toggle" type="button" data-toggle-password="signInPass" aria-label="Show password" aria-pressed="false">Show</button>
+          </div>
         </div>
 
         <div class="auth-divider"><span>or</span></div>
@@ -134,8 +137,11 @@
 
         <div class="auth-field-group">
           <label class="auth-label" for="signUpPass">Password</label>
-          <input class="auth-input" id="signUpPass" type="password"
-                 placeholder="Min. 8 characters" autocomplete="new-password" minlength="8" required>
+          <div class="auth-password-wrap">
+            <input class="auth-input auth-input--password" id="signUpPass" type="password"
+                   placeholder="Min. 8 characters" autocomplete="new-password" minlength="8" required>
+            <button class="auth-password-toggle" type="button" data-toggle-password="signUpPass" aria-label="Show password" aria-pressed="false">Show</button>
+          </div>
         </div>
 
         <div class="auth-divider"><span>or</span></div>
@@ -168,11 +174,11 @@
   </main>
 
   <!-- Scripts — order matters: config first, then carousel, then firebase module -->
-  <script src="js/app-config.local.js?v=20260405-6"></script>
-  <script src="js/api-config.js?v=20260405-6"></script>
-  <script src="js/auth-carousel.js?v=20260405-6"></script>
-  <script type="module" src="js/auth-guard.js?v=20260405-6"></script>
-  <script type="module" src="js/firebase.js?v=20260405-6"></script>
+  <script src="js/app-config.local.js?v=20260405-7"></script>
+  <script src="js/api-config.js?v=20260405-7"></script>
+  <script src="js/auth-carousel.js?v=20260405-7"></script>
+  <script type="module" src="js/auth-guard.js?v=20260405-7"></script>
+  <script type="module" src="js/firebase.js?v=20260405-7"></script>
 
 </body>
 </html>

@@ -5,7 +5,8 @@ import {
     GoogleAuthProvider,
     signInWithPopup,
     signInWithRedirect,
-    getRedirectResult
+    getRedirectResult,
+    fetchSignInMethodsForEmail
 } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
 import {
     doc,
@@ -102,6 +103,7 @@ function humanizeAuthError(error) {
         "auth/invalid-email": "Please enter a valid email address.",
         "auth/weak-password": "Password must be at least 8 characters.",
         "auth/invalid-credential": "Incorrect email or password.",
+        "auth/invalid-login-credentials": "Incorrect email or password.",
         "auth/user-not-found": "No account found for this email.",
         "auth/wrong-password": "Incorrect email or password.",
         "auth/too-many-requests": "Too many attempts. Please try again later.",
@@ -260,7 +262,23 @@ if (loginForm) {
             alert("Login successful.");
             window.location.href = getPostLoginTarget();
         } catch (error) {
-            alert(humanizeAuthError(error));
+            const code = String(error?.code || "");
+
+            // Improve guidance when account exists but uses a different provider.
+            if ((code === "auth/invalid-credential" || code === "auth/invalid-login-credentials") && email) {
+                try {
+                    const methods = await fetchSignInMethodsForEmail(auth, email);
+                    if (methods.includes("google.com") && !methods.includes("password")) {
+                        alert("This account uses Google sign-in. Please use 'Sign in with Google'.");
+                        return;
+                    }
+                } catch (_lookupError) {
+                    // Fall back to generic auth error if provider lookup fails.
+                }
+            }
+
+            const msg = humanizeAuthError(error);
+            if (msg) alert(msg);
         }
     });
 }

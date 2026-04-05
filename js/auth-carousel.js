@@ -67,6 +67,21 @@
   if (switchToSignup) switchToSignup.addEventListener('click', function (e) { e.preventDefault(); showSignup(); });
   if (switchToLogin)  switchToLogin.addEventListener('click', function (e) { e.preventDefault(); showLogin(); });
 
+  /* ─── Password visibility toggle ─── */
+  Array.from(document.querySelectorAll('[data-toggle-password]')).forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var targetId = btn.getAttribute('data-toggle-password');
+      var input = targetId ? document.getElementById(targetId) : null;
+      if (!input) return;
+
+      var isHidden = input.type === 'password';
+      input.type = isHidden ? 'text' : 'password';
+      btn.textContent = isHidden ? 'Hide' : 'Show';
+      btn.setAttribute('aria-pressed', isHidden ? 'true' : 'false');
+      btn.setAttribute('aria-label', (isHidden ? 'Hide' : 'Show') + ' password');
+    });
+  });
+
   /* ══════════════════════════════════════
      CAROUSEL
   ══════════════════════════════════════ */
