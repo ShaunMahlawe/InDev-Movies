@@ -1,72 +1,194 @@
 # InDev Movies
 
-Multi-page movie browsing site with Firebase authentication and external movie data integrations.
+InDev Movies is a multi-page movie discovery and watchlist web app built with HTML, CSS, and vanilla JavaScript, powered by Firebase Authentication, Firestore profile data, and TMDB movie metadata.
 
-## Quick Start
+The product combines a polished streaming-style UI with practical account and catalog flows:
 
-This project is a static site. There is no build step.
+- Guest users land on a split-screen auth page with a cinematic movie carousel.
+- Authenticated users enter a protected app experience with searchable movie collections.
+- Users can open detailed movie pages, build a personal watchlist, and manage their session from a profile dropdown.
+- Admin users get access to an audit dashboard for role/status controls and action logging.
 
-1. Start a local server from the project root.
+## Full Site Description
+
+### 1. Landing and Authentication Experience
+
+The root page (`index.html`) acts as the sign-in gateway and first-touch product surface.
+
+It includes:
+
+- A left-side movie showcase carousel with dynamic title and navigation controls.
+- A right-side authentication panel with:
+	- Login form (email/password)
+	- Sign-up form (username/email/password)
+	- Google OAuth sign-in/sign-up actions
+	- Password visibility toggles
+- Friendly auth error handling (invalid credentials, weak passwords, provider mismatch, popup blockers, unauthorized domain fallbacks).
+
+The authentication logic is handled in `js/firebase.js`, while Firebase app initialization lives in `js/firebase-core.js`.
+
+### 2. Protected App Experience
+
+After successful authentication, users are redirected into the protected pages under `Pages/`.
+
+Core pages:
+
+- `Pages/HomePage.html`
+	- Main hero carousel
+	- Trending sections with genre chips
+	- Search and sort controls
+	- Discovery sections for movies/series/new releases
+- `Pages/Movie Library Page.html`
+	- Library-focused browsing with filters and sorting
+	- Search toolbar
+	- Featured player section UI
+	- Recommended content rows
+- `Pages/Movie Detail.html`
+	- Dedicated detail view with backdrop, metadata, rating ring, genres, overview, gallery, and action buttons
+- `Pages/watchlist.html`
+	- Saved-content dashboard with stats (total items, movies, series)
+	- Filtering and sorting controls
+	- Trailer carousel support for watchlist content
+
+`Pages/profile.html` currently redirects to `Pages/HomePage.html`, because profile data/actions are surfaced in the navbar profile menu.
+
+### 3. Route Protection and Session Control
+
+Authentication guarding is implemented in `js/auth-guard.js` using Firebase Auth state listeners.
+
+Behavior:
+
+- Guest-only pages redirect authenticated users to the app.
+- Protected pages redirect unauthenticated users back to the login page.
+- Redirect paths are preserved for smooth post-login return.
+- Logout links are bound centrally through `data-auth-action="logout"`.
+- User profile metadata (name, role, last seen) is hydrated into UI placeholders.
+- Role-aware visibility is applied through `data-admin-only` elements.
+
+### 4. User Profiles and Roles (Firestore)
+
+When users sign up or log in, profile documents are upserted in Firestore (`users/{uid}`) with fields such as:
+
+- `displayName`
+- `email`
+- `role` (default `user`)
+- `isActive`
+- timestamps for creation/updates/login
+
+This allows the UI to persist account identity and support role-based admin capabilities.
+
+### 5. Movie Data and Discovery Engine
+
+Movie and TV content is loaded from TMDB through front-end requests in `js/imdb-top250.js`.
+
+Capabilities include:
+
+- Trending movie and TV retrieval
+- Search by title
+- Genre mapping/filtering
+- Rating/year/title sorting options
+- Trailer enrichment via TMDB video endpoints
+- Detail-page navigation links with query parameters
+
+The app uses runtime configuration from `js/app-config.local.js` (ignored by git), and `js/api-config.js` applies TMDB tokens/keys to the browser runtime.
+
+### 6. Watchlist Behavior
+
+The watchlist feature stores saved items in browser local storage.
+
+Each saved item contains normalized identity and metadata, including:
+
+- movie/series identifier
+- TMDB ID (when available)
+- title, type, year, poster
+- rating snapshot
+- date added
+
+Users can browse their saved list with status counters, filtering, and sorting controls on `Pages/watchlist.html`.
+
+### 7. Admin Audit Dashboard
+
+Admin functionality is available at `Pages/admin.html` and powered by `js/admin.js`.
+
+Features:
+
+- View user inventory from Firestore
+- Search and filter users by role/status
+- Enable/disable accounts
+- Promote/demote roles (`user` <-> `admin`)
+- Protection against demoting the last admin
+- Log admin actions into `adminAuditEvents`
+- View recent audit events
+
+Role protection for this page is controlled through `data-required-role="admin"` and `js/auth-guard.js`.
+
+## Tech Stack
+
+- Frontend: HTML5, CSS3, JavaScript (ES modules + vanilla DOM)
+- UI libraries: Bootstrap 5, Font Awesome, Google Fonts
+- Authentication: Firebase Auth (email/password + Google OAuth)
+- Data storage: Firestore (user profiles + admin audit events)
+- Movie data: TMDB API
+- Hosting-ready config: Firebase config files are present (`firebase.json`, `firestore.rules`, indexes)
+
+## Runtime Configuration
+
+This project relies on runtime config loaded before auth/data scripts.
+
+Important files:
+
+- `js/app-config.example.js` (tracked template)
+- `js/app-config.local.js` (local secret/config values, gitignored)
+- `js/api-config.js` (injects TMDB runtime config)
+- `js/firebase-core.js` (initializes Firebase from runtime config)
+
+Minimum runtime requirements:
+
+1. Firebase web app config (apiKey, projectId, appId, etc.)
+2. TMDB bearer token or API key
+
+## Quick Start (Local)
+
+This is a static multi-page app with no build step.
+
+1. Start a local web server from the project root:
 
 ```bash
 python3 -m http.server 5500
 ```
 
-2. Open the app in a browser.
+2. Open:
 
 ```text
 http://127.0.0.1:5500/index.html
 ```
 
-3. Sign in or create an account on the landing page.
+3. Sign up or log in.
 
-Protected pages redirect back to `index.html` until Firebase auth has an active session.
+Protected routes under `Pages/` will redirect to `index.html` when no authenticated Firebase session exists.
 
-## Main Entry Points
+## Firebase Setup Summary
 
-- `index.html`: login and sign-up page
-- `Pages/HomePage.html`: authenticated home page
-- `Pages/Movie Library Page.html`: library and featured player
-- `Pages/Movie Detail.html`: detail view for a selected title
-- `Pages/watchlist.html`: saved watchlist
+Detailed setup steps are documented in `firebase/SETUP.md`.
 
-## Important Config Files
+At minimum, ensure:
 
-- `js/app-config.example.js`: tracked template for local runtime config
-- `js/app-config.local.js`: local runtime config loaded by the app and ignored by git
-- `js/firebase-core.js`: Firebase initialization that reads from the runtime config
-- `js/firebase.js`: sign-up, login, and user profile persistence logic
-- `js/auth-guard.js`: guest/protected route redirects and logout handling
-- `js/api-config.js`: TMDB runtime configuration loader used before movie data scripts
-- `firebase/SETUP.md`: Firebase CLI setup and project provisioning notes
-
-## Current Setup Notes
-
-- The site is already wired to protect app pages with Firebase auth.
-- Runtime config is loaded from `js/app-config.local.js` before Firebase and TMDB-dependent scripts run.
-- The local config in this workspace currently points to the Firebase project `dv100firebaseclass`.
-- Home, Library, Detail, and Watchlist now use TMDB in the browser and no longer call RapidAPI from tracked frontend code.
-- `js/app-config.local.js` is ignored by git. Keep project-specific Firebase and TMDB values there.
+1. Firebase CLI dependencies are installed in `firebase/`.
+2. A Firebase project is selected.
+3. Email/Password auth is enabled.
+4. Firestore is enabled.
+5. `js/app-config.local.js` contains valid Firebase + TMDB runtime values.
 
 ## Project Structure
 
 ```text
-css/                  Shared site styles
-js/                   Frontend logic
-Pages/                Authenticated app pages
-firebase/             Firebase CLI helpers and setup notes
-Asset/                Fonts and images
-public/               Static Firebase hosting assets
+Asset/               Fonts and images
+css/                 Shared site styles
+firebase/            Firebase CLI scripts and setup notes
+js/                  Frontend logic (auth, config, catalog, admin)
+Pages/               Protected app pages
+public/              Firebase hosting assets
+index.html           Guest auth entry page
+firebase.json        Firebase hosting/emulator config
+firestore.rules      Firestore security rules
 ```
-
-## Firebase Setup
-
-If you need to create or switch the Firebase project, follow the steps in `firebase/SETUP.md`.
-
-At minimum you will need:
-
-1. Firebase CLI installed in `firebase/`
-2. A Firebase project selected
-3. Authentication enabled with Email/Password
-4. Firestore enabled
-5. `js/app-config.local.js` updated with the correct Firebase web app config and TMDB access token

@@ -1,6 +1,7 @@
 import {
     createUserWithEmailAndPassword,
     signInWithEmailAndPassword,
+    sendPasswordResetEmail,
     updateProfile,
     GoogleAuthProvider,
     signInWithPopup,
@@ -23,6 +24,7 @@ const signUpPass = document.getElementById("signUpPass");
 const signUpUsername = document.getElementById("create-username");
 const signInEmail = document.getElementById("signInEmail");
 const signInPass = document.getElementById("signInPass");
+const forgotPasswordLink = document.getElementById("forgotPasswordLink");
 const PRIMARY_WEBAPP_ORIGIN = "https://indevmovies.web.app";
 const GOOGLE_REDIRECT_STARTED_KEY = "indev_google_redirect_started";
 
@@ -249,6 +251,29 @@ const googleSignInBtn  = document.getElementById("googleSignInBtn");
 const googleSignUpBtn  = document.getElementById("googleSignUpBtn");
 if (googleSignInBtn)  googleSignInBtn.addEventListener("click", handleGoogleAuth);
 if (googleSignUpBtn)  googleSignUpBtn.addEventListener("click", handleGoogleAuth);
+
+if (forgotPasswordLink) {
+    forgotPasswordLink.addEventListener("click", async (event) => {
+        event.preventDefault();
+
+        const email = (signInEmail?.value || "").trim();
+        if (!email) {
+            alert("Enter your email first, then click 'Forgot password?'.");
+            signInEmail?.focus();
+            return;
+        }
+
+        try {
+            await sendPasswordResetEmail(auth, email);
+            alert("Password reset email sent. Check your inbox.");
+        } catch (error) {
+            const msg = humanizeAuthError(error);
+            if (msg) {
+                alert(msg);
+            }
+        }
+    });
+}
 
 if (loginForm) {
     loginForm.addEventListener("submit", async (event) => {

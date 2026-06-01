@@ -1,5 +1,5 @@
 (function () {
-        const FALLBACK_POSTER = "../assets/Logo.png";
+    const FALLBACK_POSTER = "../Asset/img/menu_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24.svg";
     const TMDB_TRENDING_URL = "https://api.themoviedb.org/3/trending/movie/week";
     const TMDB_TV_TRENDING_URL = "https://api.themoviedb.org/3/trending/tv/week";
     const TMDB_TV_TOP_RATED_URL = "https://api.themoviedb.org/3/tv/top_rated";
@@ -255,6 +255,10 @@
         const url = new URL(TMDB_TRENDING_URL);
         url.searchParams.set("page", String(page));
 
+        if (!headers) {
+            appendTmdbApiKey(url);
+        }
+
         const response = await fetch(url.toString(), {
             method: "GET",
             headers
@@ -280,12 +284,17 @@
     }
 
     async function fetchTmdbTrailerByMediaId(mediaType, tmdbId, headers) {
-        if (!tmdbId || !headers) {
+        if (!tmdbId) {
             return "";
         }
 
         const typePath = mediaType === "tv" ? "tv" : "movie";
-        const response = await fetch(`https://api.themoviedb.org/3/${typePath}/${tmdbId}/videos`, {
+        const url = new URL(`https://api.themoviedb.org/3/${typePath}/${tmdbId}/videos`);
+        if (!headers) {
+            appendTmdbApiKey(url);
+        }
+
+        const response = await fetch(url.toString(), {
             method: "GET",
             headers
         });
@@ -301,7 +310,7 @@
 
     async function searchTmdbMediaIdByTitle(mediaType, title, year, headers) {
         const query = String(title || "").trim();
-        if (!query || !headers) {
+        if (!query) {
             return null;
         }
 
@@ -309,6 +318,10 @@
         url.searchParams.set("query", query);
         if (year) {
             url.searchParams.set(mediaType === "tv" ? "first_air_date_year" : "year", String(year));
+        }
+
+        if (!headers) {
+            appendTmdbApiKey(url);
         }
 
         const response = await fetch(url.toString(), {
@@ -519,7 +532,7 @@
     }
 
     function getTmdbAuthHeaders() {
-        const runtimeToken = window.TMDB_BEARER_TOKEN || "";
+        const runtimeToken = String(window.TMDB_BEARER_TOKEN || "").trim();
         const token = runtimeToken;
         if (!token) {
             return null;
@@ -529,6 +542,21 @@
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json"
         };
+    }
+
+    function getTmdbApiKey() {
+        return String(window.TMDB_API_KEY || "").trim();
+    }
+
+    function appendTmdbApiKey(url) {
+        const apiKey = getTmdbApiKey();
+        if (!apiKey || !url || !url.searchParams) {
+            return;
+        }
+
+        if (!url.searchParams.has("api_key")) {
+            url.searchParams.set("api_key", apiKey);
+        }
     }
 
     function getUserCountryCode() {
@@ -552,7 +580,7 @@
 
     async function fetchTopMoviesFromTmdb() {
         const headers = getTmdbAuthHeaders();
-        if (!headers) {
+        if (!headers && !getTmdbApiKey()) {
             console.warn("TMDB config missing: define window.INDEV_CONFIG.tmdb in js/app-config.local.js");
             return [];
         }
@@ -607,6 +635,10 @@
         const url = new URL(baseUrl);
         url.searchParams.set("page", String(page));
 
+        if (!headers) {
+            appendTmdbApiKey(url);
+        }
+
         const response = await fetch(url.toString(), { method: "GET", headers });
         if (!response.ok) {
             throw new Error(`TMDB TV fetch failed (${response.status})`);
@@ -618,8 +650,8 @@
 
     async function fetchTvShows(type) {
         const headers = getTmdbAuthHeaders();
-        if (!headers) {
-            console.warn("TMDB bearer token not set. Cannot fetch TV series.");
+        if (!headers && !getTmdbApiKey()) {
+            console.warn("TMDB config missing. Set window.INDEV_CONFIG.tmdb bearerToken or apiKey.");
             return [];
         }
 
